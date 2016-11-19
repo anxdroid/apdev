@@ -1,8 +1,44 @@
 import multiprocessing
 import socket
+import os
+import json
 import RPi.GPIO as GPIO
+import sqlite3
 
 AUTH_TOKEN = "f_Yhkoljlj43_."
+dbname = '/media/LaCie/Anto/templog.db'
+
+def doquery(key, value, source, notes):
+    conn=sqlite3.connect(dbname)
+    curs=conn.cursor()
+    curs.execute("INSERT INTO events (id, category, key, value, source, params) values(NULL, 'CMDSRV', (?), (?), (?), (?))", (key,value,source,notes))
+    conn.commit()
+    conn.close()
+
+def deinit():
+    GPIO.cleanup()
+
+    conn=sqlite3.connect(dbname)
+    key="STOP"
+    value=str(os.getpid())
+    source = socket.gethostbyname(socket.gethostname())
+    params = {}
+    params["pid"] = str(os.getpid())    
+    doquery(key, value, source, json.dumps(params))
+
+def init():
+    conn=sqlite3.connect(dbname)
+    key="START"
+    value=str(os.getpid())
+    source = socket.gethostbyname(socket.gethostname())
+    params = {}
+    params["pid"] = str(os.getpid()) 
+    doquery(key, value, source, json.dumps(params))
+
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setup(18, GPIO.OUT)
+    GPIO.output(18, GPIO.HIGH)
+
 
 def RELAY(arg, logger):
     args = arg.split("#")
@@ -36,23 +72,44 @@ def handle(connection, address):
             logger.debug("Received data %r", data)
 
             data_info = data.split(":")
-            if AUTH == False and data_info[0] == "AUTH" and data_info[1] == AUTH_TOKEN:
-                AUTH = True
-            
-            if AUTH == False:
-                logger.debug("Failed auth !")
-                data = "Get out !"
-            elif data_info[0] != "AUTH" :
-                if (data_info[0] == "RELAY"):
-                    data = RELAY(data_info[1], logger)
-                else :
-                    logger.debug("Unknown command !")
-                    data = "Unknown command !"
-            else:
-                logger.debug("Authenticated !")
-                data = "Welcome !"
+            retval = data
+            if len(data_info) > 1 :
 
-            connection.sendall(data)
+                #conn=sqlite3.connect(dbname)
+                #curs=conn.cursor()
+                key=data_info[0]
+                value=data_info[1]
+                params = {}
+                params["clientaddr"] = address 
+
+                if AUTH == False and data_info[0] == "AUTH" and data_info[1] == AUTH_TOKEN:
+                    AUTH = True
+                    value="****"
+
+                retval = data
+                if AUTH == False:
+                    logger.debug("Failed auth !")
+                    retval = "Get out !"
+                elif data_info[0] != "AUTH" :
+                    if (data_info[0] == "RELAY"):
+                        retval = RELAY(data_info[1], logger)
+                    else :
+                        logger.debug("Unknown command !")
+                        retval = "Unknown command !"
+                else:
+                    logger.debug("Authenticated !")
+                    retval = "Welcome !"
+
+            else:
+                key = data
+                val = "ERR"
+                retval = "Params error"
+
+            params["retval"] = retval
+
+            source = socket.gethostbyname(socket.gethostname())
+            doquery(key, value, source, json.dumps(params))
+            connection.sendall(retval)
             logger.debug("Sent data")
     except:
         logger.exception("Problem handling request")
@@ -77,17 +134,24 @@ class Server(object):
             conn, address = self.socket.accept()
             self.logger.debug("Got connection")
             process = multiprocessing.Process(target=handle, args=(conn, address))
+            key="CONNECTION"
+            value=str(process)
+            source = socket.gethostbyname(socket.gethostname())
+            params = {}
+            params["clientaddr"] = address
+            params["pid"] = str(os.getpid()) 
+            params["thread"] = str(process)
+            doquery(key, value, source, json.dumps(params))
             process.daemon = True
             process.start()
             self.logger.debug("Started process %r", process)
 
 if __name__ == "__main__":
     import logging
-    GPIO.setmode(GPIO.BCM)
-    GPIO.setup(18, GPIO.OUT)
     logging.basicConfig(level=logging.DEBUG)
     server = Server("0.0.0.0", 82)
     try:
+        init()
         logging.info("Listening")
         server.start()
     except:
@@ -98,5 +162,5 @@ if __name__ == "__main__":
             logging.info("Shutting down process %r", process)
             process.terminate()
             process.join()
-        GPIO.cleanup()
+        deinit()
     logging.info("All done")
