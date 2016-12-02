@@ -31,6 +31,7 @@ def check_threshold(id):
         curs.execute("SELECT * FROM thresholds WHERE active = 1 AND id = ?", (id, ))
 	row = curs.fetchone()
 	#print row
+	#TODO: non tutti i sources sono dati acquisiti es. l'orario o (per ora) il fatto che la caldaia sia accesa
 	curs.execute("SELECT source, value, timestamp FROM sensors WHERE source = (?) AND cast( ( strftime('%s',datetime('now'))-strftime('%s',timestamp) ) AS real ) < 60 ORDER BY timestamp DESC", (row[1], ))
 	row1 = curs.fetchone()
 	#print row1
@@ -73,12 +74,16 @@ def triggers():
 			# do CMD
 			print trigger+" ok => execute "+cmd
 			curs1.execute("UPDATE triggers SET last_triggered = datetime('now'), last_result = 1 WHERE id = ?", (row[0], ))
-	            else :
+	            	cmd_info = cmd.split(":")
+			#doquery('TRGSRV', cmd_info[0], cmd_info[1], '127.0.0.1', "Trigger id: "+str(row[0]))
+                    elif(row[5] == 1) :
 			curs1.execute("UPDATE triggers SET last_triggered = datetime('now'), last_result = 0 WHERE id = ?", (row[0], ))
             
                     #print(check)
                     #logger.debug("Done trigger id %d", row[0])
                     conn.commit()
+                    if (check):
+			doquery('TRGSRV', cmd_info[0], cmd_info[1], '127.0.0.1', "Trigger id: "+str(row[0]))
 		time.sleep(2)
     except:
         logger.exception("Problem handling request")
