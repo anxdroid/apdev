@@ -5,9 +5,13 @@ import json
 import RPi.GPIO as GPIO
 import sqlite3
 import time
+from passlib.hash import apr_md5_crypt
+import re
 
 AUTH_TOKEN = "f_Yhkoljlj43_."
 dbname = '/media/LaCie/Anto/templog.db'
+values = {}
+
 
 def doquery(category, key, value, source, notes):
     conn=sqlite3.connect(dbname)
@@ -15,6 +19,72 @@ def doquery(category, key, value, source, notes):
     curs.execute("INSERT INTO events (id, category, key, value, source, params) values (NULL, (?), (?), (?), (?), (?))", (category, key,value,source,notes))
     conn.commit()
     conn.close()
+
+def check_threshold(id):
+    import logging
+    logging.basicConfig(level=logging.DEBUG)
+    logger = logging.getLogger("thresholds")
+    conn=sqlite3.connect(dbname)
+    try:
+        curs=conn.cursor()
+        #logging.info("Querying...")
+        curs.execute("SELECT * FROM thresholds WHERE active = 1 AND id = ?", (id, ))
+	row = curs.fetchone()
+	#print row
+	curs.execute("SELECT source, value, timestamp FROM sensors WHERE source = (?) AND cast( ( strftime('%s',datetime('now'))-strftime('%s',timestamp) ) AS real ) < 60 ORDER BY timestamp DESC", (row[1], ))
+	row1 = curs.fetchone()
+	#print row1
+	if (row1 != None) :
+		print id+": "+row[1]+" = "+str(row1[1])+" ["+str(row[2])+","+str(row[3])+"]"
+		if (row1[1] >= row[2] and row1[1] <= row[3]):
+			return True
+	return False
+	#logger.debug("Done threshold id %d", row[0])
+    except:
+        logger.exception("Problem handling request")
+    finally:
+        #logger.debug("Closing thresholds process")
+        conn.close()
+
+def triggers():
+    import logging
+    logging.basicConfig(level=logging.DEBUG)
+    logger = logging.getLogger("process-triggers")
+    logger.debug("Starting triggers process")
+    conn=sqlite3.connect(dbname)
+    try:
+	while (True):
+	        curs=conn.cursor()
+        	#logging.info("Querying...")
+	        for row in curs.execute("SELECT * FROM triggers WHERE active = 1 AND (last_result = 0 OR last_result IS NULL OR last_triggered IS NULL OR cast( ( strftime('%s',datetime('now'))-strftime('%s',last_triggered) ) AS real ) > 60)"):
+        	    #print row
+	            trigger = str(row[1])
+                    cmd = str(row[2])
+	            p = re.compile('\d+')
+	            ids = p.findall(trigger)
+	            #print trigger+" "+cmd
+	            for id in ids:
+	                check = check_threshold(id)
+	                trigger = trigger.replace(str(id), str(check))
+	                #print check
+	            check = eval(trigger)
+                    curs1 = conn.cursor()
+	            if (check) :
+			# do CMD
+			print trigger+" ok => execute "+cmd
+			curs1.execute("UPDATE triggers SET last_triggered = datetime('now'), last_result = 1 WHERE id = ?", (row[0], ))
+	            else :
+			curs1.execute("UPDATE triggers SET last_triggered = datetime('now'), last_result = 0 WHERE id = ?", (row[0], ))
+            
+                    #print(check)
+                    #logger.debug("Done trigger id %d", row[0])
+                    conn.commit()
+		time.sleep(2)
+    except:
+        logger.exception("Problem handling request")
+    finally:
+        logger.debug("Closing triggers process")
+        conn.close()
 
 def jobs():
     import logging
@@ -96,10 +166,12 @@ def doAUTH(user, password, logger):
     AUTH = False;
     try:
         curs=conn.cursor()
-        curs.execute("SELECT * FROM users WHERE username = ? AND password = ?", (user, password,))
-        row = curs.fetchone()
+        #curs.execute("SELECT * FROM users WHERE username = ? AND password = ?", (user, password,))
+        curs.execute("SELECT password FROM users WHERE username = ?", (user,))
+	row = curs.fetchone()
         if row != None:
-            AUTH = True
+            #AUTH = True
+		AUTH = apr_md5_crypt.verify(password, row[0])
     except:
         logger.exception("Problem handling request")
     finally:
@@ -213,6 +285,16 @@ class Server(object):
         process_jobs = multiprocessing.Process(target=jobs, args=())
         process_jobs.daemon = True
         process_jobs.start()
+
+
+	values['TEMP_SALOTTO'] = 16.5
+	values['TEMP_ESTERNA'] = 5
+        values['HOURS'] = 18
+	
+	process_triggers = multiprocessing.Process(target=triggers, args=())
+        process_triggers.daemon = True
+        process_triggers.start()
+	
         self.logger.debug("listening")
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.bind((self.hostname, self.port))
