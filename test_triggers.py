@@ -73,7 +73,7 @@ if __name__ == "__main__":
 
     values['TEMP_SALOTTO'] = 16.5
     values['TEMP_ESTERNA'] = 5
-
+	values['HOURS'] = 18
     process_triggers = multiprocessing.Process(target=triggers, args=())
     process_triggers.start()
     logging.info("...done !")
