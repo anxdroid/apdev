@@ -298,7 +298,7 @@ class Server(object):
 	
 	process_triggers = multiprocessing.Process(target=triggers, args=())
         process_triggers.daemon = True
-        process_triggers.start()
+        #process_triggers.start()
 	
         self.logger.debug("listening")
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
