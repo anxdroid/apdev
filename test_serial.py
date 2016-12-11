@@ -24,9 +24,6 @@ class APServer(object):
 
 
     def __init__(self):
-            self.logger = logging.getLogger("apserver")
-            self.hostname = hostname
-            self.port = port
             self.srvinit()
 
     def log_measurement(self, value, source, unit):
