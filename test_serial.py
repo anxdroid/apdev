@@ -81,12 +81,15 @@ class APServer(object):
                 myline = self.ser.readline()
                 vals = p.findall(myline)
                 ts = time.time()
-                st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+                timestamp = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
                 if (len(vals) == 3):
                     print myline
                     for val in vals:
-                        print st+" "+str(val)
-                        #print ser.readline()
+                        info = val.split(':')
+                        if (len(info) == 3)
+                            print st+" "+str(val)
+                            self.log_measurement(timestamp, val[0], val[1], val[2])
+                            #print ser.readline()
                 time.sleep(2)
         except:
             logger.exception("Problem handling request")
