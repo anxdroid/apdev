@@ -10,7 +10,7 @@ import json
 
 class APServer(object):
     def srvinit(self):
-        self.dbconn = MySQLdb.connect('localhost', 'apdb', 'pwd4apdb', 'apdb')
+        self.dbconn = MySQLdb.connect('192.168.1.3', 'apdb', 'pwd4apdb', 'apdb')
         self.dbconn.autocommit(True)
         print self.dbconn
 
