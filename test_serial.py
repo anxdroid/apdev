@@ -21,26 +21,6 @@ class APServer(object):
         params = {}
         value = params["pid"] = str(self.srvpid)
         self.log_event("SRV", key, value, self.srvaddress, json.dumps(params))
-        #self.ser = serial.Serial('/dev/ttyACM0', 9600)
-
-        self.ser = serial.Serial('/dev/ttyACM0',
-                    baudrate=9600,
-                    bytesize=serial.EIGHTBITS,
-                    parity=serial.PARITY_NONE,
-                    stopbits=serial.STOPBITS_ONE,
-                    timeout=1,
-                    xonxoff=0,
-                    rtscts=0
-                    )
-
-# Toggle DTR to reset Arduino
-        self.ser.setDTR(False)
-        time.sleep(1)
-# toss any data already received, see
-# http://pyserial.sourceforge.net/pyserial_api.html#serial.Serial.flushInput
-        self.ser.flushInput()
-        self.ser.setDTR(True)
-
 
     def __init__(self):
             self.srvinit()
@@ -76,6 +56,25 @@ class APServer(object):
         logging.basicConfig(level=logging.DEBUG)
         logger = logging.getLogger("process-serial")
         logger.debug("Starting serial process")
+
+        self.ser = serial.Serial('/dev/ttyACM0',
+            baudrate=9600,
+            bytesize=serial.EIGHTBITS,
+            parity=serial.PARITY_NONE,
+            stopbits=serial.STOPBITS_ONE,
+            timeout=1,
+            xonxoff=0,
+            rtscts=0
+            )
+
+# Toggle DTR to reset Arduino
+        self.ser.setDTR(False)
+        time.sleep(1)
+# toss any data already received, see
+# http://pyserial.sourceforge.net/pyserial_api.html#serial.Serial.flushInput
+        self.ser.flushInput()
+        self.ser.setDTR(True)
+        
         try:
             while True:
                 p = re.compile('[\d|\.|-]+')
