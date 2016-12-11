@@ -82,8 +82,8 @@ class APServer(object):
                 vals = p.findall(myline)
                 ts = time.time()
                 timestamp = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
-                if (len(vals) == 3):
-                    print myline
+                print myline
+                if (len(vals) == 4):
                     for val in vals:
                         info = val.split(':')
                         if (len(info) == 3):
