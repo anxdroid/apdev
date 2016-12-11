@@ -76,6 +76,7 @@ class APServer(object):
         self.ser.setDTR(True)
 
         try:
+            last_millis = 0;
             while True:
                 p = re.compile('[^:]+:[\d|\.|-]+:[^\s]+')
                 myline = self.ser.readline()
@@ -83,13 +84,15 @@ class APServer(object):
                 ts = time.time()
                 timestamp = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
                 print myline
-                if (len(vals) == 4):
+                if (len(vals) > 0):
                     for val in vals:
                         info = val.split(':')
                         if (len(info) == 3):
-                            print st+" "+str(val)
-                            self.log_measurement(timestamp, val[0], val[1], val[2])
-                            #print ser.readline()
+                            if (info[0] == "MILLIS"):
+                                last_millis = int(info[1])
+                            else:
+                                print timestamp+" ("+str(last_millis)+"): "+str(val)
+                                self.log_measurement(timestamp, info[1], info[0], info[2])
                 time.sleep(2)
         except:
             logger.exception("Problem handling request")
