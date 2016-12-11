@@ -74,7 +74,7 @@ class APServer(object):
 # http://pyserial.sourceforge.net/pyserial_api.html#serial.Serial.flushInput
         self.ser.flushInput()
         self.ser.setDTR(True)
-        
+
         try:
             while True:
                 p = re.compile('[\d|\.|-]+')
@@ -94,9 +94,10 @@ class APServer(object):
             logger.debug("Closing serial process")
 
     def start(self):
-        process_serials = multiprocessing.Process(target=self.serialsrv, args=())
-        process_serials.daemon = True
-        process_serials.start()
+        #process_serials = multiprocessing.Process(target=self.serialsrv, args=())
+        #process_serials.daemon = True
+        #process_serials.start()
+        self.serialsrv()
 
 
 def main ():
