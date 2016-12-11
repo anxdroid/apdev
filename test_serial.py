@@ -4,6 +4,7 @@ import time
 import re
 import datetime
 
+class APServer:
 def log_measurement(self, value, source, unit):
     curs = self.dbconn.cursor()
     sql = "INSERT INTO sensors (value, source, unit) values(%s, %s, %s)"
@@ -20,13 +21,16 @@ def log_measurement(self, value, source, unit):
 def main ():
     ser = serial.Serial('/dev/ttyACM0', 9600)
     while True:
-        p = re.compile('\d+')
-        vals = p.findall(ser.readline())
+        p = re.compile('[\d|\.|-]+')
+	myline = ser.readline()
+        vals = p.findall(myline)
         ts = time.time()
         st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
-        for val in vals:
-            print st+" "+str(val)
-            #print ser.readline()
+        if (len(vals)== 3):
+		print myline
+		for val in vals:
+            		print st+" "+str(val)
+            		#print ser.readline()
         time.sleep(1)
 
 if __name__ == "__main__":
