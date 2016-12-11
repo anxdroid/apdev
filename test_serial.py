@@ -77,7 +77,7 @@ class APServer(object):
 
         try:
             while True:
-                p = re.compile('[\d|\.|-]+')
+                p = re.compile('[^:]+:[\d|\.|-]+:[^\s]+')
                 myline = self.ser.readline()
                 vals = p.findall(myline)
                 ts = time.time()
