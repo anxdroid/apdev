@@ -30,7 +30,7 @@ class APServer(object):
         sql = "INSERT INTO sensors (timestamp, value, source, unit) values(%s, %s, %s, %s)"
         try:
             curs.execute(sql, (timestamp, value, source, unit))
-            print curs._last_executed
+            #print curs._last_executed
             #print curs.lastrowid
         except MySQLdb.Error, e:
             try:
@@ -44,7 +44,7 @@ class APServer(object):
             #print sql
             try:
                 curs.execute(sql, (category, key, value, source, notes,))
-                print curs._last_executed
+                #print curs._last_executed
                 #print curs.lastrowid
             except MySQLdb.Error, e:
                 try:
