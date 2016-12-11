@@ -40,6 +40,20 @@ class APServer(object):
             except IndexError:
                 print "MySQL Error: %s" % str(e)
 
+    def log_event(self, category, key, value, source, notes):
+            curs = self.dbconn.cursor()
+            sql = "INSERT INTO events (category, `cmd`, value, source, params) values (%s, %s, %s, %s, %s)"
+            #print sql
+            try:
+                curs.execute(sql, (category, key, value, source, notes,))
+                #print curs._last_executed
+                #print curs.lastrowid
+            except MySQLdb.Error, e:
+                try:
+                    print "MySQL Error [%d]: %s" % (e.args[0], e.args[1])
+                except IndexError:
+                    print "MySQL Error: %s" % str(e)
+
     def serialsrv(self):
         logging.basicConfig(level=logging.DEBUG)
         logger = logging.getLogger("process-serial")
