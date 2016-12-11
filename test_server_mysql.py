@@ -104,10 +104,10 @@ class APServer(object):
 
 		def HEATERS(self, arg, logger):
 			args = arg.split("#")
-			if args[0] == "OFF":
+			if args[0] == "OFF" or args[0] == "1":
 				GPIO.output(18, GPIO.HIGH)
 				return "GPIO 18 HIGH"
-			elif args[0] == "ON":
+			elif args[0] == "ON" or args[0] == "0":
 				GPIO.output(18, GPIO.LOW)
 				return "GPIO 18 LOW"
 			elif args[0] == "RESET":
@@ -138,7 +138,7 @@ class APServer(object):
 					logger.debug("Failed auth !")
 					retval = "Get out !"
 				elif data_info[0] != "AUTH" :
-					if (data_info[0] == "HEATERS"):
+					if (data_info[0] == "HEATERS" or data_info[0] == "RELAY"):
 						retval = self.HEATERS(data_info[1], logger)
 					#elif (data_info[0] == "LED"):
 					#	retval = LED(data_info[1], logger)
