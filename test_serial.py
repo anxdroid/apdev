@@ -22,6 +22,7 @@ def main ():
     while True:
         p = re.compile('\d+')
         vals = p.findall(ser.readline())
+        ts = time.time()
         st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
         for val in vals:
             print st+" "+str(val)
