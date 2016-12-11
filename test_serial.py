@@ -86,7 +86,7 @@ class APServer(object):
                     print myline
                     for val in vals:
                         info = val.split(':')
-                        if (len(info) == 3)
+                        if (len(info) == 3):
                             print st+" "+str(val)
                             self.log_measurement(timestamp, val[0], val[1], val[2])
                             #print ser.readline()
