@@ -286,7 +286,7 @@ class APServer(object):
 					#logger.debug("Searching for jobs...")
 					curs.execute(sql)
 					rows = curs.fetchall()
-					if curs.rowcount > 0:
+					for row in rows:
 						row = rows[0]
 						sql = "UPDATE jobs SET status = 1, started = NOW() WHERE id = %s"
 						curs.execute(sql, (row[0],))
@@ -301,6 +301,7 @@ class APServer(object):
 						curs.execute(sql, (row[0],))
 						#self.dbconn.commit()
 						logger.debug("Done job id %d", row[0])
+						break
 					#curs.close()
 					time.sleep(2)
 			except:
@@ -375,7 +376,7 @@ class APServer(object):
 
 def main ():
 	logging.basicConfig(level=logging.DEBUG)
-	server = APServer("0.0.0.0", 83)
+	server = APServer("0.0.0.0", 82)
 
 	try:
 			logging.info("Listening")
