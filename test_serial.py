@@ -23,7 +23,7 @@ class APServer(object):
         self.ser = serial.Serial('/dev/ttyACM0', 9600)
 
 
-    def __init__(self, hostname, port):
+    def __init__(self):
             self.logger = logging.getLogger("apserver")
             self.hostname = hostname
             self.port = port
