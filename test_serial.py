@@ -23,7 +23,7 @@ class APServer(object):
         self.log_event("SRV", key, value, self.srvaddress, json.dumps(params))
         #self.ser = serial.Serial('/dev/ttyACM0', 9600)
 
-        self.ser = serial.Serial('/dev/ttyS0',
+        self.ser = serial.Serial('/dev/ttyACM0',
                     baudrate=9600,
                     bytesize=serial.EIGHTBITS,
                     parity=serial.PARITY_NONE,
