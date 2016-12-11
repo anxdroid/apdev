@@ -78,7 +78,7 @@ class APServer(object):
         try:
             last_millis = 0;
             while True:
-                p = re.compile('[^:]+:[\d|\.|-]+:[^\s]+')
+                p = re.compile('[^:\s]+:[\d|\.|-]+:[^\s]+')
                 myline = self.ser.readline()
                 vals = p.findall(myline)
                 ts = time.time()
