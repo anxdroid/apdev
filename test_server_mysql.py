@@ -232,40 +232,41 @@ class APServer(object):
 					sql = "SELECT * FROM triggers WHERE active = 1 AND (last_result = 0 OR last_result IS NULL OR last_triggered IS NULL OR TIMESTAMPDIFF(SECOND, last_triggered, NOW()) > 60)"
 					curs.execute(sql)
 					rows = curs.fetchall()
-					for row in rows:
-						#print row
-						trigger = str(row[1])
-						cmd = str(row[2])
-						p = re.compile('\d+')
-						ids = p.findall(trigger)
-						#print trigger+" "+cmd
-						for id in ids:
-							check = self.check_threshold(id)
-							trigger = trigger.replace(str(id), str(check))
-							#print check
-						check = eval(trigger)
+					if (rows != None) :
+						for row in rows:
+							#print row
+							trigger = str(row[1])
+							cmd = str(row[2])
+							p = re.compile('\d+')
+							ids = p.findall(trigger)
+							#print trigger+" "+cmd
+							for id in ids:
+								check = self.check_threshold(id)
+								trigger = trigger.replace(str(id), str(check))
+								#print check
+							check = eval(trigger)
 						
-						if (check or row[5] == 1):
-							sql = "UPDATE triggers SET last_triggered = NOW(), last_result = %s WHERE id = %s"
-							res = 0;
-							if (check) :
-								# do CMD
-								print trigger+" ok => execute "+cmd
-								res = 1
-							#elif(row[5] == 1) :
-							#	res = 0
-							curs.execute(sql, (res, row[0], ))
-							#self.dbconn.commit()
+							if (check or row[5] == 1):
+								sql = "UPDATE triggers SET last_triggered = NOW(), last_result = %s WHERE id = %s"
+								res = 0;
+								if (check) :
+									# do CMD
+									print trigger+" ok => execute "+cmd
+									res = 1
+								#elif(row[5] == 1) :
+								#	res = 0
+								curs.execute(sql, (res, row[0], ))
+								#self.dbconn.commit()
 							
-						logger.debug("Done trigger id %d", row[0])
+							logger.debug("Done trigger id %d", row[0])
 						
-						if (check):
-							#cmd_info = cmd.split(":")
-							#self.log_event('TRGSRV', cmd_info[0], cmd_info[1], '127.0.0.1', "Trigger id: "+str(row[0]))
-							params = {}
-							AUTH = True
-							params["trigger_id"] = row[0]
-							params = self.execute_cmd("TRIGGERSRV", cmd, params, AUTH)
+							if (check):
+								#cmd_info = cmd.split(":")
+								#self.log_event('TRGSRV', cmd_info[0], cmd_info[1], '127.0.0.1', "Trigger id: "+str(row[0]))
+								params = {}
+								AUTH = True
+								params["trigger_id"] = row[0]
+								params = self.execute_cmd("TRIGGERSRV", cmd, params, AUTH)
 					#curs.close()
 					time.sleep(2)
 			except:
@@ -286,22 +287,23 @@ class APServer(object):
 					#logger.debug("Searching for jobs...")
 					curs.execute(sql)
 					rows = curs.fetchall()
-					for row in rows:
-						row = rows[0]
-						sql = "UPDATE jobs SET status = 1, started = NOW() WHERE id = %s"
-						curs.execute(sql, (row[0],))
-						#self.dbconn.commit()
-						logger.debug("Found job id %d", row[0])
-						params = {}
-						params["clientaddr"] = row[4]
-						params["job_id"] = row[0]
-						params = self.execute_cmd("JOBSRV", row[2], params, AUTH)
-						AUTH = params["AUTH"]
-						sql = "UPDATE jobs SET status = 2, ended = NOW() WHERE id = %s"
-						curs.execute(sql, (row[0],))
-						#self.dbconn.commit()
-						logger.debug("Done job id %d", row[0])
-						break
+					if (rows != None):
+						for row in rows:
+							row = rows[0]
+							sql = "UPDATE jobs SET status = 1, started = NOW() WHERE id = %s"
+							curs.execute(sql, (row[0],))
+							#self.dbconn.commit()
+							logger.debug("Found job id %d", row[0])
+							params = {}
+							params["clientaddr"] = row[4]
+							params["job_id"] = row[0]
+							params = self.execute_cmd("JOBSRV", row[2], params, AUTH)
+							AUTH = params["AUTH"]
+							sql = "UPDATE jobs SET status = 2, ended = NOW() WHERE id = %s"
+							curs.execute(sql, (row[0],))
+							#self.dbconn.commit()
+							logger.debug("Done job id %d", row[0])
+							break
 					#curs.close()
 					time.sleep(2)
 			except:
