@@ -29,7 +29,7 @@ class APServer(object):
         curs = self.dbconn.cursor()
         sql = "INSERT INTO sensors (timestamp, value, source, unit) values(%s, %s, %s, %s)"
         try:
-            curs.execute(sql, (timestamp, value,source,unit))
+            curs.execute(sql, (timestamp, value, source, unit))
             #print curs._last_executed
             #print curs.lastrowid
         except MySQLdb.Error, e:
@@ -76,20 +76,23 @@ class APServer(object):
         self.ser.setDTR(True)
 
         try:
+            last_millis = 0;
             while True:
-                p = re.compile('[\d|\.|-]+')
+                p = re.compile('[^:\s]+:[\d|\.|-]+:[^\s]+')
                 myline = self.ser.readline()
                 vals = p.findall(myline)
                 ts = time.time()
                 timestamp = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
-                if (len(vals) == 3):
-                    print myline
+                print myline
+                if (len(vals) > 0):
                     for val in vals:
                         info = val.split(':')
                         if (len(info) == 3):
-                            print st+" "+str(val)
-                            self.log_measurement(timestamp, val[0], val[1], val[2])
-                            #print ser.readline()
+                            if (info[0] == "MILLIS"):
+                                last_millis = int(info[1])
+                            else:
+                                print timestamp+" ("+str(last_millis)+"): "+str(val)
+                                self.log_measurement(timestamp, info[1], info[0], info[2])
                 time.sleep(2)
         except:
             logger.exception("Problem handling request")
