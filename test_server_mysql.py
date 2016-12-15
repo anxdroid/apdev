@@ -16,6 +16,7 @@ class APServer(object):
 		def srvinit(self):
 				self.dbconn = MySQLdb.connect('localhost', 'apdb', 'pwd4apdb', 'apdb')
 				self.dbconn.autocommit(True)
+				self.dbconn.ping(True)
 				print self.dbconn
 
 				key="START"
@@ -283,28 +284,36 @@ class APServer(object):
 				while True:
 					curs = self.dbconn.cursor()
 					#print curs
-					sql = "SELECT * FROM jobs WHERE status = 0 ORDER BY timestamp DESC"
-					#logger.debug("Searching for jobs...")
-					curs.execute(sql)
-					rows = curs.fetchall()
-					if (rows != None):
-						for row in rows:
-							row = rows[0]
-							sql = "UPDATE jobs SET status = 1, started = NOW() WHERE id = %s"
-							curs.execute(sql, (row[0],))
-							#self.dbconn.commit()
-							logger.debug("Found job id %d", row[0])
-							params = {}
-							params["clientaddr"] = row[4]
-							params["job_id"] = row[0]
-							params = self.execute_cmd("JOBSRV", row[2], params, AUTH)
-							AUTH = params["AUTH"]
-							sql = "UPDATE jobs SET status = 2, ended = NOW() WHERE id = %s"
-							curs.execute(sql, (row[0],))
-							#self.dbconn.commit()
-							logger.debug("Done job id %d", row[0])
-							break
-					#curs.close()
+					try:
+						sql = "SELECT * FROM jobs WHERE status = 0 ORDER BY timestamp DESC LIMIT 0, 1"
+						#logger.debug("Searching for jobs...")
+						curs.execute(sql)
+						#rows = curs.fetchall()
+						if (curs.rowcount > 0):
+							rows = curs.fetchall()
+							if (len(rows) > 0) :
+								row = rows[0]
+								if (row != None) :
+									sql = "UPDATE jobs SET status = 1, started = NOW() WHERE id = %s"
+									curs.execute(sql, (row[0],))
+									#self.dbconn.commit()
+									logger.debug("Found job id %s", str(row[0]))
+									params = {}
+									params["clientaddr"] = row[4]
+									params["job_id"] = row[0]
+									params = self.execute_cmd("JOBSRV", row[2], params, AUTH)
+									AUTH = params["AUTH"]
+									sql = "UPDATE jobs SET status = 2, ended = NOW() WHERE id = %s"
+									curs.execute(sql, (row[0],))
+									#self.dbconn.commit()
+									logger.debug("Done job id %d", row[0])
+									#break
+						#curs.close()
+					except MySQLdb.Error, e:
+                                		try:
+                                        		print "MySQL Error [%d]: %s" % (e.args[0], e.args[1])
+                                		except IndexError:
+                                        		print "MySQL Error: %s" % str(e)
 					time.sleep(2)
 			except:
 				logger.exception("Problem handling request")
