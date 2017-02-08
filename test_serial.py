@@ -26,11 +26,11 @@ class APServer(object):
     def __init__(self):
             self.srvinit()
 
-    def log_measurement(self, timestamp, value, source, unit):
+    def log_measurement(self, timestamp, value, sensor, unit):
         curs = self.dbconn.cursor()
-        sql = "INSERT INTO sensors (timestamp, value, source, unit) values(%s, %s, %s, %s)"
+        sql = "INSERT INTO sensors (timestamp, value, sensor, source, unit) values(%s, %s, %s, %s, %s)"
         try:
-            curs.execute(sql, (timestamp, value, source, unit))
+            curs.execute(sql, (timestamp, value, sensor, self.srvaddress, unit))
             #print curs._last_executed
             #print curs.lastrowid
         except MySQLdb.Error, e:
@@ -53,48 +53,103 @@ class APServer(object):
                 except IndexError:
                     print "MySQL Error: %s" % str(e)
 
+    def serialread(self, path):
+        myline = ""
+        try:
+            if(self.ser.isOpen() == False):
+            	self.ser.open()
+            #inbuff = self.ser.inWaiting()
+            if (self.ser.inWaiting() > 0):
+                myline = self.ser.readline()
+                #self.ser.flushInput()
+	except IOError as e:
+            #Disconnect of USB->UART occured
+            #self.ser.flushInput()
+            print(e)
+            self.ser.close()
+            #time.sleep(10)
+            return -1
+        except TypeError as e:
+            #Disconnect of USB->UART occured
+            #self.ser.flushInput()
+            print(e)
+            self.ser.close()
+            time.sleeps(10)
+        except serial.SerialException as e:
+            #There is no new data from serial port
+            #self.ser.flushInput()
+            print(e)
+            self.ser.close()
+            time.sleep(10)
+        else:
+            #Some data was received
+            p = re.compile('[^:\s]+:[\d|\.|-]+:[^\s]+')
+            vals = p.findall(myline)
+            ts = time.time()
+            timestamp = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+            print myline
+            if (len(vals) > 0):
+                for val in vals:
+                    info = val.split(':')
+                    if (len(info) == 3 and info[0] != 'MILLIS'):
+                        print timestamp+" "+str(val)
+                        self.log_measurement(timestamp, info[1], info[0], info[2])
+        #self.ser.flushInput()
+	return 0
+
     def serialsrv(self):
         logging.basicConfig(level=logging.DEBUG)
         logger = logging.getLogger("process-serial")
         logger.debug("Starting serial process")
-
-        self.ser = serial.Serial('/dev/ttyACM0',
-            baudrate=9600,
-            bytesize=serial.EIGHTBITS,
-            parity=serial.PARITY_NONE,
-            stopbits=serial.STOPBITS_ONE,
-            timeout=1,
-            xonxoff=0,
-            rtscts=0
+        path = '/dev/ttyACM0'
+	try:
+            os.stat(path)
+	except OSError:
+            path = '/dev/ttyACM1'
+        try:
+            self.ser = serial.Serial(path,
+                baudrate=9600,
+                bytesize=serial.EIGHTBITS,
+                parity=serial.PARITY_NONE,
+                stopbits=serial.STOPBITS_ONE,
+                timeout=1,
+                xonxoff=0,
+                rtscts=0
             )
-
-# Toggle DTR to reset Arduino
-        self.ser.setDTR(False)
-        time.sleep(1)
-# toss any data already received, see
-# http://pyserial.sourceforge.net/pyserial_api.html#serial.Serial.flushInput
-        self.ser.flushInput()
-        self.ser.setDTR(True)
+            self.ser.setDTR(False)
+            self.ser.flushInput()
+            time.sleep(3)
+            self.ser.setDTR(True)
+        except IOError as e:
+            print(e)
+            
+        #time.sleep(1)
 
         try:
-            last_millis = 0;
-            while True:
-                p = re.compile('[^:\s]+:[\d|\.|-]+:[^\s]+')
-                myline = self.ser.readline()
-                vals = p.findall(myline)
-                ts = time.time()
-                timestamp = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
-                print myline
-                if (len(vals) > 0):
-                    for val in vals:
-                        info = val.split(':')
-                        if (len(info) == 3):
-                            if (info[0] == "MILLIS"):
-                                last_millis = int(info[1])
-                            else:
-                                print timestamp+" ("+str(last_millis)+"): "+str(val)
-                                self.log_measurement(timestamp, info[1], info[0], info[2])
-                time.sleep(2)
+            while True: 
+                ret = self.serialread(path)
+		if ret == -1 :
+			if path == '/dev/ttyACM1' :
+				path = '/dev/ttyACM0'
+			else :
+				path = '/dev/ttyACM1'
+		        try :
+				self.ser = serial.Serial(path,
+		        	        baudrate=9600,
+	        		        bytesize=serial.EIGHTBITS,
+        	        		parity=serial.PARITY_NONE,
+			                stopbits=serial.STOPBITS_ONE,
+		        	        timeout=1,
+		                	xonxoff=0,
+			                rtscts=0
+				)
+                                self.ser.setDTR(False)
+                                self.ser.flushInput()
+				time.sleep(3)
+				self.ser.setDTR(True)
+		        except IOError as e:
+		            print(e)
+		            time.sleep(2)
         except:
             logger.exception("Problem handling request")
         finally:
