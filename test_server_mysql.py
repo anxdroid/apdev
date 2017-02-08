@@ -11,12 +11,42 @@ import MySQLdb
 import datetime
 import sys
 import Adafruit_DHT
+import warnings
 
 class APServer(object):
+
+                def getsensors(self):
+                      	curs = self.dbconn.cursor()
+                        #print curs
+                        try:
+                        	sql = "SELECT * FROM devices WHERE id_parent = %s AND active = 1"
+                                curs.execute(sql, (int(self.deviceid), ))
+                                
+				if (curs.rowcount > 0):
+                                	rows = curs.fetchall()
+                                        if (len(rows) > 0) :
+                                        	for row in rows:
+                                                	if (row != None) :
+								print row
+			except MySQLdb.Error, e:
+                        	print curs._last_executed
+				try:
+                                	print "MySQL Error [%d]: %s" % (e.args[0], e.args[1])
+                        	
+				except IndexError:
+                                        print "MySQL Error: %s" % str(e)
+			except MySQLdb.Warning, e:
+                                print "MySQL Warning: %s" % (e.args[0],)
+                                print curs._last_executed
+                        except Warning, e:
+                                print "MySQL Warning %s" % (e.args[0],)
+                                print curs._last_executed
+
 		def srvinit(self):
 				self.dbconn = MySQLdb.connect('localhost', 'apdb', 'pwd4apdb', 'apdb')
 				self.dbconn.autocommit(True)
 				self.dbconn.ping(True)
+				warnings.filterwarnings('error', category=MySQLdb.Warning)
 				print self.dbconn
 
 				key="START"
@@ -26,7 +56,7 @@ class APServer(object):
 				value = params["pid"] = str(self.srvpid)
 				self.log_event("SRV", key, value, self.srvaddress, json.dumps(params))
 				#self.dbconn.commit()
-
+				self.getsensors()
 				GPIO.setmode(GPIO.BCM)
 				GPIO.setup(18, GPIO.OUT)
 				GPIO.setup(27, GPIO.OUT)
@@ -34,10 +64,11 @@ class APServer(object):
 
 				
 
-		def __init__(self, hostname, port):
+		def __init__(self, hostname, port, deviceid):
 				self.logger = logging.getLogger("apserver")
 				self.hostname = hostname
 				self.port = port
+				self.deviceid = deviceid
 				self.srvinit()
 
 
@@ -59,9 +90,15 @@ class APServer(object):
 			curs = self.dbconn.cursor()
 			sql = "INSERT INTO sensors (value, source, unit) values(%s, %s, %s)"
 			try:
-				curs.execute(sql, (value,source,unit))
+				curs.execute(sql, (round(value,3),source,unit))
 				#print curs._last_executed
 				#print curs.lastrowid
+			except MySQLdb.Warning, e:
+				print "MySQL Warning: %s" % (e.args[0],)
+				print curs._last_executed
+			except Warning, e:
+				print "MySQL Warning %s" % (e.args[0],)
+				print curs._last_executed
 			except MySQLdb.Error, e:
 				try:
 					print "MySQL Error [%d]: %s" % (e.args[0], e.args[1])
@@ -190,31 +227,62 @@ class APServer(object):
 			finally:
 				logger.debug("Closing thresholds process")
 
+		def int1WIRE(self, pin, device):
+			tfile = open("/sys/bus/w1/devices/"+device+"/w1_slave")
+			text = tfile.read()
+                        tfile.close()
+                        secondline = text.split("\n")[1]
+                        temperaturedata = secondline.split(" ")[9]
+                        temperature = float(temperaturedata[2:])
+                        temperature = temperature / 1000
+			return temperature
+
+		def intADAFRUIT_DHT(self, pin, devicetype):
+			humidity, temperature = Adafruit_DHT.read_retry(devicetype, pin)
+			if humidity is not None and temperature is not None:
+				#print('Temp={0:0.1f}*  Humidity={1:0.1f}%'.format(temperature, humidity))
+				if (temperature > 0 and temperature < 50 and humidity > 0 and humidity <= 100):
+					print('Temp={0:0.1f}*  Humidity={1:0.1f}%'.format(temperature, humidity))
+					temperature = round(temperature, 3)
+					humidity = round(humidity, 3)
+				else :
+					humidity = None
+					temperature = None
+			return temperature, humidity
+				
+
 		def sensorsrv(self):
 			logging.basicConfig(level=logging.DEBUG)
 			logger = logging.getLogger("process-sensors")
 			logger.debug("Starting sensors process")
 			try:
 				while (True) :
-					tfile = open("/sys/bus/w1/devices/28-000003fa0104/w1_slave")
-					text = tfile.read()
-					tfile.close()
-					secondline = text.split("\n")[1]
-					temperaturedata = secondline.split(" ")[9]
-					temperature = float(temperaturedata[2:])
-					temperature = temperature / 1000
+					#tfile = open("/sys/bus/w1/devices/28-000003fa0104/w1_slave")
+					#text = tfile.read()
+					#tfile.close()
+					#secondline = text.split("\n")[1]
+					#temperaturedata = secondline.split(" ")[9]
+					#temperature = float(temperaturedata[2:])
+					#temperature = temperature / 1000
+					
+					temperature = self.int1WIRE(4, '28-000003fa0104')
 					self.log_measurement(temperature, "TEMP_SALOTTO", "&deg;")
 					
 					# Humidity
 
-					humidity, temperature = Adafruit_DHT.read_retry(Adafruit_DHT.AM2302, 17)
-					if humidity is not None and temperature is not None:
+					#humidity, temperature = Adafruit_DHT.read_retry(Adafruit_DHT.AM2302, 17)
+					#if humidity is not None and temperature is not None:
 						#print('Temp={0:0.1f}*  Humidity={1:0.1f}%'.format(temperature, humidity))
-						if (temperature > 0 and temperature < 50):
-								self.log_measurement(temperature, "TEMP_DISIMPEGNO", "&deg;")
-						if (humidity > 0 and humidity <= 100):
-								self.log_measurement(humidity, "UMID_DISIMPEGNO", "%")
-								
+					#	if (temperature > 0 and temperature < 50):
+					#			self.log_measurement(temperature, "TEMP_DISIMPEGNO", "&deg;")
+					#	if (humidity > 0 and humidity <= 100):
+					#			self.log_measurement(humidity, "UMID_DISIMPEGNO", "%")
+					
+					temperature, humidity = self.intADAFRUIT_DHT(17, Adafruit_DHT.AM2302)
+					if (temperature != None) :
+						self.log_measurement(temperature, "TEMP_DISIMPEGNO", "&deg;")
+						self.log_measurement(humidity, "UMID_DISIMPEGNO", "%")
+		
 					time.sleep(30)
 			except:
 				logger.exception("Problem handling request")
@@ -387,7 +455,7 @@ class APServer(object):
 
 def main ():
 	logging.basicConfig(level=logging.DEBUG)
-	server = APServer("0.0.0.0", 82)
+	server = APServer("0.0.0.0", 82, 1)
 
 	try:
 			logging.info("Listening")
