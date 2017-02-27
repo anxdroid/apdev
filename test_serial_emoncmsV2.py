@@ -10,13 +10,14 @@ import os
 import json
 import httplib
 import serial.tools.list_ports
+import sys, traceback
 
 class APServer(object):
 # id nodo
 #	10: ARDUINO_EMONTX
 	nodeids = {
 		"10":{"POWER_SOLAR":"W", "CURRENT_SOLAR":"A", "VOLTAGE":"V", "TEMP_TERRAZZO":"&deg;"},
-		"40":{"CURRENT_TERMO":"A"}
+		"40":{"CURRENT_TERMO":"A", "LIGHT_TERRAZZO":"&perc;"}
 	}
 	domain = "192.168.1.3"
 	emoncmspath = "emoncms"
@@ -37,11 +38,11 @@ class APServer(object):
 	def __init__(self):
 			self.srvinit()
 
-	def log_emoncms(self, timestamp, nodeid, key, value):
-		print timestamp+" "+nodeid+" "+key+" "+value
+	def log_emoncms(self, timestamp, nodeid, key, value, logger):
+		print(timestamp+" "+nodeid+" "+key+" "+value)
 		conn = httplib.HTTPConnection(self.domain)
 		url = "/"+self.emoncmspath+"/input/post.json?apikey="+self.apikey+"&node="+nodeid+"&json={"+key+":"+value+"}"
-		print url
+		#print url
 		conn.request("GET", url)
 
 	def log_event(self, category, key, value, source, notes):
@@ -58,50 +59,68 @@ class APServer(object):
 				except IndexError:
 					print "MySQL Error: %s" % str(e)
 
-	def parsereading(self, myline):
+	def parsereading(self, myline, logger):
 		#Some data was received
 		p = re.compile('[^:\s]+:[^:\s]+:[\d|\.|-]+:[^\s]+')
 		vals = p.findall(myline)
 		ts = time.time()
 		timestamp = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
-		print myline
+		#print myline
 		if (len(vals) > 0):
 			for val in vals:
 				info = val.split(':')
 				if (len(info) == 4 and info[0] != 'MILLIS'):
 					if (info[0] in self.nodeids and info[1] in self.nodeids[info[0]]) :
-						print timestamp+" "+str(val)
-						self.log_emoncms(timestamp, info[0], info[1], info[2])
+						#print timestamp+" "+str(val)
+						self.log_emoncms(timestamp, info[0], info[1], info[2], logger)
 					else :
 						print timestamp+" "+str(val)+" not ok !"		
 
-	def serialreadUSB(self, path):
+	def serialreadUSB(self, logger):
+		print("serialreadUSB")
 		myline = ""
 		try:
-			if(self.serUSB.isOpen() == False):
+			while(self.serUSB.isOpen() == False):
 				self.serUSB.open()
 			if (self.serUSB.inWaiting() > 0):
+				print (str(self.serUSB.inWaiting())+" chars waiting")
 				myline = self.serUSB.readline()
 				self.serUSB.flushInput()
+			#else:
+			#	self.initserialUSB(logger)
 		except IOError as e:
-			self.initserialUSB()
+			self.initserialUSB(logger)
 		except TypeError as e:
-			print(e)
+			logger.debug(e)
+			exc_type, exc_value, exc_traceback = sys.exc_info()
+			print "*** print_tb:"
+			traceback.print_tb(exc_traceback, limit=1, file=sys.stdout)
 			self.serUSB.flushInput()
 			self.serUSB.close()
-			time.sleeps(5)
-		except serial.SerialException as e:
-			#There is no new data from serial port
-			print(e)
-			self.serUSB.flushInput()
-			self.serUSB.close()
+			time.sleep(2)
+			self.initserialUSB(logger)
+			#time.exc_type, exc_value, exc_traceback = sys.exc_info()
+			print "*** print_tb:"
 			time.sleep(5)
+		except serial.SerialException as e:
+			logger.debug(e)
+			exc_type, exc_value, exc_traceback = sys.exc_info()
+			print "*** print_tb:"
+			traceback.print_tb(exc_traceback, limit=1, file=sys.stdout)
+			self.serUSB.flushInput()
+			self.serUSB.close()
+			time.exc_type, exc_value, exc_traceback = sys.exc_info()
+			print "*** print_tb:"
+			time.sleep(2)
+			self.initserialUSB(logger)
+			#time.sleep(5)
 		else:
-			self.parsereading(myline)
-		return path
+			print myline
+			self.parsereading(myline, logger)
+		#return path
 
 
-	def serialreadACM(self, path):
+	def serialreadACM(self, logger):
 		myline = ""
 		try:
 			if(self.serACM.isOpen() == False):
@@ -110,23 +129,37 @@ class APServer(object):
 				myline = self.serACM.readline()
 				self.serACM.flushInput()
 		except IOError as e:
-			path = self.initserialACM()
+			self.initserialACM(logger)
 		except TypeError as e:
-			print(e)
+			logger.debug(e)
+			exc_type, exc_value, exc_traceback = sys.exc_info()
+			print "*** print_tb:"
+			traceback.print_tb(exc_traceback, limit=1, file=sys.stdout)
 			self.serACM.flushInput()
 			self.serACM.close()
-			time.sleeps(5)
-		except serial.SerialException as e:
-			#There is no new data from serial port
-			print(e)
-			self.serACM.flushInput()
-			self.serACM.close()
+			time.exc_type, exc_value, exc_traceback = sys.exc_info()
+			print "*** print_tb:"
+			time.sleep(2)
+			self.initserialACM(logger)
+			#time.exc_type, exc_value, exc_traceback = sys.exc_info()
+			print "*** print_tb:"
 			time.sleep(5)
+		except serial.SerialException as e:
+			logger.debug(e)
+			print "Error on line "+format(sys.exc_info()[-1].tb_lineno)()
+			self.serACM.flushInput()
+			self.serACM.close()
+			time.exc_type, exc_value, exc_traceback = sys.exc_info()
+			print "*** print_tb:"
+			time.sleep(2)
+			self.initserialACM(logger)
+			#time.sleep(5)
 		else:
-			self.parsereading(myline)
-		return path
+			self.parsereading(myline,logger)
+		#return path
 
-	def initserialACM(self):
+	def initserialACM(self, logger):
+		print "Resetting ttyACM..."
 		path = ""
 		for port_no, description, address in serial.tools.list_ports.comports() :
 			if 'ACM' in description:
@@ -145,15 +178,26 @@ class APServer(object):
 					xonxoff=0,
 					rtscts=0
 				)
+
+				if(self.serACM.isOpen() == False):
+					self.serACM.open() 
 				self.serACM.setDTR(False)
 				self.serACM.flushInput()
-				time.sleep(5)
+				time.sleep(1)
 				self.serACM.setDTR(True)
 			except IOError as e:
-				print(e)
+				exc_type, exc_value, exc_traceback = sys.exc_info()
+				print "*** print_tb:"
+				traceback.print_tb(exc_traceback, limit=1, file=sys.stdout)
+				self.initserialACM(logger)
+		else:
+			print("Serial not found !")
+			time.sleep(2)
+			self.initserialACM(logger)
 		return path
 
-	def initserialUSB(self):
+	def initserialUSB(self, logger):
+		print "Resetting ttyUSB..."
 		path = ""
 		for port_no, description, address in serial.tools.list_ports.comports() :
 			if 'USB' in description:
@@ -162,7 +206,7 @@ class APServer(object):
 				break
 
 		if path != "" :
-			print "Using "+path
+			print "Opening serial on "+path+"..."
 			try:
 				self.serUSB = serial.Serial(path,
 					baudrate=9600,
@@ -171,14 +215,33 @@ class APServer(object):
 					stopbits=serial.STOPBITS_ONE,
 					timeout=1,
 					xonxoff=0,
-					rtscts=0
+					rtscts=True,
+					dsrdtr=True
+					#rtscts=0
 				)
+				while(self.serUSB.isOpen() == False):
+					self.serUSB.open()
 				self.serUSB.setDTR(False)
 				self.serUSB.flushInput()
-				time.sleep(5)
+				time.sleep(1)
 				self.serUSB.setDTR(True)
+				print path+" ready !"
 			except IOError as e:
-				print(e)
+				print "IOError after opening USB..."
+				exc_type, exc_value, exc_traceback = sys.exc_info()
+				print "*** print_tb:"
+				traceback.print_tb(exc_traceback, limit=1, file=sys.stdout)
+				while (self.serUSB.isOpen() == True):
+					self.serUSB.flushInput()
+					self.serUSB.close()
+				time.exc_type, exc_value, exc_traceback = sys.exc_info()
+				print "*** print_tb:"
+				time.sleep(5)
+				self.initserialUSB(logger)
+		else:
+			print("Serial not found waiting 10 secs...!")
+			time.sleep(10)
+			self.initserialUSB(logger)
 		return path				
 
 	def serialsrv(self):
@@ -186,13 +249,15 @@ class APServer(object):
 		logger = logging.getLogger("process-serial")
 		logger.debug("Starting serial process")
 
-		pathACM = self.initserialACM()
-		pathUSB = self.initserialUSB()
+		pathACM = self.initserialACM(logger)
+		pathUSB = self.initserialUSB(logger)
 		try:
 			while True: 
-				pathACM = self.serialreadACM(pathACM)
-				pathUSB = self.serialreadUSB(pathUSB)		
+				pathACM = self.serialreadACM(logger)
+				time.sleep(1)
+				pathUSB = self.serialreadUSB(logger)		
 				time.sleep(3)
+				sys.stdout.flush()
 		except:
 			logger.exception("Problem handling request")
 		finally:
@@ -204,8 +269,8 @@ class APServer(object):
 		#process_serials.start()
 		self.serialsrv()
 
-
 def main ():
+	sys.stdout = open("log.txt", "w")
 	server = APServer()
 	server.start()
 
