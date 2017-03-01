@@ -11,6 +11,10 @@ import json
 import httplib
 import serial.tools.list_ports
 import sys, traceback
+from subprocess import Popen, PIPE
+import fcntl
+
+USBDEVFS_RESET= 21780
 
 class APServer(object):
 # id nodo
@@ -22,6 +26,8 @@ class APServer(object):
 	domain = "192.168.1.3"
 	emoncmspath = "emoncms"
 	apikey = "2a4e7605bb826a82ef3a54f4ff0267ed"
+
+	lastUSBreading = 0
 
 	def srvinit(self):
 		self.dbconn = MySQLdb.connect('192.168.1.3', 'apdb', 'pwd4apdb', 'apdb')
@@ -82,12 +88,19 @@ class APServer(object):
 		try:
 			while(self.serUSB.isOpen() == False):
 				self.serUSB.open()
+			currenttime = time.time()
+			timediff = currenttime - self.lastUSBreading
 			if (self.serUSB.inWaiting() > 0):
+				self.lastUSBreading = time.time()
 				print (str(self.serUSB.inWaiting())+" chars waiting")
 				myline = self.serUSB.readline()
 				self.serUSB.flushInput()
-			#else:
-			#	self.initserialUSB(logger)
+			elif timediff > 60:
+				print "No new readings from more than "+str(timediff)+" secs"
+				print str(currenttime)+" "+str(self.lastUSBreading)
+				self.resetserial("FT232")
+				time.sleep(5)
+				self.initserialUSB(logger)
 		except IOError as e:
 			self.initserialUSB(logger)
 		except TypeError as e:
@@ -189,6 +202,7 @@ class APServer(object):
 				exc_type, exc_value, exc_traceback = sys.exc_info()
 				print "*** print_tb:"
 				traceback.print_tb(exc_traceback, limit=1, file=sys.stdout)
+				self.resetserial("Arduino")
 				self.initserialACM(logger)
 		else:
 			print("Serial not found !")
@@ -223,7 +237,7 @@ class APServer(object):
 					self.serUSB.open()
 				self.serUSB.setDTR(False)
 				self.serUSB.flushInput()
-				time.sleep(1)
+				time.sleep(5)
 				self.serUSB.setDTR(True)
 				print path+" ready !"
 			except IOError as e:
@@ -237,6 +251,7 @@ class APServer(object):
 				time.exc_type, exc_value, exc_traceback = sys.exc_info()
 				print "*** print_tb:"
 				time.sleep(5)
+				self.resetserial("FT232")
 				self.initserialUSB(logger)
 		else:
 			print("Serial not found waiting 10 secs...!")
@@ -244,11 +259,22 @@ class APServer(object):
 			self.initserialUSB(logger)
 		return path				
 
+	def resetserial(self, driver):
+		try:
+			lsusb_out = Popen("lsusb | grep -i %s"%driver, shell=True, bufsize=64, stdin=PIPE, stdout=PIPE, close_fds=True).stdout.read().strip().split()
+			bus = lsusb_out[1]
+			device = lsusb_out[3][:-1]
+			f = open("/dev/bus/usb/%s/%s"%(bus, device), 'w', os.O_WRONLY)
+			fcntl.ioctl(f, USBDEVFS_RESET, 0)
+		except Exception, msg:
+			print "failed to reset device:", msg
+		
+
 	def serialsrv(self):
 		logging.basicConfig(level=logging.DEBUG)
 		logger = logging.getLogger("process-serial")
 		logger.debug("Starting serial process")
-
+		self.resetserial("FT232")
 		pathACM = self.initserialACM(logger)
 		pathUSB = self.initserialUSB(logger)
 		try:
