@@ -49,7 +49,10 @@ class APServer(object):
 		conn = httplib.HTTPConnection(self.domain)
 		url = "/"+self.emoncmspath+"/input/post.json?apikey="+self.apikey+"&node="+nodeid+"&json={"+key+":"+value+"}"
 		#print url
-		conn.request("GET", url)
+		try:
+			conn.request("GET", url)
+		except Exception as e:
+			print "HTTP error: %s" % str(e)
 
 	def log_event(self, category, key, value, source, notes):
 			curs = self.dbconn.cursor()
@@ -276,12 +279,12 @@ class APServer(object):
 		logger.debug("Starting serial process")
 		self.resetserial("FT232")
 		pathACM = self.initserialACM(logger)
-		pathUSB = self.initserialUSB(logger)
+		#pathUSB = self.initserialUSB(logger)
 		try:
 			while True: 
 				pathACM = self.serialreadACM(logger)
-				time.sleep(1)
-				pathUSB = self.serialreadUSB(logger)		
+				#time.sleep(1)
+				#pathUSB = self.serialreadUSB(logger)		
 				time.sleep(3)
 				sys.stdout.flush()
 		except:
