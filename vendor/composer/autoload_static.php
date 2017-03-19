@@ -36,11 +36,25 @@ class ComposerStaticInitfd90a4427e4e03fe391731dfcdf879ae
     );
 
     public static $prefixesPsr0 = array (
+        's' => 
+        array (
+            'stringEncode' => 
+            array (
+                0 => __DIR__ . '/..' . '/paquettg/string-encode/src',
+            ),
+        ),
         'T' => 
         array (
             'Transmission' => 
             array (
                 0 => __DIR__ . '/..' . '/kleiram/transmission-php/lib',
+            ),
+        ),
+        'P' => 
+        array (
+            'PHPHtmlParser' => 
+            array (
+                0 => __DIR__ . '/..' . '/paquettg/php-html-parser/src',
             ),
         ),
         'J' => 

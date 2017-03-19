@@ -1,6 +1,7 @@
 {
     "require": {
         "kleiram/transmission-php": "dev-master",
-	"fguillot/json-rpc": "@stable"
+	"fguillot/json-rpc": "@stable",
+	"paquettg/php-html-parser": "dev-master"
     }
 }

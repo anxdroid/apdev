@@ -1,4 +1,5 @@
 <?php
+require("test_torrent_functions.php");
 
 $mysqli = mysqli_connect("localhost", "apdb", "pwd4apdb", "apdb");
 
@@ -22,6 +23,9 @@ function parseItem($item) {
 	$info["title"] = (string) $item->title;
 	$info["stagione"] = "";
 	$info["risoluzione"] = array();
+	return parseTorrentInfo($info);
+
+	/*
 	$title = $item->title;
 	if (preg_match($pattern, $title, $matches)) {
 		//echo $matches[1]." ".$matches[2]."\n";
@@ -89,6 +93,7 @@ function parseItem($item) {
 	$info["serie"] = $tokens[0];
 	//echo $title."\n";
 	return $info;	
+	*/
 }
 
 function saveInfo($info) {
@@ -110,9 +115,11 @@ function saveInfo($info) {
 	//echo $sql."\n";
 	$res = mysqli_query($mysqli, $sql) or die(mysqli_error ( $mysqli )."\n".$sql."\n");
 	#echo "Affected: ".mysqli_affected_rows($mysqli)."\n";
-	if (mysqli_affected_rows($mysqli) > 0) {
+	$affected = mysqli_affected_rows($mysqli);
+	if ($affected > 0) {
 		echo "New torrent to download ".$info["title"]." ".$info["infoHash"]."\n";
 	}
+	return $affected;
 }
 
 function saveSerie($serie) {
@@ -127,13 +134,16 @@ function saveSerie($serie) {
 		$res = mysqli_query($mysqli, $sql);	
 }
 
+$torrentFound = $torrentAdded = 0;
 foreach ($rss->channel->item as $item) {
+	$torrentFound++;
 	#echo $item->title ."\n";
 	$info = parseItem($item);
 	//echo print_r($info, true)."\n";
-	saveInfo($info);
+	$torrentAdded += saveInfo($info);
 	if (trim($info["serie"]) != "") {
 		saveSerie($info["serie"]);
 	}
 }
+echo "Found ".$torrentFound." New ".$torrentAdded."\n";
 ?>
