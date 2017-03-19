@@ -28,11 +28,15 @@ $preferiti = array("risoluzione" => "720");
 /***************************************************************************/
 
 function doDownload() {
-	global $mysqli, $transmission;
-
-	$sql = "SELECT * 
-	FROM apdb.torrent_rss 
-	WHERE serie IN (SELECT serie FROM apdb.torrent_serie WHERE preferita = 1) AND scaricato = 0";
+	global $mysqli, $transmission, $preferiti;
+	echo "Looking for episodes to download...";
+	$sql = "SELECT t.*, s.stagione stagioneMin, s.episodio episodioMin 
+	FROM apdb.torrent_rss t JOIN apdb.torrent_serie s ON t.serie = s.serie AND s.preferita = 1 
+	WHERE t.scaricato = 0 AND 
+	(
+		CAST(t.stagione AS UNSIGNED) > CAST(s.stagione AS UNSIGNED) 
+	OR 
+		(CAST(t.stagione AS UNSIGNED) = CAST(s.stagione AS UNSIGNED) AND CAST(t.episodio AS UNSIGNED) >= CAST(s.episodio AS UNSIGNED)))";
 	//echo $sql."\n";
 	$res = mysqli_query($mysqli, $sql) or die(mysqli_error($mysqli)."\n");
 
@@ -43,7 +47,6 @@ function doDownload() {
 		}
 		$torrents[$row["serie"]][$row["stagione"]][$row["episodio"]][$row["risoluzione"]] = $row;
 	}
-
 	$scaricare = array();
 	foreach($torrents as $serie => $serieInfo)
 		foreach($serieInfo as $stagione => $stagioneInfo) 
@@ -59,15 +62,21 @@ function doDownload() {
 					}
 				}
 			}
+	echo "found ".count($scaricare)." episodes...\n";
 	#echo print_r($scaricare, true)."\n";
 	foreach($scaricare as $row) {	
 		//echo print_r($row, true)."\n";
 		$transmission->add($row["magnetURI"]);
 		echo "Adding ".$row["title"]." ".$row["infoHash"]." to download queue...\n";
-		$torrent = $transmission->get($row["infoHash"]);
+		try {
+			$torrent = $transmission->get($row["infoHash"]);
+		} catch (RuntimeException $e) {
+			echo "Error on ".$row["title"]." ".$row["infoHash"]."\n";
+		}
 		$transmission->start($torrent);
 
 		$sql = "UPDATE apdb.torrent_rss SET 
+		contentLength = ".(1*$torrent->getSize()).",
 		percentDone = ".(1*$torrent->getPercentDone()).", 
 		status = ".(1*$torrent->getStatus()).", 
 		startDate = ".(1*$torrent->getStartDate())." 

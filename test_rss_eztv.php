@@ -4,7 +4,7 @@ require("test_torrent_functions.php");
 $mysqli = mysqli_connect("localhost", "apdb", "pwd4apdb", "apdb");
 
 /***************************************************************************/
-
+echo "Downloading rss updates...\n";
 $rss = simplexml_load_file('https://eztv.ag/ezrss.xml', 'SimpleXMLElement', LIBXML_NOCDATA);
 if ($rss === false) {
 	die("Exiting...\n");
@@ -95,7 +95,7 @@ function parseItem($item) {
 	return $info;	
 	*/
 }
-
+/*
 function saveInfo($info) {
 	global $mysqli;
 	unset($info["codec"]);
@@ -121,7 +121,8 @@ function saveInfo($info) {
 	}
 	return $affected;
 }
-
+*/
+/*
 function saveSerie($serie) {
 		global $mysqli;
 		$sql = "INSERT INTO apdb.torrent_serie (serie)
@@ -133,17 +134,17 @@ function saveSerie($serie) {
 		//echo $sql."\n";
 		$res = mysqli_query($mysqli, $sql);	
 }
-
+*/
 $torrentFound = $torrentAdded = 0;
 foreach ($rss->channel->item as $item) {
 	$torrentFound++;
 	#echo $item->title ."\n";
 	$info = parseItem($item);
 	//echo print_r($info, true)."\n";
-	$torrentAdded += saveInfo($info);
+	$torrentAdded += saveTorrentInfo($info);
 	if (trim($info["serie"]) != "") {
 		saveSerie($info["serie"]);
 	}
 }
-echo "Found ".$torrentFound." New ".$torrentAdded."\n";
+echo "Found ".$torrentFound." torrent ".$torrentAdded." new\n";
 ?>

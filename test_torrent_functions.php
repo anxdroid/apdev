@@ -1,5 +1,52 @@
 <?php
 
+function saveSerie($serie, $preferita = false, $eztvTitle = "") {
+                global $mysqli;
+                $sql = "INSERT INTO apdb.torrent_serie (serie, preferita, eztvTitle)
+                SELECT * FROM (
+                SELECT '".mysqli_real_escape_string($mysqli, trim($serie))."' as serie,
+		".($preferita ? 1 : 0)." as preferita,
+		'".mysqli_real_escape_string($mysqli, $eztvTitle)."' as eztvTitle
+		) AS tmp
+                WHERE NOT EXISTS (
+        	SELECT serie FROM apdb.torrent_serie 
+        	WHERE serie = '".mysqli_real_escape_string($mysqli, trim($serie))."') LIMIT 1";
+                //echo $sql."\n";
+                $res = mysqli_query($mysqli, $sql) or die(mysqli_error ( $mysqli )."\n".$sql."\n");
+
+		$sql = "UPDATE apdb.torrent_serie 
+		SET preferita = ".($preferita ? 1 : 0).",
+		eztvTitle = '".mysqli_real_escape_string($mysqli, $eztvTitle)."'
+		WHERE serie = '".mysqli_real_escape_string($mysqli, trim($serie))."'";
+		$res = mysqli_query($mysqli, $sql) or die(mysqli_error ( $mysqli )."\n".$sql."\n");
+}
+
+function saveTorrentInfo($info) {
+        global $mysqli;
+        unset($info["codec"]);
+        $info["risoluzione"] = print_r($info["risoluzione"], true);
+        if ($info["stagione"] == "") {
+                $info["stagione"] = "Unica";
+        }
+        $sql = "INSERT INTO apdb.torrent_rss (data";
+        foreach($info as $k => $v) {
+                $sql .= ", ".$k;
+        }
+        $sql .= ") SELECT * FROM (SELECT NOW() as data";
+    foreach($info as $k => $v) {
+                $sql .= ", '".mysqli_real_escape_string($mysqli, trim($v))."' as ".$k;
+    }
+        $sql .= ") as tmp WHERE NOT EXISTS (SELECT * FROM apdb.torrent_rss WHERE infoHash = '".mysqli_real_escape_string($mysqli, trim($info["infoHash"]))."')";
+        //echo $sql."\n";
+        $res = mysqli_query($mysqli, $sql) or die(mysqli_error ( $mysqli )."\n".$sql."\n");
+        #echo "Affected: ".mysqli_affected_rows($mysqli)."\n";
+        $affected = mysqli_affected_rows($mysqli);
+        if ($affected > 0) {
+                echo "New torrent to download ".$info["title"]." ".$info["infoHash"]."\n";
+        }
+        return $affected;
+}
+
 function parseTorrentInfo($raw) {
 	//echo "Parsing torrent info from ".print_r($raw, true)."...\n";
 	$pattern = "/S(\d{2})E(\d{2})/";
@@ -43,9 +90,14 @@ function parseTorrentInfo($raw) {
 		$info["risoluzione"][] = $matches[1];
 		$title = str_replace($matches[0], "|", $title);
 	}
+	/*
 	if(strstr($title, "HDTV") !== false) {
 		$title = str_replace("HDTV", "|", $title);
 		$info["risoluzione"][] = "HDTV";
+	}
+	*/
+	if (count($info["risoluzione"]) == 0) {
+		$info["risoluzione"][] = "480p";		
 	}
 	$pattern = "/(x[2645]{3})/";
     if (preg_match($pattern, $title, $matches)) {
