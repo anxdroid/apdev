@@ -128,6 +128,8 @@ $pattern = '/<a href="(\/shows\/\d+\/[^\/]+\/)" class="thread">([^<]+)<\/a>/';
 $matches = array();
 if (preg_match_all($pattern, $html, $matches)) {
 	#echo print_r($matches, true)."\n";
+	echo "Resetting favourites...\n";
+	resetSerie();
 	foreach ($matches[1] as $i => $showUrl) {
 		$url = $eztvUrl.$showUrl;
 		#echo $url."\n";

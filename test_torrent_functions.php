@@ -1,5 +1,11 @@
 <?php
 
+function resetSerie() {
+	global $mysqli;
+	$sql = "UPDATE apdb.torrent_serie SET preferita = 0";
+	$res = mysqli_query($mysqli, $sql) or die(mysqli_error ( $mysqli )."\n".$sql."\n");	
+}
+
 function saveSerie($serie, $preferita = false, $eztvTitle = "") {
                 global $mysqli;
                 $sql = "INSERT INTO apdb.torrent_serie (serie, preferita, eztvTitle)

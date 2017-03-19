@@ -29,23 +29,42 @@ $preferiti = array("risoluzione" => "720");
 
 function doDownload() {
 	global $mysqli, $transmission, $preferiti;
-	echo "Looking for episodes to download...";
+	echo "Looking for episodes to download...\n";
 	$sql = "SELECT t.*, s.stagione stagioneMin, s.episodio episodioMin 
 	FROM apdb.torrent_rss t JOIN apdb.torrent_serie s ON t.serie = s.serie AND s.preferita = 1 
 	WHERE t.scaricato = 0 AND 
 	(
 		CAST(t.stagione AS UNSIGNED) > CAST(s.stagione AS UNSIGNED) 
 	OR 
-		(CAST(t.stagione AS UNSIGNED) = CAST(s.stagione AS UNSIGNED) AND CAST(t.episodio AS UNSIGNED) >= CAST(s.episodio AS UNSIGNED)))";
+		(CAST(t.stagione AS UNSIGNED) = CAST(s.stagione AS UNSIGNED) AND CAST(t.episodio AS UNSIGNED) >= CAST(s.episodio AS UNSIGNED)))
+	ORDER BY serie ASC, CAST(t.stagione AS UNSIGNED) DESC, CAST(t.episodio AS UNSIGNED) DESC";
 	//echo $sql."\n";
 	$res = mysqli_query($mysqli, $sql) or die(mysqli_error($mysqli)."\n");
 
 	$torrents = array();
+	$lastEpisode = $lastShow = "";
+	$skipShow = "";
 	while ($row = mysqli_fetch_assoc($res)) {
 		if ($row["stagione"] == "") {
 			$row["stagione"] = "Unica";	
 		}
-		$torrents[$row["serie"]][$row["stagione"]][$row["episodio"]][$row["risoluzione"]] = $row;
+		$currEpisode = "S".$row["stagione"]."E".$row["episodio"];
+		//echo $currEpisode."\n";
+		if ($row["serie"] != $skipShow) {
+			if (1*$row["stagioneMin"] == 0 && $lastEpisode != "" && $lastShow == $row["serie"] && $currEpisode != $lastEpisode) {
+				echo "No boundaries defined for '".$row["serie"]."' taking only latest episode: ".$lastEpisode." !\n";
+				$skipShow = $row["serie"];
+			}else{
+				//echo $currEpisode." ".$lastEpisode." ".$row["serie"]." ".$lastShow." MIN ".$row["stagioneMin"]."\n";
+				$torrents[$row["serie"]][$row["stagione"]][$row["episodio"]][$row["risoluzione"]] = $row;
+			}
+		}
+		if ($lastShow != $row["serie"] && $lastShow != "") {
+			$lastEpisode = "";
+		}else{
+			$lastEpisode = $currEpisode;
+		}
+		$lastShow = $row["serie"];
 	}
 	$scaricare = array();
 	foreach($torrents as $serie => $serieInfo)
@@ -67,9 +86,10 @@ function doDownload() {
 	foreach($scaricare as $row) {	
 		//echo print_r($row, true)."\n";
 		$transmission->add($row["magnetURI"]);
-		echo "Adding ".$row["title"]." ".$row["infoHash"]." to download queue...\n";
+		echo "Adding ".$row["title"]." to download queue...\n";
 		try {
 			$torrent = $transmission->get($row["infoHash"]);
+			echo "Torrent status: ".$torrent->getStatus().". Completion ".$torrent->getPercentDone()."%\n";
 		} catch (RuntimeException $e) {
 			echo "Error on ".$row["title"]." ".$row["infoHash"]."\n";
 		}
@@ -111,7 +131,7 @@ function checkCompletion() {
 }
 
 function handleDone() {
-	global $mysqli, $transmission;
+	global $torrentPath, $kodiPath, $mysqli, $transmission;
 	$sql = "SELECT * FROM apdb.torrent_rss WHERE spostato = 0 AND scaricato = 1";
 	#echo $sql."\n";
 	$res = mysqli_query($mysqli, $sql) or die(mysqli_error($mysqli)."\n");
@@ -147,7 +167,7 @@ function handleDone() {
 					rename($filename, $row["path"]);
 					echo "File moved to ".$row["path"]."\n";
 					$sql = "UPDATE apdb.torrent_rss SET spostato = 1 WHERE infoHash = '".mysqli_real_escape_string($mysqli, $row["infoHash"])."'";
-					echo $sql."\n";
+					#echo $sql."\n";
 					mysqli_query($mysqli, $sql) or die(mysqli_error($mysqli)."\n");
 				}
 			}
