@@ -4,7 +4,7 @@ require("test_torrent_functions.php");
 $mysqli = mysqli_connect("localhost", "apdb", "pwd4apdb", "apdb");
 
 /***************************************************************************/
-echo "Downloading rss updates...\n";
+echo "* \033[35meztv rss updates:\033[0m ";
 $rss = simplexml_load_file('https://eztv.ag/ezrss.xml', 'SimpleXMLElement', LIBXML_NOCDATA);
 if ($rss === false) {
 	die("Exiting...\n");
@@ -24,117 +24,7 @@ function parseItem($item) {
 	$info["stagione"] = "";
 	$info["risoluzione"] = array();
 	return parseTorrentInfo($info);
-
-	/*
-	$title = $item->title;
-	if (preg_match($pattern, $title, $matches)) {
-		//echo $matches[1]." ".$matches[2]."\n";
-		$info["stagione"] = 1 * $matches[1];
-		$info["episodio"] = 1 * $matches[2];
-		$title = str_replace($matches[0], "|", $title);
-		//echo $title."\n";
-	}
-	if (!isset($info["stagione"])) {
-		$pattern = "/(\d{4} \d{2} \d{2})/";
-		if (preg_match($pattern, $title, $matches)) {
-			//echo $matches[1]."\n";
-			$info["episodio"] = $matches[1];
-			$title = str_replace($matches[1], "|", $title);
-		}	
-	}
-	if (!isset($info["stagione"])) {
-		$pattern = "/Series (\d{1,2}) (\d{1,2} ?of ?\d{1,2})/";
-		if (preg_match($pattern, $title, $matches)) {
-			echo $matches[0]."\n";
-			$info["stagione"] = 1 * $matches[1];
-			$info["episodio"] = $matches[2];
-			$title = str_replace($matches[0], "|", $title);
-		}
-	}
-	$pattern = "/([72018]{3,4}p)/";
-	if (preg_match($pattern, $title, $matches)) {
-		//echo $matches[1]."\n";
-		$info["risoluzione"][] = $matches[1];
-		$title = str_replace($matches[0], "|", $title);
-	}
-	if(strstr($title, "HDTV") !== false) {
-		$title = str_replace("HDTV", "|", $title);
-		$info["risoluzione"][] = "HDTV";
-	}
-	$pattern = "/(x[2645]{3})/";
-    if (preg_match($pattern, $title, $matches)) {
-		//echo $matches[1]."\n";
-		$info["codec"]["video"] = $matches[1];
-		$title = str_replace($matches[1], "|", $title);
-    }
-	$pattern = "/(mp4)/";
-    if (preg_match($pattern, $title, $matches)) {
-		//echo $matches[1]."\n";
-		$info["codec"]["video"] = $matches[1];
-		$title = str_replace($matches[1], "|", $title);
-    }
-    $pattern = "/(AAC)/";
-    if (preg_match($pattern, $title, $matches)) {
-		//echo $matches[1]."\n";
-		$info["codec"]["audio"] = $matches[1];
-		$title = str_replace($matches[1], "|", $title);
-    }	
-	$pattern = "/( ?\| ?)/";
-	if (preg_match_all($pattern, $title, $matches)) {
-        foreach($matches[1] as $match) {
-			$title = str_replace($match, "|", $title);
-		}
-	}
-	$pattern = "/\|{2,}/";
-	if (preg_match($pattern, $title, $matches)) {
-		$title = str_replace($matches[0], "|", $title);
-	}
-	$tokens = explode("|", $title);
-	$info["serie"] = $tokens[0];
-	//echo $title."\n";
-	return $info;	
-	*/
 }
-/*
-function saveInfo($info) {
-	global $mysqli;
-	unset($info["codec"]);
-	$info["risoluzione"] = print_r($info["risoluzione"], true);
-	if ($info["stagione"] == "") {
-		$info["stagione"] = "Unica";
-	}
-	$sql = "INSERT INTO apdb.torrent_rss (data";
-	foreach($info as $k => $v) {
-		$sql .= ", ".$k;
-	}
-	$sql .= ") SELECT * FROM (SELECT NOW() as data";
-    foreach($info as $k => $v) {
-		$sql .= ", '".mysqli_real_escape_string($mysqli, trim($v))."' as ".$k;
-    }
-	$sql .= ") as tmp WHERE NOT EXISTS (SELECT * FROM apdb.torrent_rss WHERE infoHash = '".mysqli_real_escape_string($mysqli, trim($info["infoHash"]))."')";
-	//echo $sql."\n";
-	$res = mysqli_query($mysqli, $sql) or die(mysqli_error ( $mysqli )."\n".$sql."\n");
-	#echo "Affected: ".mysqli_affected_rows($mysqli)."\n";
-	$affected = mysqli_affected_rows($mysqli);
-	if ($affected > 0) {
-		echo "New torrent to download ".$info["title"]." ".$info["infoHash"]."\n";
-	}
-	return $affected;
-}
-*/
-/*
-function saveSerie($serie) {
-		global $mysqli;
-		$sql = "INSERT INTO apdb.torrent_serie (serie)
-		SELECT * FROM (
-		SELECT '".mysqli_real_escape_string($mysqli, trim($serie))."') AS tmp
-		WHERE NOT EXISTS (
-    	SELECT serie FROM apdb.torrent_serie 
-    	WHERE serie = '".mysqli_real_escape_string($mysqli, trim($serie))."') LIMIT 1";
-		//echo $sql."\n";
-		$res = mysqli_query($mysqli, $sql);	
-}
-*/
 $torrentFound = $torrentAdded = 0;
 foreach ($rss->channel->item as $item) {
 	$torrentFound++;
@@ -146,5 +36,5 @@ foreach ($rss->channel->item as $item) {
 		saveSerie($info["serie"]);
 	}
 }
-echo "Found ".$torrentFound." torrent ".$torrentAdded." new\n";
+echo $torrentFound." (".$torrentAdded." new)\n";
 ?>

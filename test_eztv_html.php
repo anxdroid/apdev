@@ -128,12 +128,13 @@ $pattern = '/<a href="(\/shows\/\d+\/[^\/]+\/)" class="thread">([^<]+)<\/a>/';
 $matches = array();
 if (preg_match_all($pattern, $html, $matches)) {
 	#echo print_r($matches, true)."\n";
-	echo "Resetting favourites...\n";
+	echo "* \033[31mResetting favourites...\033[0m\n";
 	resetSerie();
+	echo "* \033[34mGetting eztv favourites...\033[0m\n";
 	foreach ($matches[1] as $i => $showUrl) {
 		$url = $eztvUrl.$showUrl;
 		#echo $url."\n";
-		echo "Downloading ".$matches[2][$i]." torrents...\n";
+		echo " - \033[34m".$matches[2][$i]."\033[0m: ";
 		$cookies = array();
 		$headers = array();
 		$inputFields = array();
@@ -168,7 +169,7 @@ if (preg_match_all($pattern, $html, $matches)) {
         				}
 				}
 			}
-			echo "Found ".$total." magnet link ".$new." new\n";
+			echo $total." torrents (".$new." new)\n";
 		}	
 	}
 }

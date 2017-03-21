@@ -6,51 +6,54 @@ function resetSerie() {
 	$res = mysqli_query($mysqli, $sql) or die(mysqli_error ( $mysqli )."\n".$sql."\n");	
 }
 
-function saveSerie($serie, $preferita = false, $eztvTitle = "") {
-                global $mysqli;
-                $sql = "INSERT INTO apdb.torrent_serie (serie, preferita, eztvTitle)
-                SELECT * FROM (
-                SELECT '".mysqli_real_escape_string($mysqli, trim($serie))."' as serie,
-		".($preferita ? 1 : 0)." as preferita,
-		'".mysqli_real_escape_string($mysqli, $eztvTitle)."' as eztvTitle
-		) AS tmp
-                WHERE NOT EXISTS (
-        	SELECT serie FROM apdb.torrent_serie 
-        	WHERE serie = '".mysqli_real_escape_string($mysqli, trim($serie))."') LIMIT 1";
-                //echo $sql."\n";
-                $res = mysqli_query($mysqli, $sql) or die(mysqli_error ( $mysqli )."\n".$sql."\n");
+function saveSerie($serie, $preferita = false, $eztvTitle = "", $stagione = 0, $episodio = 0) {
+	global $mysqli;
+	$sql = "INSERT INTO apdb.torrent_serie (serie, preferita, eztvTitle)
+	SELECT * FROM (
+	SELECT '".mysqli_real_escape_string($mysqli, trim($serie))."' as serie,
+	".($preferita ? 1 : 0)." as preferita,
+	'".mysqli_real_escape_string($mysqli, $eztvTitle)."' as eztvTitle
+	) AS tmp
+	WHERE NOT EXISTS (
+	SELECT serie FROM apdb.torrent_serie 
+	WHERE serie = '".mysqli_real_escape_string($mysqli, trim($serie))."') LIMIT 1";
+	//echo $sql."\n";
+	$res = mysqli_query($mysqli, $sql) or die(mysqli_error ( $mysqli )."\n".$sql."\n");
 
-		$sql = "UPDATE apdb.torrent_serie 
-		SET preferita = ".($preferita ? 1 : 0).",
-		eztvTitle = '".mysqli_real_escape_string($mysqli, $eztvTitle)."'
-		WHERE serie = '".mysqli_real_escape_string($mysqli, trim($serie))."'";
-		$res = mysqli_query($mysqli, $sql) or die(mysqli_error ( $mysqli )."\n".$sql."\n");
+	$sql = "UPDATE apdb.torrent_serie 
+	SET preferita = ".($preferita ? 1 : 0).",
+	".((1*$stagione > 0 ) ? "stagione = '".mysqli_real_escape_string($mysqli, $stagione)."'," : "")."
+	".((1*$episodio > 0 ) ? "episodio = '".mysqli_real_escape_string($mysqli, $episodio)."'," : "")."
+	eztvTitle = '".mysqli_real_escape_string($mysqli, $eztvTitle)."'
+	WHERE serie = '".mysqli_real_escape_string($mysqli, trim($serie))."'";
+	//echo $sql."\n";
+	$res = mysqli_query($mysqli, $sql) or die(mysqli_error ( $mysqli )."\n".$sql."\n");
 }
 
 function saveTorrentInfo($info) {
-        global $mysqli;
-        unset($info["codec"]);
-        $info["risoluzione"] = print_r($info["risoluzione"], true);
-        if ($info["stagione"] == "") {
-                $info["stagione"] = "Unica";
-        }
-        $sql = "INSERT INTO apdb.torrent_rss (data";
-        foreach($info as $k => $v) {
-                $sql .= ", ".$k;
-        }
-        $sql .= ") SELECT * FROM (SELECT NOW() as data";
+	global $mysqli;
+	unset($info["codec"]);
+	$info["risoluzione"] = print_r($info["risoluzione"], true);
+	if ($info["stagione"] == "") {
+		$info["stagione"] = "Unica";
+	}
+	$sql = "INSERT INTO apdb.torrent_rss (data";
+	foreach($info as $k => $v) {
+		$sql .= ", ".$k;
+	}
+	$sql .= ") SELECT * FROM (SELECT NOW() as data";
     foreach($info as $k => $v) {
-                $sql .= ", '".mysqli_real_escape_string($mysqli, trim($v))."' as ".$k;
+		$sql .= ", '".mysqli_real_escape_string($mysqli, trim($v))."' as ".$k;
     }
-        $sql .= ") as tmp WHERE NOT EXISTS (SELECT * FROM apdb.torrent_rss WHERE infoHash = '".mysqli_real_escape_string($mysqli, trim($info["infoHash"]))."')";
-        //echo $sql."\n";
-        $res = mysqli_query($mysqli, $sql) or die(mysqli_error ( $mysqli )."\n".$sql."\n");
-        #echo "Affected: ".mysqli_affected_rows($mysqli)."\n";
-        $affected = mysqli_affected_rows($mysqli);
-        if ($affected > 0) {
-                echo "New torrent to download ".$info["title"]." ".$info["infoHash"]."\n";
-        }
-        return $affected;
+	$sql .= ") as tmp WHERE NOT EXISTS (SELECT * FROM apdb.torrent_rss WHERE infoHash = '".mysqli_real_escape_string($mysqli, trim($info["infoHash"]))."')";
+	//echo $sql."\n";
+	$res = mysqli_query($mysqli, $sql) or die(mysqli_error ( $mysqli )."\n".$sql."\n");
+	#echo "Affected: ".mysqli_affected_rows($mysqli)."\n";
+	$affected = mysqli_affected_rows($mysqli);
+	if ($affected > 0) {
+		#echo "New torrent to download ".$info["title"]."\n";
+	}
+	return $affected;
 }
 
 function parseTorrentInfo($raw) {
@@ -73,15 +76,27 @@ function parseTorrentInfo($raw) {
 		$title = str_replace($matches[0], "|", $title);
 		//echo $title."\n";
 	}
-	if (!isset($info["stagione"])) {
+	if ($info["stagione"] == "") {
 		$pattern = "/(\d{4} \d{2} \d{2})/";
 		if (preg_match($pattern, $title, $matches)) {
 			//echo $matches[1]."\n";
 			$info["episodio"] = $matches[1];
+			$info["stagione"] = "Unica";
 			$title = str_replace($matches[1], "|", $title);
 		}	
 	}
-	if (!isset($info["stagione"])) {
+
+	if ($info["stagione"] == "") {
+		$pattern = "/(\d{1,2})x(\d{1,2})/";
+		if (preg_match($pattern, $title, $matches)) {
+			//echo $matches[1]."\n";
+			$info["stagione"] = 1 * $matches[1];
+			$info["episodio"] = 1 * $matches[2];
+			$title = str_replace($matches[0], "|", $title);
+		}
+	}
+
+	if ($info["stagione"] == "") {
 		$pattern = "/Series (\d{1,2}) (\d{1,2} ?of ?\d{1,2})/";
 		if (preg_match($pattern, $title, $matches)) {
 			echo $matches[0]."\n";

@@ -3,7 +3,7 @@ require __DIR__ . '/vendor/autoload.php';
 use Transmission\Transmission;
 use Transmission\Client;
 use JsonRPC\Client as KodiClient;
-
+require("test_torrent_functions.php");
 /***************************************************************************/
 
 $mysqli = mysqli_connect("localhost", "apdb", "pwd4apdb", "apdb");
@@ -29,10 +29,9 @@ $preferiti = array("risoluzione" => "720");
 
 function doDownload() {
 	global $mysqli, $transmission, $preferiti;
-	echo "Looking for episodes to download...\n";
-	$sql = "SELECT t.*, s.stagione stagioneMin, s.episodio episodioMin 
+	$sql = "SELECT t.*, s.eztvTitle, s.preferita, s.stagione stagioneMin, s.episodio episodioMin 
 	FROM apdb.torrent_rss t JOIN apdb.torrent_serie s ON t.serie = s.serie AND s.preferita = 1 
-	WHERE t.scaricato = 0 AND 
+	WHERE t.scaricato = 0 AND t.errore = 0 AND
 	(
 		CAST(t.stagione AS UNSIGNED) > CAST(s.stagione AS UNSIGNED) 
 	OR 
@@ -44,19 +43,36 @@ function doDownload() {
 	$torrents = array();
 	$lastEpisode = $lastShow = "";
 	$skipShow = "";
+	$stagioniMin = array();
 	while ($row = mysqli_fetch_assoc($res)) {
 		if ($row["stagione"] == "") {
 			$row["stagione"] = "Unica";	
 		}
 		$currEpisode = "S".$row["stagione"]."E".$row["episodio"];
+		if ($lastShow != $row["serie"]) {
+			//echo $row["serie"]." ".$currEpisode."\n";
+		}
+		
+		if (isset($stagioniMin[$row["serie"]])) {
+			$row["stagioneMin"] = $stagioniMin[$row["serie"]]["stagioneMin"];
+			$row["episodioMin"] = $stagioniMin[$row["serie"]]["episodioMin"]; 
+		}
+		
 		//echo $currEpisode."\n";
 		if ($row["serie"] != $skipShow) {
 			if (1*$row["stagioneMin"] == 0 && $lastEpisode != "" && $lastShow == $row["serie"] && $currEpisode != $lastEpisode) {
-				echo "No boundaries defined for '".$row["serie"]."' taking only latest episode: ".$lastEpisode." !\n";
-				$skipShow = $row["serie"];
+				#echo "No boundaries defined for '".$row["serie"]."' taking only latest episode: ".$lastEpisode." !\n";
+				#$skipShow = $row["serie"];
 			}else{
 				//echo $currEpisode." ".$lastEpisode." ".$row["serie"]." ".$lastShow." MIN ".$row["stagioneMin"]."\n";
 				$torrents[$row["serie"]][$row["stagione"]][$row["episodio"]][$row["risoluzione"]] = $row;
+				if (1*$row["stagioneMin"] == 0) {
+					echo " - \033[31m".$row["serie"]." downloading from: ".$currEpisode."\033[0m\n";
+					saveSerie($row["serie"], true, $row["eztvTitle"], $row["stagione"], $row["episodio"]);
+					$stagioniMin[$row["serie"]]["stagioneMin"] = $row["stagione"];
+					$stagioniMin[$row["serie"]]["episodioMin"] = $row["episodio"];
+					$skipShow = $row["serie"];	
+				}
 			}
 		}
 		if ($lastShow != $row["serie"] && $lastShow != "") {
@@ -81,28 +97,39 @@ function doDownload() {
 					}
 				}
 			}
-	echo "found ".count($scaricare)." episodes...\n";
+	#echo "found ".count($scaricare)." episodes...\n";
 	#echo print_r($scaricare, true)."\n";
 	foreach($scaricare as $row) {	
 		//echo print_r($row, true)."\n";
 		$transmission->add($row["magnetURI"]);
-		echo "Adding ".$row["title"]." to download queue...\n";
+		
 		try {
 			$torrent = $transmission->get($row["infoHash"]);
-			echo "Torrent status: ".$torrent->getStatus().". Completion ".$torrent->getPercentDone()."%\n";
-		} catch (RuntimeException $e) {
-			echo "Error on ".$row["title"]." ".$row["infoHash"]."\n";
-		}
-		$transmission->start($torrent);
+			echo " - \033[34m".$row["title"]."\033[0m status:".$torrent->getStatus()." perc:".$torrent->getPercentDone()."%\n";
+			if ($torrent != null) {
+				if ($torrent->getPercentDone() == 0 || $torrent->getStatus() != 4) {
+					$transmission->start($torrent);
+					#echo "   \033[32mSuccesfully added to download queue\033[0m\n";
+				}
 
-		$sql = "UPDATE apdb.torrent_rss SET 
-		contentLength = ".(1*$torrent->getSize()).",
-		percentDone = ".(1*$torrent->getPercentDone()).", 
-		status = ".(1*$torrent->getStatus()).", 
-		startDate = ".(1*$torrent->getStartDate())." 
-		WHERE infoHash = '".mysqli_real_escape_string($mysqli, $row["infoHash"])."'";
-		//echo $sql."\n";
-		$res = mysqli_query($mysqli, $sql) or die(mysqli_error($mysqli)."\n");	
+				$sql = "UPDATE apdb.torrent_rss SET 
+				contentLength = ".(1*$torrent->getSize()).",
+				percentDone = ".(1*$torrent->getPercentDone()).", 
+				status = ".(1*$torrent->getStatus()).", 
+				startDate = ".(1*$torrent->getStartDate())." 
+				WHERE infoHash = '".mysqli_real_escape_string($mysqli, $row["infoHash"])."'";
+				//echo $sql."\n";
+				$res = mysqli_query($mysqli, $sql) or die(mysqli_error($mysqli)."\n");
+				
+			}
+		} catch (RuntimeException $e) {
+			echo " - \033[31mError on ".$row["title"]."\033[0m\n";
+			$sql = "UPDATE apdb.torrent_rss SET errore = 1
+			WHERE infoHash = '".mysqli_real_escape_string($mysqli, $row["infoHash"])."'";
+			$res = mysqli_query($mysqli, $sql) or die(mysqli_error($mysqli)."\n");
+			saveSerie($row["serie"], true, $row["eztvTitle"], 0, 0);
+		}
+
 	}
 }
 
@@ -146,7 +173,7 @@ function handleDone() {
 		}
 		$row["path"] .= "/S".str_pad($row["stagione"], 2, "0", STR_PAD_LEFT);
 		if (!file_exists($row["path"])) {
-		        echo "Creating ".$row["path"]."...\n";
+		        echo " - Creating ".$row["path"]."...\n";
 		        mkdir($row["path"], 0777);
 		}
 		#echo $row["path"]."\n";
@@ -158,14 +185,14 @@ function handleDone() {
 				$torSize = number_format($file->getSize() / 1024 / 1024, 2);
 				$actSize = number_format(filesize($filename) / 1024 / 1024, 2);
 				$perc = number_format(100 * $file->getSize() / $row["contentLength"], 2);
-				echo $filename." ".$torSize." MB (actual: ".$actSize." MB) ".$perc."% of total size\n";
+				#echo $filename." ".$torSize." MB (actual: ".$actSize." MB) ".$perc."% of total size\n";
 				
 				if ($file->getSize() == filesize($filename) && $perc > 60) {
 					$row["path"] .= "/".$row["serie"]." S".str_pad($row["stagione"], 2, "0", STR_PAD_LEFT)."E".str_pad($row["episodio"], 2, "0", STR_PAD_LEFT).".".$ext;
-					echo "Stopping torrent...\n";
+					echo " - Stopping torrent...\n";
 					$transmission->stop($torrent);
 					rename($filename, $row["path"]);
-					echo "File moved to ".$row["path"]."\n";
+					echo " - File moved to ".$row["path"]."\n";
 					$sql = "UPDATE apdb.torrent_rss SET spostato = 1 WHERE infoHash = '".mysqli_real_escape_string($mysqli, $row["infoHash"])."'";
 					#echo $sql."\n";
 					mysqli_query($mysqli, $sql) or die(mysqli_error($mysqli)."\n");
@@ -179,13 +206,14 @@ function updateLibrary() {
 	global $kodiPath;
 	$kodiclient = new KodiClient('http://anto:resistore@localhost:81/jsonrpc');
 	#echo print_r($kodiclient, true)."\n";
-	echo "Updating library...";
 	$result = $kodiclient->execute('VideoLibrary.Scan', ["directory" => $kodiPath]);
 	echo print_r($result, true)."\n";
 }
-
+echo "* \033[35mDownloading...\033[0m\n";
 doDownload();
 checkCompletion();
+echo "* \033[35mHandling completed...\033[0m\n";
 handleDone();
+echo "* \033[35mUpdating Kodi library...\033[0m";
 updateLibrary();
 ?>
