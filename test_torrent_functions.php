@@ -99,7 +99,7 @@ function parseTorrentInfo($raw) {
 	if ($info["stagione"] == "") {
 		$pattern = "/Series (\d{1,2}) (\d{1,2} ?of ?\d{1,2})/";
 		if (preg_match($pattern, $title, $matches)) {
-			echo $matches[0]."\n";
+			//echo $matches[0]."\n";
 			$info["stagione"] = 1 * $matches[1];
 			$info["episodio"] = $matches[2];
 			$title = str_replace($matches[0], "|", $title);

@@ -188,7 +188,13 @@ function handleDone() {
 				#echo $filename." ".$torSize." MB (actual: ".$actSize." MB) ".$perc."% of total size\n";
 				
 				if ($file->getSize() == filesize($filename) && $perc > 60) {
-					$row["path"] .= "/".$row["serie"]." S".str_pad($row["stagione"], 2, "0", STR_PAD_LEFT)."E".str_pad($row["episodio"], 2, "0", STR_PAD_LEFT).".".$ext;
+					$row["path"] .= "/".str_replace(" ", ".", $row["serie"]).".S".str_pad($row["stagione"], 2, "0", STR_PAD_LEFT)."E".str_pad($row["episodio"], 2, "0", STR_PAD_LEFT);
+					if (strstr($row["risoluzione"], "720p") !== false) {
+						$row["path"] .= ".720p";
+					}elseif (strstr($row["risoluzione"], "1080p") !== false) {
+						$row["path"] .= ".1080p";
+					}
+					$row["path"] .= ".".$ext;
 					echo " - Stopping torrent...\n";
 					$transmission->stop($torrent);
 					rename($filename, $row["path"]);
@@ -201,6 +207,12 @@ function handleDone() {
 		}	
 	}
 }
+
+function cleanLibrary() {
+        global $kodiPath;
+        $kodiclient = new KodiClient('http://anto:resistore@localhost:81/jsonrpc');
+        #echo print_r($kodiclient, true)."\n";
+        $result = $kodiclient->execute('VideoLibrary.Clean', []);                                                                          echo print_r($result, true)."\n";                                    }
 
 function updateLibrary() {
 	global $kodiPath;
@@ -216,4 +228,6 @@ echo "* \033[35mHandling completed...\033[0m\n";
 handleDone();
 echo "* \033[35mUpdating Kodi library...\033[0m";
 updateLibrary();
+echo "* \033[35mCleaning Kodi library...\033[0m";
+cleanLibrary();
 ?>
