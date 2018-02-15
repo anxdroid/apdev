@@ -13,9 +13,9 @@ ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=0.5,
 ser.isOpen()
 
 while 1:
-    ser.write('test')
+    ser.write("test")
     print("sent..")
-    sleep(1)
+    sleep(5)
 
 ser.close()
 
