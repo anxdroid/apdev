@@ -28,12 +28,14 @@ class APABB(object):
     debug = False
 
     def log_emoncms(self, timestamp, nodeid, key, value):
-        print(timestamp+" "+nodeid+" "+key+" "+value)
+        print(str(timestamp)+" "+str(nodeid)+" "+key+" "+str(value))
         conn = httplib.HTTPConnection(self.domain)
-        url = "/"+self.emoncmspath+"/input/post.json?apikey="+self.apikey+"&node="+nodeid+"&json={"+key+":"+value+"}"
-        #print url
+        url = "/"+self.emoncmspath+"/input/post.json?apikey="+self.apikey+"&node="+str(nodeid)+"&json={"+key+":"+str(value)+"}&time="+str(timestamp)
+        print url
         try:
             conn.request("GET", url)
+            resp = conn.getresponse()
+            print resp.read()
         except Exception as e:
             print "HTTP error: %s" % str(e)
 
@@ -126,7 +128,7 @@ class APABB(object):
         if (regexp4 is not None) :
             self.nonce = str(regexp4.group(1))
 
-    def fetch(self, element, key) :
+    def fetch(self, element) :
         if self.nonce is None :
             self.login()
         timestamp = str(int(time.time()))
@@ -138,17 +140,22 @@ class APABB(object):
                 measure = payload['feeds']['ser'+self.ser]['datastreams'][element]['data'][0]
                 ts = measure['timestamp']
                 ts_format = datetime.datetime.strptime(ts, "%Y-%m-%dT%H:%M:%S")
-                measure['ts'] = int(time.mktime(ts_format.timetuple()))
-                #measure['ts'] = time.mktime(datetime.datetime.strptime(measure['timestamp'], "%Y-%m-%dT%H:%M:%S%").timetuple())
-                
+                measure['ts'] = int(time.mktime(ts_format.timetuple())) 
                 return measure
         except ValueError as e:
             print("JSON error: "+resp['html'])
+        return None
 
 def main ():
     abb = APABB("192.168.1.18", "admin", "db6e106cf2b982d8dce1cf2ba2e0d449", "4:120399-3G96-3016")
-    voltage = abb.fetch('m101_1_PhVphA', 'ABB_VOLTAGE_OUT');
-    print voltage
+    while True :
+        m = abb.fetch('m101_1_PhVphA')
+        abb.log_emoncms(m['ts'], 101, 'ABB_VOLTAGE_OUT', m['value'])
+        m = abb.fetch('m101_1_W')
+        abb.log_emoncms(m['ts'], 101, 'ABB_POWER_SOLAR_OUT', m['value'])
+        m = abb.fetch('m101_1_TmpCab')
+        abb.log_emoncms(m['ts'], 101, 'ABB_TEMP_INVERTER', m['value'])
+        time.sleep(10)
 
 if __name__ == "__main__":
     main()
