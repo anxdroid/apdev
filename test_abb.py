@@ -183,7 +183,8 @@ def main ():
             m = abb.fetch('m101_1_A')
             abb.log_emoncms(m['ts'], 101, 'ABB_CURRENT_SOLAR_OUT', m['value'])
             time.sleep(60)
-        else
+        else :
+            print("Unable to reach the inverter...")
             time.sleep(1200)
 
 if __name__ == "__main__":
