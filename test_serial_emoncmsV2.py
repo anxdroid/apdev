@@ -23,7 +23,7 @@ class APServer(object):
 		"10":{"POWER_SOLAR":"W", "CURRENT_SOLAR":"A", "VOLTAGE":"V", "TEMP_TERRAZZO":"&deg;"},
 		"40":{"CURRENT_TERMO":"A", "LIGHT_TERRAZZO":"&perc;"}
 	}
-	domain = "192.168.1.3"
+	domain = "192.168.1.12"
 	emoncmspath = "emoncms"
 	apikey = "2a4e7605bb826a82ef3a54f4ff0267ed"
 
