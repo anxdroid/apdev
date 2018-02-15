@@ -155,7 +155,9 @@ def main ():
         abb.log_emoncms(m['ts'], 101, 'ABB_POWER_SOLAR_OUT', m['value'])
         m = abb.fetch('m101_1_TmpCab')
         abb.log_emoncms(m['ts'], 101, 'ABB_TEMP_INVERTER', m['value'])
-        time.sleep(10)
+        m = abb.fetch('m101_1_A')
+        abb.log_emoncms(m['ts'], 101, 'ABB_CURRENT_SOLAR_OUT', m['value'])
+        time.sleep(60)
 
 if __name__ == "__main__":
     main()
