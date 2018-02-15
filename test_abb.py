@@ -138,7 +138,7 @@ class APABB(object):
                 measure = payload['feeds']['ser'+self.ser]['datastreams'][element]['data'][0]
                 ts = measure['timestamp']
                 ts_format = datetime.datetime.strptime(ts, "%Y-%m-%dT%H:%M:%S")
-                print ts_format
+                measure['ts'] = int(time.mktime(ts_format.timetuple()))
                 #measure['ts'] = time.mktime(datetime.datetime.strptime(measure['timestamp'], "%Y-%m-%dT%H:%M:%S%").timetuple())
                 
                 return measure
