@@ -152,7 +152,7 @@ def main ():
         m = abb.fetch('m101_1_PhVphA')
         abb.log_emoncms(m['ts'], 101, 'ABB_VOLTAGE_OUT', m['value'])
         m = abb.fetch('m101_1_W')
-        abb.log_emoncms(m['ts'], 101, 'ABB_POWER_SOLAR_OUT', m['value'])
+        abb.log_emoncms(m['ts'], 101, 'ABB_POWER_SOLAR_OUT', 1000*m['value'])
         m = abb.fetch('m101_1_TmpCab')
         abb.log_emoncms(m['ts'], 101, 'ABB_TEMP_INVERTER', m['value'])
         m = abb.fetch('m101_1_A')
