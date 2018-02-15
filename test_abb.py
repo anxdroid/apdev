@@ -83,12 +83,16 @@ class APABB(object):
                 "Accept-Language": "it-IT,it;q=0.9,en;q=0.8,es;q=0.7",
                 "Authorization": "X-Digest username=\""+self.username+"\", realm=\"registered_user@power-one.com\", nonce=\""+self.nonce+"\", uri=\""+path+"\", response=\""+self.response+"\", qop="+self.qop+", nc="+self.nc+", cnonce=\""+self.cnonce+"\""}
 
-        conn.request(method=method, url=path, headers=headers)
-        resp = conn.getresponse()
-        html = resp.read()
-        headers = str(resp.msg)
-        conn.close()
-        return {'html':html, 'headers':headers}
+        try :
+            conn.request(method=method, url=path, headers=headers)
+            resp = conn.getresponse()
+            html = resp.read()
+            headers = str(resp.msg)
+            conn.close()
+            return {'html':html, 'headers':headers}
+        except Exception as e:
+            print "HTTP error: %s" % str(e)
+        return None
 
     def __init__(self, host, username, password, serial) :
         self.host = host
@@ -101,15 +105,24 @@ class APABB(object):
         uri = "/v3/#/login"
         resp = self.buildReq(uri, "GET", timestamp)
 
+        if resp is None :
+            return None
+
         timestamp = str(int(time.time()))
         uri = "../v1/status?_="+timestamp
         resp = self.buildReq(uri, "GET", timestamp)
+
+        if resp is None :
+            return None
 
         timestamp = str(int(time.time()))
         regexp1 = re.search("nonce=\"([^\"]+)\"", resp['headers'])
         if (regexp1 is not None) :
             self.nonce = str(regexp1.group(1))
         resp = self.buildReq(uri, "GET", timestamp)
+
+        if resp is None :
+            return None
 
         timestamp = str(int(time.time()))
         regexp2 = re.search("nonce=\"([^\"]+)\"", resp['headers'])
@@ -118,19 +131,30 @@ class APABB(object):
         uri = "/au/logger/v1/public_config"
         resp = self.buildReq(uri, "GET", timestamp)
 
+        if resp is None :
+            return None
+
         timestamp = str(int(time.time()))
         regexp3 = re.search("nonce=\"([^\"]+)\"", resp['headers'])
         if (regexp3 is not None) :
             self.nonce = str(regexp3.group(1))
         uri = "../v1/config"
         resp = self.buildReq(uri, "GET", timestamp)
+
+        if resp is None :
+            return None
+
         regexp4 = re.search("nonce=\"([^\"]+)\"", resp['headers'])
         if (regexp4 is not None) :
             self.nonce = str(regexp4.group(1))
+        
 
     def fetch(self, element) :
         if self.nonce is None :
-            self.login()
+            res = self.login()
+            if res is None :
+                return None
+
         timestamp = str(int(time.time()))
         uri = "/v1/feeds/ser"+self.ser+"?_="+timestamp
         resp = self.buildReq(uri, "GET", timestamp)
@@ -150,14 +174,17 @@ def main ():
     abb = APABB("192.168.1.18", "admin", "db6e106cf2b982d8dce1cf2ba2e0d449", "4:120399-3G96-3016")
     while True :
         m = abb.fetch('m101_1_PhVphA')
-        abb.log_emoncms(m['ts'], 101, 'ABB_VOLTAGE_OUT', m['value'])
-        m = abb.fetch('m101_1_W')
-        abb.log_emoncms(m['ts'], 101, 'ABB_POWER_SOLAR_OUT', 1000*m['value'])
-        m = abb.fetch('m101_1_TmpCab')
-        abb.log_emoncms(m['ts'], 101, 'ABB_TEMP_INVERTER', m['value'])
-        m = abb.fetch('m101_1_A')
-        abb.log_emoncms(m['ts'], 101, 'ABB_CURRENT_SOLAR_OUT', m['value'])
-        time.sleep(60)
+        if m is not None :
+            abb.log_emoncms(m['ts'], 101, 'ABB_VOLTAGE_OUT', m['value'])
+            m = abb.fetch('m101_1_W')
+            abb.log_emoncms(m['ts'], 101, 'ABB_POWER_SOLAR_OUT', 1000*m['value'])
+            m = abb.fetch('m101_1_TmpCab')
+            abb.log_emoncms(m['ts'], 101, 'ABB_TEMP_INVERTER', m['value'])
+            m = abb.fetch('m101_1_A')
+            abb.log_emoncms(m['ts'], 101, 'ABB_CURRENT_SOLAR_OUT', m['value'])
+            time.sleep(60)
+        else
+            time.sleep(1200)
 
 if __name__ == "__main__":
     main()
