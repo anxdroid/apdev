@@ -23,6 +23,7 @@ class APABB(object):
     HA2 = None
     response = None
     host = None
+    ser = None
 
     debug = False
 
@@ -87,10 +88,11 @@ class APABB(object):
         conn.close()
         return {'html':html, 'headers':headers}
 
-    def __init__(self, host, username, password) :
+    def __init__(self, host, username, password, serial) :
         self.host = host
         self.username = username
         self.HA1 = password
+        self.ser = serial
 
     def login(self) :
         timestamp = str(int(time.time()))
@@ -128,12 +130,15 @@ class APABB(object):
         if self.nonce is None :
             self.login()
         timestamp = str(int(time.time()))
-        uri = "/v1/feeds/ser4:120399-3G96-3016?_="+timestamp
+        uri = "/v1/feeds/ser"+self.ser+"?_="+timestamp
         resp = self.buildReq(uri, "GET", timestamp)
         try: 
             payload = json.loads(resp['html'])
             if payload is not None :
-                measure = payload['feeds']['ser4:120399-3G96-3016']['datastreams'][element]['data'][0]
+                measure = payload['feeds']['ser'+self.ser]['datastreams'][element]['data'][0]
+                ts = measure['timestamp']
+                ts_format = datetime.datetime.strptime(ts, "%Y-%m-%dT%H:%M:%S")
+                print ts_format
                 #measure['ts'] = time.mktime(datetime.datetime.strptime(measure['timestamp'], "%Y-%m-%dT%H:%M:%S%").timetuple())
                 
                 return measure
@@ -141,7 +146,7 @@ class APABB(object):
             print("JSON error: "+resp['html'])
 
 def main ():
-    abb = APABB("192.168.1.18", "admin", "db6e106cf2b982d8dce1cf2ba2e0d449")
+    abb = APABB("192.168.1.18", "admin", "db6e106cf2b982d8dce1cf2ba2e0d449", "4:120399-3G96-3016")
     voltage = abb.fetch('m101_1_PhVphA', 'ABB_VOLTAGE_OUT');
     print voltage
 
