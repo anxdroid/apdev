@@ -20,13 +20,19 @@ def writeString(value):
             if (nchunk == (len(chunks) - 1)) :
                 # last chunk
                 cmd = 0x00
-            print str(nchunk)+" of "+str(len(chunks))+": "+str(chunk)
+            #print str(nchunk)+" of "+str(len(chunks))+": "+str(chunk)
             bus.write_i2c_block_data(address, cmd, chunk)
-            time.sleep(0.2)
+            time.sleep(0.5)
             #resp = bus.read_i2c_block_data(address, 0)
             #number = readNumber()
             #print "Sent "+str(len(chunk))+" received "+str(number)
             nchunk += 1
+        time.sleep(1)
+        print "Waiting for response..."
+        resp = bus.read_i2c_block_data(address, 0)
+        while (resp is None) :
+            resp = bus.read_i2c_block_data(address, 0)
+        print "Got response: "+str(resp)+" = "+BytesToString(resp)
     except IOError as e:
         return 0
 
@@ -42,6 +48,13 @@ def readNumber():
         return number
     except IOError as e:
         return 0
+
+def BytesToString(val):
+    retVal = ''
+    for c in val:
+        if c != 255 :
+            retVal += chr(c)
+    return retVal
 
 def StringToBytes(val):
     retVal = []
@@ -69,7 +82,8 @@ while True:
     #var = input("Enter 1 - 9: ")
     #if not var:
     #    continue
-    var = "{\"sensor\":\"gps\",\"time\":1351824120,\"data\":[48.756080,2.302038]}"
+    #var = "{\"sensor\":\"gps\",\"time\":1351824120,\"data\":[48.756080,2.302038]}"
+    var = '{"cmd":"getTouchCmd", "idCmdMaster":"12", "idCmdSlave":"0", "status":"0", "response":""}'
     writeString(var)
     #print "RPI: Hi Arduino, I sent you ", var
     # sleep one second
