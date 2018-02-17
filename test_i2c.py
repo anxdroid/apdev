@@ -81,10 +81,13 @@ def StringToBytes(val):
 while True:
     #var = '{"cmd":"getTouchCmd", "idCmdMaster":"12", "idCmdSlave":"0", "status":"0", "response":""}'
     #sendString(var)
-    resp = chr(int(sendCmd(CMD_GET_TOUCH_CMD)))
-    if (resp != "") :
+    resp = sendCmd(CMD_GET_TOUCH_CMD)
+    #print str(type(resp))
+    if resp is not None and isinstance(resp, list) and len(resp) > 0 : 
+        resp = int(chr(int(resp[0])))
+    if (resp > 0) :
         print str(resp)
-    time.sleep(0.1)
+    #time.sleep(0.1)
 
     #number = readNumber()
     #print "Arduino: Hey RPI, I received a digit ", number
