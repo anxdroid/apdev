@@ -1,25 +1,26 @@
 import serial
 from time import sleep, time
 
-ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=0.5, 
+ser = serial.Serial('/dev/ttyUSB0', 9600, 
 	bytesize=serial.EIGHTBITS,
 	parity=serial.PARITY_NONE,
 	stopbits=serial.STOPBITS_ONE,
-	timeout=1,
+	timeout=5,
 	xonxoff=0,
 	rtscts=0)
 
 if(ser.isOpen() == False):
-	ser.open()
-self.serACM.setDTR(False)
-self.serACM.flushInput()
-time.sleep(1)
-self.serACM.setDTR(True)
+    ser.open()
+
+ser.setDTR(False)
+ser.flushInput()
+sleep(1)
+ser.setDTR(True)
 
 while 1:
-    ser.write("test")
+    ser.write("Xxx\n")
     print("sent..")
-    sleep(5)
+    sleep(2)
 
 ser.close()
 
