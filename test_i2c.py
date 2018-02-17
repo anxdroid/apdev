@@ -8,7 +8,11 @@ bus = smbus.SMBus(1)
 # This is the address we setup in the Arduino Program
 address = 0x04
 
-def writeString(value):
+CMD_LAST_CHUNK = 0x00
+CMD_INTERMEDIATE_CHUNK = 0x01
+CMD_GET_TOUCH_CMD = 0x10
+
+def sendString(value):
     try :
         print value
         chunks = StringToBytes(value)
@@ -16,10 +20,10 @@ def writeString(value):
         nchunk = 0
         for chunk in chunks :
             # not last chunk
-            cmd = 0x01
+            cmd = CMD_INTERMEDIATE_CHUNK
             if (nchunk == (len(chunks) - 1)) :
                 # last chunk
-                cmd = 0x00
+                cmd = CMD_LAST_CHUNK
             #print str(nchunk)+" of "+str(len(chunks))+": "+str(chunk)
             bus.write_i2c_block_data(address, cmd, chunk)
             time.sleep(0.5)
@@ -36,16 +40,12 @@ def writeString(value):
     except IOError as e:
         return 0
 
-def writeNumber(value):
-    bus.write_byte(address, value)
-    # bus.write_byte_data(address, 0, value)
-    return -1
-
-def readNumber():
+def sendCmd(cmd):
     try :
-        number = bus.read_byte(address)
-        # number = bus.read_byte_data(address, 1)
-        return number
+        #resp = bus.read_i2c_block_data(address, cmd)
+        #resp = bus.read_byte_data(address, cmd)
+        resp = bus.read_i2c_block_data(address, cmd, 1)
+        return resp
     except IOError as e:
         return 0
 
@@ -79,15 +79,12 @@ def StringToBytes(val):
     return retVal
 
 while True:
-    #var = input("Enter 1 - 9: ")
-    #if not var:
-    #    continue
-    #var = "{\"sensor\":\"gps\",\"time\":1351824120,\"data\":[48.756080,2.302038]}"
-    var = '{"cmd":"getTouchCmd", "idCmdMaster":"12", "idCmdSlave":"0", "status":"0", "response":""}'
-    writeString(var)
-    #print "RPI: Hi Arduino, I sent you ", var
-    # sleep one second
-    time.sleep(50)
+    #var = '{"cmd":"getTouchCmd", "idCmdMaster":"12", "idCmdSlave":"0", "status":"0", "response":""}'
+    #sendString(var)
+    resp = chr(int(sendCmd(CMD_GET_TOUCH_CMD)))
+    if (resp != "") :
+        print str(resp)
+    time.sleep(0.1)
 
     #number = readNumber()
     #print "Arduino: Hey RPI, I received a digit ", number
