@@ -17,35 +17,51 @@ API = ["", "", "", "sendSolarData", "", "", "", "", "", "", "sendTempData"]
 
 APIKEY = "a7441c2c34fc80b6667fdb1717d1606f"
 class APIs:
-    def sendSolarData(self, apiId):
-        #var = '{"apiId":'+str(apiId)+', "values":["324"], "timestamps":[1112233212]}'
-        url = "http://192.168.1.12/emoncms/feed/data.json?id=22&start=1518780000000&end=1518799900000&interval=1800&skipmissing=0&limitinterval=1&apikey="+APIKEY
+    url = "http://192.168.1.12/emoncms/feed/data.json?apikey="+APIKEY
+
+    def feedToPayload(self, feedId, startTS, endTS, interval, color, justList):
+        url = self.url+"&id="+str(feedId)+"&start="+str(startTS)+"&end="+str(endTS)+"&interval="+str(interval)+"&skipmissing=0&limitinterval=1"
+        print url
         response = urllib.urlopen(url)
         data = json.loads(response.read())
-        payload = "[";
+        payload = ""
+        if (justList == False) :
+            payload = "["
         index = 0;
+        minTS = startTS/1000
+        
         for m in data :
             if (m[1] is not None) :
                 #print m
                 if (index > 0) :
-                    payload += ", "
-                payload += '["'+str(int(m[0])/1000)+'", "'+str(m[1])+'"]'
+                    payload += ","
+                #print m[0]
+                offsetTS = (int(m[0])/1000) - minTS
+                payload += '['+str(offsetTS)+','+("{0:.2f}".format(m[1]))
+                if (color != "") :
+                    payload += ',"'+color+'"'
+                payload += ']'
                 index += 1;
-        payload += "]"
+        
+        if (justList == False) :
+            payload += "]"
+        
+        return payload
 
+    def sendSolarData(self, apiId):
+        #var = '{"apiId":'+str(apiId)+', "values":["324"], "timestamps":[1112233212]}'
+        #startTS = 1518700000000
+        #endTS = 1518799900000
+        
+        endTS = ((int(time.time()) - (12*60*60)) * 1000)
+        startTS = ((endTS/1000) - (6 * 60 * 60)) * 1000
+        interval = 900
+        payload1 = self.feedToPayload(1, startTS, endTS, interval, "Y", True)
+        payload2 = self.feedToPayload(7, startTS, endTS, interval, "R", True)
+        payload = '['+payload1 +','+ payload2+']'
+        minTS = startTS/1000
         #print payload;
-        
-        
-        var = '''{"i":'''+str(apiId)+''', "p":[
-        {"t":"1518974662", "v":"700.23"},
-        {"t":"1518974562", "v":"700.30"},
-        {"t":"1518974462", "v":"700.40"},
-        {"t":"1518974362", "v":"700.44"},
-        {"t":"1518974262", "v":"700.45"},
-        {"t":"1518974162", "v":"700.50"}]}'''
-        
-        var = '{"i":'+str(apiId)+', "p":'+payload+'}'
-
+        var = '{"i":'+str(apiId)+',"s":'+str(minTS)+',"p":'+payload+'}'
         sendString(var)
     def sendTempData(self, apiId):
         #var = '{"apiId":'+str(apiId)+', "values":["324"], "timestamps":[1112233212]}'
@@ -67,6 +83,7 @@ def sendString(value):
             if (nchunk == (len(chunks) - 1)) :
                 # last chunk
                 cmd = CMD_LAST_CHUNK
+            #print chunk
             bus.write_i2c_block_data(address, cmd, chunk)
             time.sleep(0.1)
             nchunk += 1
