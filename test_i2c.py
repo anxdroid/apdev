@@ -53,7 +53,7 @@ class APIs:
         #startTS = 1518700000000
         #endTS = 1518799900000
         
-        endTS = ((int(time.time()) - (12*60*60)) * 1000)
+        endTS = ((int(time.time()) - (0*60*60)) * 1000)
         startTS = ((endTS/1000) - (6 * 60 * 60)) * 1000
         interval = 900
         payload1 = self.feedToPayload(1, startTS, endTS, interval, "Y", True)
