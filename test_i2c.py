@@ -144,12 +144,15 @@ while True:
     #var = '{"cmd":"getTouchCmd", "idCmdMaster":"12", "idCmdSlave":"0", "status":"0", "response":""}'
     #sendString(var)
     resp = sendCmd(CMD_GET_TOUCH_CMD)
-    if (resp > 0) :
-        print str(resp)
-        print API[resp]
-        if (API[resp] != "") :
-            time.sleep(0.1)
-            getattr(api, API[resp])(resp)
+    if (resp > 1) :
+        #print str(resp)
+        try: 
+            print API[resp]
+            if (API[resp] != "") :
+                time.sleep(0.1)
+                getattr(api, API[resp])(resp)
+        except IndexError as e:
+            print "Error on index "+str(resp)
     #time.sleep(0.1)
 
     #number = readNumber()
