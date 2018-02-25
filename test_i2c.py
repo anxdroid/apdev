@@ -12,6 +12,7 @@ address = 0x04
 CMD_LAST_CHUNK = 0x00
 CMD_INTERMEDIATE_CHUNK = 0x01
 CMD_GET_TOUCH_CMD = 0x10
+CMD_GET_LAST_RECV_SIZE = 0x20
 
 API = ["", "", "", "sendSolarData", "", "", "", "", "", "", "sendTempData"]
 
@@ -89,19 +90,22 @@ def sendString(value):
             nchunk += 1
         time.sleep(1)
         print "Waiting for response..."
-        resp = bus.read_i2c_block_data(address, 0)
-        while (resp is None) :
-            resp = bus.read_i2c_block_data(address, 0)
+        time.sleep(0.1)
+        resp = bus.read_i2c_block_data(address, CMD_GET_LAST_RECV_SIZE, 4)
+        #while (resp is None) :
+        #    resp = bus.read_i2c_block_data(address, 0)
         print "Got "+BytesToString(resp)+" bytes, sent "+value+" ["+str(len(value))+"]"
     except IOError as e:
         return 0
 
 def sendCmd(cmd):
     try :
-        resp = bus.read_i2c_block_data(address, cmd, 4)
+        resp = bus.read_i2c_block_data(address, cmd, 1)
         if resp is not None and isinstance(resp, list) and len(resp) > 0 and resp[0] != 48: 
             resp = int(BytesToString(resp))
+            print resp
             if resp > 0:
+                print "Got command "+str(resp)
                 return resp
 
     except IOError as e:
