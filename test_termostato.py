@@ -8,6 +8,7 @@ class Termostato:
     APIKEY = "a7441c2c34fc80b6667fdb1717d1606f"
     urlCurrTemp = "http://192.168.1.12/emoncms/feed/timevalue.json"
     urlHeaters = "http://192.168.1.12/temp/jobs.php"
+    urlThresholds = "http://192.168.1.12/temp/thresholds.php?sensor=TEMP_DISIMPEGNO"
     heatersMgrUsr = "anto"
     heatersMgrPwd = "resistore"
     minTemp = 17
@@ -21,6 +22,9 @@ class Termostato:
 
     def startTermo(self) :
         while True:
+            thresholds = self.getThresholds()
+            self.minTemp = float(thresholds["min"])
+            self.maxTemp = float(thresholds["max"])
             temp = self.getCurrTemp()
             #print str(temp)
             now = time.time()
@@ -40,10 +44,10 @@ class Termostato:
             if diffTempTime > 120 :
                 print "No decision taken !"
             else:
-                if ((temp < self.minTemp) and (cmd != "HEATERS:ON" or cmdStatus != 2)) :
+                if ((tempVal < self.minTemp) and (cmd != "HEATERS:ON" or cmdStatus != 2)) :
                     print "Start heaters !"
                     self.toggleHeatersStatus("HEATERS:ON")
-                if ((temp > self.maxTemp) and (cmd != "HEATERS:OFF" or cmdStatus != 2)) :
+                if ((tempVal > self.maxTemp) and (cmd != "HEATERS:OFF" or cmdStatus != 2)) :
                     print "Stop heaters !"
                     self.toggleHeatersStatus("HEATERS:OFF")
             
@@ -79,11 +83,21 @@ class Termostato:
         response = urllib2.urlopen(self.urlHeaters)
         data = json.loads(response.read())
         return data["data"][0]
-
-
+    
+    def getThresholds(self):
+        password_mgr = urllib2.HTTPPasswordMgrWithDefaultRealm()
+        password_mgr.add_password(None, self.urlThresholds, self.heatersMgrUsr, self.heatersMgrPwd)
+        handler = urllib2.HTTPBasicAuthHandler(password_mgr)
+        opener = urllib2.build_opener(handler)
+        opener.open(self.urlThresholds)
+        urllib2.install_opener(opener)
+        response = urllib2.urlopen(self.urlThresholds)
+        data = json.loads(response.read())
+        return data["data"][0]
 
 def main():
-    termo = Termostato(20, 22, 10)
+    termo = Termostato(18, 24, 10)
+    #print str(termo.getThresholds())
     #status = termo.getHeatersStatus()
     #temp = termo.getCurrTemp()
     #termo.toggleHeatersStatus("ON")
