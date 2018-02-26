@@ -14,8 +14,6 @@ CMD_INTERMEDIATE_CHUNK = 0x01
 CMD_GET_TOUCH_CMD = 0x10
 CMD_GET_LAST_RECV_SIZE = 0x20
 
-API = ["", "", "", "sendSolarData", "", "", "", "", "", "", "sendTempData"]
-
 APIKEY = "a7441c2c34fc80b6667fdb1717d1606f"
 class APIs:
     url = "http://192.168.1.12/emoncms/feed/data.json?apikey="+APIKEY
@@ -49,7 +47,7 @@ class APIs:
         
         return payload
 
-    def sendSolarData(self, apiId):
+    def getSolarData(self, apiId):
         #var = '{"apiId":'+str(apiId)+', "values":["324"], "timestamps":[1112233212]}'
         #startTS = 1518700000000
         #endTS = 1518799900000
@@ -88,7 +86,7 @@ def sendString(value):
             bus.write_i2c_block_data(address, cmd, chunk)
             time.sleep(0.1)
             nchunk += 1
-        time.sleep(1)
+        time.sleep(0.1)
         print "Waiting for response..."
         time.sleep(0.1)
         resp = bus.read_i2c_block_data(address, CMD_GET_LAST_RECV_SIZE, 4)
@@ -100,19 +98,20 @@ def sendString(value):
 
 def sendCmd(cmd):
     try :
-        resp = bus.read_i2c_block_data(address, cmd, 1)
-        if resp is not None and isinstance(resp, list) and len(resp) > 0 and resp[0] != 48: 
-            resp = int(BytesToString(resp))
-            print resp
-            if resp > 0:
-                print "Got command "+str(resp)
-                return resp
+        resp = bus.read_i2c_block_data(address, cmd, 32)
+        #print "["+str(resp)+"]"
+        #print str(cmd)+" -> "+str(resp)
+        if resp is not None and isinstance(resp, list) and len(resp) > 0 and resp[0] != 48:
+            #print "["+str(resp)+"]"
+            resp = str(BytesToString(resp)) 
+            print str(cmd)+" -> "+resp
+            return resp
 
     except IOError as e:
-        return 0
+        return ""
     except ValueError as e:
-        return 0
-    return 0
+        return ""
+    return ""
 
 def BytesToString(val):
     retVal = ''
@@ -143,20 +142,24 @@ def StringToBytes(val):
     #print "Found "+str(len(retVal))+" chunks"
     return retVal
 
+api = APIs()
 while True:
-    api = APIs()
     #var = '{"cmd":"getTouchCmd", "idCmdMaster":"12", "idCmdSlave":"0", "status":"0", "response":""}'
     #sendString(var)
     resp = sendCmd(CMD_GET_TOUCH_CMD)
-    if (resp > 1) :
+    if (resp != "") :
         #print str(resp)
         try: 
-            print API[resp]
-            if (API[resp] != "") :
-                time.sleep(0.1)
-                getattr(api, API[resp])(resp)
+            #print API[resp]
+            #if (API[resp] != "") :
+                #time.sleep(0.1)
+                #getattr(api, API[resp])(resp)
+            action = getattr(api, resp, None)
+            if (callable(action)):
+                action(resp)
+
         except IndexError as e:
-            print "Error on index "+str(resp)
+            print "Error on "+str(resp)
     #time.sleep(0.1)
 
     #number = readNumber()
