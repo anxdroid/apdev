@@ -30,7 +30,7 @@ class APServer(object):
 	lastUSBreading = 0
 
 	def srvinit(self):
-		self.dbconn = MySQLdb.connect('192.168.1.3', 'apdb', 'pwd4apdb', 'apdb')
+		self.dbconn = MySQLdb.connect('192.168.1.12', 'apdb', 'pwd4apdb', 'apdb')
 		self.dbconn.autocommit(True)
 		self.dbconn.ping(True)
 		print self.dbconn
