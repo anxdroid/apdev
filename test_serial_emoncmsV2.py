@@ -74,6 +74,7 @@ class APServer(object):
 		if (cmd == 'GET_CMD') :
 			print("Requesting command...")
 			self.serialwriteACM('RETURN_TEMP', logger)
+			time.sleep(0.1)
 			myline = self.serialreadACM(logger)
 			if (myline != '') :
 				print('Data: '+myline)
