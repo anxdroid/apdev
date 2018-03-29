@@ -46,7 +46,7 @@ class APServer(object):
 			self.srvinit()
 
 	def log_emoncms(self, timestamp, nodeid, key, value, logger):
-		print(timestamp+" "+nodeid+" "+key+" "+value)
+		logger.debug(timestamp+" "+nodeid+" "+key+" "+value)
 		conn = httplib.HTTPConnection(self.domain)
 		url = "/"+self.emoncmspath+"/input/post.json?apikey="+self.apikey+"&node="+nodeid+"&json={"+key+":"+value+"}"
 		#print url
@@ -80,9 +80,13 @@ class APServer(object):
 			for val in vals:
 				info = val.split(':')
 				if (len(info) == 4 and info[0] != 'MILLIS'):
-					if (info[0] in self.nodeids and info[1] in self.nodeids[info[0]]) :
-						#print timestamp+" "+str(val)
-						self.log_emoncms(timestamp, info[0], info[1], info[2], logger)
+					if (info[0] in self.nodeids) :
+						if (info[1] in self.nodeids[info[0]]) :
+							#print timestamp+" "+str(val)
+							self.log_emoncms(timestamp, info[0], info[1], info[2], logger)
+						else if(info[1] == 'CMD') :
+							print info[2]
+
 					else :
 						print timestamp+" "+str(val)+" not ok !"		
 
