@@ -81,16 +81,16 @@ class APServer(object):
 			for val in vals:
 				info = val.split(':')
 				if (len(info) == 4 and info[0] != 'MILLIS'):
-					print 'nodeId: '+info[0]
+					logger.debug('nodeId: '+info[0])
 					if (1*info[0] == 0 and info[1] in self.nodeids[info[0]]) :
-						print info[1]
+						logger.debug(info[1])
 					else :
 						if (info[0] in self.nodeids) :
 							if (info[1] in self.nodeids[info[0]]) :
 								#print timestamp+" "+str(val)
 								self.log_emoncms(timestamp, info[0], info[1], info[2], logger)
 						else :
-							print timestamp+" "+str(val)+" not ok !"		
+							logger.debug(timestamp+" "+str(val)+" not ok !")	
 
 	def serialreadUSB(self, logger):
 		print("serialreadUSB")
