@@ -20,6 +20,7 @@ class APServer(object):
 # id nodo
 #	10: ARDUINO_EMONTX
 	nodeids = {
+		"0":{"GET_CMD":"GET_CMD"}
 		"10":{"POWER_SOLAR":"W", "CURRENT_SOLAR":"A", "VOLTAGE":"V", "TEMP_TERRAZZO":"&deg;"},
 		"30":{"CURRENT_CASA":"A", "TEMP_DISIMPEGNO":"&deg;", "TEMP_SALOTTO":"&deg;", "TEMP_SOTTOTETTO":"&deg;"},
 		"40":{"CURRENT_TERMO":"A", "LIGHT_TERRAZZO":"&perc;"}
@@ -80,14 +81,16 @@ class APServer(object):
 			for val in vals:
 				info = val.split(':')
 				if (len(info) == 4 and info[0] != 'MILLIS'):
-					if (info[0] in self.nodeids) :
+					if (info[0] == "0") :
 						if (info[1] in self.nodeids[info[0]]) :
-							#print timestamp+" "+str(val)
-							self.log_emoncms(timestamp, info[0], info[1], info[2], logger)
-						if (info[1] == 'CMD') :
-							print info[2]
+							print info[1]
 					else :
-						print timestamp+" "+str(val)+" not ok !"		
+						if (info[0] in self.nodeids) :
+							if (info[1] in self.nodeids[info[0]]) :
+								#print timestamp+" "+str(val)
+								self.log_emoncms(timestamp, info[0], info[1], info[2], logger)
+						else :
+							print timestamp+" "+str(val)+" not ok !"		
 
 	def serialreadUSB(self, logger):
 		print("serialreadUSB")
