@@ -54,8 +54,8 @@ class APServer(object):
 			conn.request("GET", url)
 		except Exception as e:
 			print "HTTP error: %s" % str(e)
-'''
-	def log_event(self, category, key, value, source, notes):
+
+	'''def log_event(self, category, key, value, source, notes):
 			curs = self.dbconn.cursor()
 			sql = "INSERT INTO events (category, `cmd`, value, source, params) values (%s, %s, %s, %s, %s)"
 			#print sql
@@ -67,8 +67,8 @@ class APServer(object):
 				try:
 					print "MySQL Error [%d]: %s" % (e.args[0], e.args[1])
 				except IndexError:
-					print "MySQL Error: %s" % str(e)
-'''
+					print "MySQL Error: %s" % str(e)'''
+					
 	def parsereading(self, myline, logger):
 		#Some data was received
 		p = re.compile('[^:\s]+:[^:\s]+:[\d|\.|-]+:[^\s]+')
