@@ -8,7 +8,10 @@ class Termostato:
     APIKEY = "a7441c2c34fc80b6667fdb1717d1606f"
     urlCurrTemp = "http://192.168.1.12/emoncms/feed/timevalue.json"
     urlHeaters = "http://192.168.1.12/temp/jobs.php"
-    urlThresholds = "http://192.168.1.12/temp/thresholds.php?sensor=TEMP_DISIMPEGNO"
+    #urlThresholds = "http://192.168.1.12/temp/thresholds.php?sensor=TEMP_DISIMPEGNO"
+    urlThresholds = "http://192.168.1.12/temp/thresholds.php"
+
+    sensor = "TEMP_SALOTTO"
     heatersMgrUsr = "anto"
     heatersMgrPwd = "resistore"
     minTemp = 17
@@ -35,13 +38,14 @@ class Termostato:
             cmd = status["cmd"]
             cmdStatus = int(status["status"])
             cmdEnded = status["ended"]
-            date = datetime.datetime.strptime(cmdEnded, "%Y-%m-%d %H:%M:%S")
-            #cmdTime = calendar.timegm(date.utctimetuple())
-            cmdTime = time.mktime(date.timetuple())
-            diffCmdTime = now - cmdTime
-            print str(time.time())+": Temp "+str(diffTempTime)+" secs ago was "+str(tempVal)+" ("+str(self.minTemp)+"-"+str(self.maxTemp)+")"
-            print str(time.time())+": Heaters "+str(diffCmdTime)+" secs ago where "+str(cmd)+" ("+str(cmdStatus)+")"
-            if diffTempTime > 120 :
+            if cmdEnded is not None:
+                date = datetime.datetime.strptime(cmdEnded, "%Y-%m-%d %H:%M:%S")
+                #cmdTime = calendar.timegm(date.utctimetuple())
+                cmdTime = time.mktime(date.timetuple())
+                diffCmdTime = now - cmdTime
+                print str(time.time())+": Temp "+str(diffTempTime)+" secs ago was "+str(tempVal)+" ("+str(self.minTemp)+"-"+str(self.maxTemp)+")"
+                print str(time.time())+": Heaters "+str(diffCmdTime)+" secs ago where "+str(cmd)+" ("+str(cmdStatus)+")"
+            if cmdEnded is None or diffTempTime > 120 :
                 print "No decision taken !"
             else:
                 if ((tempVal < self.minTemp) and (cmd != "HEATERS:ON" or cmdStatus != 2)) :
@@ -54,7 +58,7 @@ class Termostato:
             time.sleep(self.interval)
 
     def getCurrTemp(self):
-        url = self.urlCurrTemp+"?id=10&apikey="+self.APIKEY
+        url = self.urlCurrTemp+"?id=12&apikey="+self.APIKEY
         #print url
         response = urllib2.urlopen(url)
         data = json.loads(response.read())
@@ -85,13 +89,14 @@ class Termostato:
         return data["data"][0]
     
     def getThresholds(self):
+        urlToCall = self.urlThresholds+"?sensor="+self.sensor
         password_mgr = urllib2.HTTPPasswordMgrWithDefaultRealm()
-        password_mgr.add_password(None, self.urlThresholds, self.heatersMgrUsr, self.heatersMgrPwd)
+        password_mgr.add_password(None, urlToCall, self.heatersMgrUsr, self.heatersMgrPwd)
         handler = urllib2.HTTPBasicAuthHandler(password_mgr)
         opener = urllib2.build_opener(handler)
         opener.open(self.urlThresholds)
         urllib2.install_opener(opener)
-        response = urllib2.urlopen(self.urlThresholds)
+        response = urllib2.urlopen(urlToCall)
         data = json.loads(response.read())
         return data["data"][0]
 
