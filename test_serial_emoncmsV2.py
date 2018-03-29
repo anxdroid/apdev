@@ -31,10 +31,10 @@ class APServer(object):
 	lastUSBreading = 0
 
 	def srvinit(self):
-		self.dbconn = MySQLdb.connect('192.168.1.12', 'apdb', 'pwd4apdb', 'apdb')
-		self.dbconn.autocommit(True)
-		self.dbconn.ping(True)
-		print self.dbconn
+		#self.dbconn = MySQLdb.connect('192.168.1.12', 'apdb', 'pwd4apdb', 'apdb')
+		#self.dbconn.autocommit(True)
+		#self.dbconn.ping(True)
+		#print self.dbconn
 		key="START"
 		self.srvaddress = socket.gethostbyname(socket.gethostname())
 		self.srvpid = os.getpid()
@@ -68,7 +68,7 @@ class APServer(object):
 					print "MySQL Error [%d]: %s" % (e.args[0], e.args[1])
 				except IndexError:
 					print "MySQL Error: %s" % str(e)'''
-					
+
 	def parsereading(self, myline, logger):
 		#Some data was received
 		p = re.compile('[^:\s]+:[^:\s]+:[\d|\.|-]+:[^\s]+')
