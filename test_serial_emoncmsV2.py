@@ -89,7 +89,7 @@ class APServer(object):
 					#logger.debug('nodeId: '+info[0])
 					if (info[0] == "0" and info[1] in self.nodeids[info[0]]) :
 						#logger.debug(timestamp+" "+info[1])
-						self.parsecmd(info[1])
+						self.parsecmd(info[1], logger)
 					else :
 						if (info[0] in self.nodeids) :
 							if (info[1] in self.nodeids[info[0]]) :
