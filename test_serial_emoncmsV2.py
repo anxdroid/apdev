@@ -29,6 +29,8 @@ class APServer(object):
 	emoncmspath = "emoncms"
 	apikey = "2a4e7605bb826a82ef3a54f4ff0267ed"
 
+	sendingCmd = False
+
 	lastUSBreading = 0
 
 	def srvinit(self):
@@ -71,6 +73,7 @@ class APServer(object):
 					print "MySQL Error: %s" % str(e)'''
 
 	def parsecmd(self, cmd, logger):
+		sendingCmd = True
 		if (cmd == 'GET_CMD') :
 			print("Requesting command...")
 			self.serialwriteACM('RETURN_TEMP', logger)
@@ -78,6 +81,7 @@ class APServer(object):
 			myline = self.serialreadACM(logger)
 			if (myline != '') :
 				print('Data: '+myline)
+		sendingCmd = False
 
 
 	def parsereading(self, myline, logger):
@@ -340,7 +344,9 @@ class APServer(object):
 		pathACM = self.initserialACM(logger)
 		#pathUSB = self.initserialUSB(logger)
 		try:
-			while True: 
+			while True:
+				while self.sendingCmd:
+					print "."
 				myline = self.serialreadACM(logger)
 				if (myline != '') :
 					print('Got: '+myline)
