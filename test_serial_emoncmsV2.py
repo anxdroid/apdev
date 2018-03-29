@@ -84,7 +84,7 @@ class APServer(object):
 						if (info[1] in self.nodeids[info[0]]) :
 							#print timestamp+" "+str(val)
 							self.log_emoncms(timestamp, info[0], info[1], info[2], logger)
-						else if(info[1] == 'CMD') :
+						else if (info[1] == 'CMD') :
 							print info[2]
 
 					else :
