@@ -225,9 +225,10 @@ class APServer(object):
 			time.sleep(2)
 			self.initserialACM(logger)
 			#time.sleep(5)
-		else:
-			self.parsereading(myline,logger)
+		#else:
+		#	self.parsereading(myline,logger)
 		#return path
+		return myline
 
 	def initserialACM(self, logger):
 		print "Resetting ttyACM..."
@@ -337,7 +338,10 @@ class APServer(object):
 		#pathUSB = self.initserialUSB(logger)
 		try:
 			while True: 
-				pathACM = self.serialreadACM(logger)
+				myline = self.serialreadACM(logger)
+				if (myline != '') :
+					self.parsereading(myline,logger)
+
 				#time.sleep(1)
 				#pathUSB = self.serialreadUSB(logger)		
 				time.sleep(3)
