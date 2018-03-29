@@ -141,7 +141,7 @@ class APServer(object):
 				print "Waiting response..."
 				myline = self.serialreadACM(logger)
 				print "...done"
-				time.sleep(0.2)
+				time.sleep(0.3)
 				if (myline != '') :
 					print('Data: '+myline)
 		sendingCmd = False
