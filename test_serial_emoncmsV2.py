@@ -96,7 +96,7 @@ class APServer(object):
 			print 'CMD: '+serverCmd
 			if (serverCmd != "") :
 				self.serialwriteACM(serverCmd, logger)
-				time.sleep(0.1)
+				time.sleep(0.2)
 				myline = self.serialreadACM(logger)
 				if (myline != '') :
 					print('Data: '+myline)
