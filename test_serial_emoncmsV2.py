@@ -141,7 +141,7 @@ class APServer(object):
 				print "Waiting response..."
 				myline = self.serialreadACM(logger)
 				print "...done"
-				
+
 				if (myline != '') :
 					print('Data: '+myline)
 		sendingCmd = False
@@ -228,6 +228,7 @@ class APServer(object):
 		try:
 			if(self.serACM.isOpen() == False):
 				self.serACM.open()
+			while (self.serACM.inWaiting() == 0);
 			if (self.serACM.inWaiting() > 0):
 				myline = self.serACM.readline()
 				self.serACM.flushInput()
