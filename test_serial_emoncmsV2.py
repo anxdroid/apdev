@@ -376,7 +376,7 @@ class APServer(object):
 
 				#time.sleep(1)
 				#pathUSB = self.serialreadUSB(logger)		
-				time.sleep(3)
+				#time.sleep(3)
 				sys.stdout.flush()
 		except:
 			logger.exception("Problem handling request")
