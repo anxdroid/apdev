@@ -92,7 +92,7 @@ class APServer(object):
 			jsonData = json.loads(response.read())
 			serverCmd = "NOOP"
 			if len(jsonData['data']) > 0 :
-				serverCmd = jsonData['data'][0]["id"]+" "+jsonData['data'][0]["cmd"]
+				serverCmd = str(jsonData['data'][0]["id"]+" "+jsonData['data'][0]["cmd"])
 			print 'CMD: '+serverCmd
 			if (serverCmd != "") :
 				self.serialwriteACM(serverCmd, logger)
@@ -183,7 +183,8 @@ class APServer(object):
 			if(self.serACM.isOpen() == False):
 				self.serACM.open()
 			print('Writing cmd to serial...')
-			self.serACM.write((str(cmd)+'\r').encode())
+			cmdToSend = 
+			self.serACM.write(cmd+'\r'.encode())
 			#if (self.serACM.inWaiting() > 0):
 			#	myline = self.serACM.readline()
 			#	self.serACM.flushInput()
