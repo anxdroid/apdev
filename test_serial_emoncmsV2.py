@@ -9,6 +9,7 @@ import multiprocessing
 import os
 import json
 import httplib
+import urllib2
 import serial.tools.list_ports
 import sys, traceback
 from subprocess import Popen, PIPE
@@ -28,6 +29,9 @@ class APServer(object):
 	domain = "192.168.1.12"
 	emoncmspath = "emoncms"
 	apikey = "2a4e7605bb826a82ef3a54f4ff0267ed"
+	urlJobs = "http://192.168.1.12/temp/jobs.php?req_cmd=HEATERS&simple_out=1"
+	jobsUsr = "anto"
+    jobsPwd = "resistore"
 
 	sendingCmd = False
 
@@ -76,7 +80,16 @@ class APServer(object):
 		sendingCmd = True
 		if (cmd == 'GET_CMD') :
 			print("Requesting command...")
-			self.serialwriteACM('RETURN_TEMP', logger)
+			print self.urlJobs
+			password_mgr = urllib2.HTTPPasswordMgrWithDefaultRealm()
+			password_mgr.add_password(None, self.urlJobs, self.jobsUsr, self.jobsPwd)
+			handler = urllib2.HTTPBasicAuthHandler(password_mgr)
+			opener = urllib2.build_opener(handler)
+			opener.open(self.urlJobs)
+			urllib2.install_opener(opener)
+			response = urllib2.urlopen(self.urlJobs)
+			print response.read()
+			self.serialwriteACM('test', logger)
 			time.sleep(0.1)
 			myline = self.serialreadACM(logger)
 			if (myline != '') :
