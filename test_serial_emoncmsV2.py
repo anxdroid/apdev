@@ -47,7 +47,7 @@ class APServer(object):
 			self.srvinit()
 
 	def log_emoncms(self, timestamp, nodeid, key, value, logger):
-		logger.debug(timestamp+" "+nodeid+" "+key+" "+value)
+		print timestamp+" "+nodeid+" "+key+" "+value
 		conn = httplib.HTTPConnection(self.domain)
 		url = "/"+self.emoncmspath+"/input/post.json?apikey="+self.apikey+"&node="+nodeid+"&json={"+key+":"+value+"}"
 		#print url
@@ -97,7 +97,7 @@ class APServer(object):
 								#print timestamp+" "+str(val)
 								self.log_emoncms(timestamp, info[0], info[1], info[2], logger)
 						else :
-							logger.debug(timestamp+" "+str(val)+" not ok !")	
+							print timestamp+" "+str(val)+" not ok !"	
 
 	def serialreadUSB(self, logger):
 		print("serialreadUSB")
