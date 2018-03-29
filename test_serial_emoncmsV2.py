@@ -89,13 +89,17 @@ class APServer(object):
 			#opener.open(self.urlJobs)
 			urllib2.install_opener(opener)
 			response = urllib2.urlopen(self.urlJobs)
-			serverCmd = json.loads(response.read())
+			jsonData = json.loads(response.read())
+			serverCmd = "NOOP"
+			if len(jsonData['data']) > 0 :
+				serverCmd = jsonData['data'][0]["id"]+" "+jsonData['data'][0]["cmd"]
 			print 'CMD: '+str(serverCmd)
-			self.serialwriteACM('test', logger)
-			time.sleep(0.1)
-			myline = self.serialreadACM(logger)
-			if (myline != '') :
-				print('Data: '+myline)
+			if (serverCmd != "") :
+				self.serialwriteACM('test', logger)
+				time.sleep(0.1)
+				myline = self.serialreadACM(logger)
+				if (myline != '') :
+					print('Data: '+myline)
 		sendingCmd = False
 
 
