@@ -183,7 +183,8 @@ class APServer(object):
 			if(self.serACM.isOpen() == False):
 				self.serACM.open()
 			print('Writing cmd to serial...')
-			self.serACM.write(cmd+'\r'.encode())
+			cmd += '\r'
+			self.serACM.write(cmd.encode())
 			#if (self.serACM.inWaiting() > 0):
 			#	myline = self.serACM.readline()
 			#	self.serACM.flushInput()
