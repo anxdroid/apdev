@@ -10,6 +10,7 @@ import os
 import json
 import httplib
 import urllib2
+import json
 import serial.tools.list_ports
 import sys, traceback
 from subprocess import Popen, PIPE
@@ -88,7 +89,7 @@ class APServer(object):
 			#opener.open(self.urlJobs)
 			urllib2.install_opener(opener)
 			response = urllib2.urlopen(self.urlJobs)
-			serverCmd = response.read()
+			serverCmd = json.loads(response.read())
 			print 'CMD: '+serverCmd
 			self.serialwriteACM('test', logger)
 			time.sleep(0.1)
