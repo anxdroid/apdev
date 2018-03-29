@@ -75,7 +75,7 @@ class APServer(object):
 		vals = p.findall(myline)
 		ts = time.time()
 		timestamp = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
-		#print myline
+		print myline
 		if (len(vals) > 0):
 			for val in vals:
 				info = val.split(':')
