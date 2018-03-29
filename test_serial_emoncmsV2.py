@@ -73,6 +73,7 @@ class APServer(object):
 	def parsecmd(self, cmd, logger):
 		if (cmd == 'GET_CMD') :
 			print("Requesting command...")
+			self.serialwriteACM('RETURN_TEMP', logger)
 
 
 	def parsereading(self, myline, logger):
@@ -148,6 +149,45 @@ class APServer(object):
 			self.parsereading(myline, logger)
 		#return path
 
+
+	def serialwriteACM(self, cmd, logger):
+		myline = ""
+		try:
+			if(self.serACM.isOpen() == False):
+				self.serACM.open()
+			self.serACM.writeline(cmd)
+			#if (self.serACM.inWaiting() > 0):
+			#	myline = self.serACM.readline()
+			#	self.serACM.flushInput()
+		except IOError as e:
+			self.initserialACM(logger)
+		except TypeError as e:
+			logger.debug(e)
+			exc_type, exc_value, exc_traceback = sys.exc_info()
+			print "*** print_tb:"
+			traceback.print_tb(exc_traceback, limit=1, file=sys.stdout)
+			self.serACM.flushInput()
+			self.serACM.close()
+			time.exc_type, exc_value, exc_traceback = sys.exc_info()
+			print "*** print_tb:"
+			time.sleep(2)
+			self.initserialACM(logger)
+			#time.exc_type, exc_value, exc_traceback = sys.exc_info()
+			print "*** print_tb:"
+			time.sleep(5)
+		except serial.SerialException as e:
+			logger.debug(e)
+			print "Error on line "+format(sys.exc_info()[-1].tb_lineno)()
+			self.serACM.flushInput()
+			self.serACM.close()
+			time.exc_type, exc_value, exc_traceback = sys.exc_info()
+			print "*** print_tb:"
+			time.sleep(2)
+			self.initserialACM(logger)
+			#time.sleep(5)
+		#else:
+		#	self.parsereading(myline,logger)
+		#return path
 
 	def serialreadACM(self, logger):
 		myline = ""
