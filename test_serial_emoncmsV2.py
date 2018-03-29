@@ -88,7 +88,7 @@ class APServer(object):
 			opener.open(self.urlJobs)
 			urllib2.install_opener(opener)
 			response = urllib2.urlopen(self.urlJobs)
-			print response.read()
+			print 'CMD: '+response.read()
 			self.serialwriteACM('test', logger)
 			time.sleep(0.1)
 			myline = self.serialreadACM(logger)
