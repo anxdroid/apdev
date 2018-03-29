@@ -1,5 +1,5 @@
 import serial
-import MySQLdb
+#import MySQLdb
 import time
 import re
 import datetime
@@ -40,7 +40,7 @@ class APServer(object):
 		self.srvpid = os.getpid()
 		params = {}
 		value = params["pid"] = str(self.srvpid)
-		self.log_event("SRV", key, value, self.srvaddress, json.dumps(params))
+		#self.log_event("SRV", key, value, self.srvaddress, json.dumps(params))
 
 	def __init__(self):
 			self.srvinit()
@@ -54,7 +54,7 @@ class APServer(object):
 			conn.request("GET", url)
 		except Exception as e:
 			print "HTTP error: %s" % str(e)
-
+'''
 	def log_event(self, category, key, value, source, notes):
 			curs = self.dbconn.cursor()
 			sql = "INSERT INTO events (category, `cmd`, value, source, params) values (%s, %s, %s, %s, %s)"
@@ -68,7 +68,7 @@ class APServer(object):
 					print "MySQL Error [%d]: %s" % (e.args[0], e.args[1])
 				except IndexError:
 					print "MySQL Error: %s" % str(e)
-
+'''
 	def parsereading(self, myline, logger):
 		#Some data was received
 		p = re.compile('[^:\s]+:[^:\s]+:[\d|\.|-]+:[^\s]+')
