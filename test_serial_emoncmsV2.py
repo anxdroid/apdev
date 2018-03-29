@@ -77,6 +77,47 @@ class APServer(object):
 				except IndexError:
 					print "MySQL Error: %s" % str(e)'''
 
+	def serialwriteACM(self, cmd, logger):
+		myline = ""
+		try:
+			if(self.serACM.isOpen() == False):
+				self.serACM.open()
+			print('Writing cmd '+cmd+' to serial...')
+			cmdToSend = cmd+'\r'
+			self.serACM.write(cmdToSend.encode())
+			#if (self.serACM.inWaiting() > 0):
+			#	myline = self.serACM.readline()
+			#	self.serACM.flushInput()
+		except IOError as e:
+			self.initserialACM(logger)
+		except TypeError as e:
+			logger.debug(e)
+			exc_type, exc_value, exc_traceback = sys.exc_info()
+			print "*** print_tb:"
+			traceback.print_tb(exc_traceback, limit=1, file=sys.stdout)
+			self.serACM.flushInput()
+			self.serACM.close()
+			time.exc_type, exc_value, exc_traceback = sys.exc_info()
+			print "*** print_tb:"
+			time.sleep(2)
+			self.initserialACM(logger)
+			#time.exc_type, exc_value, exc_traceback = sys.exc_info()
+			print "*** print_tb:"
+			time.sleep(5)
+		except serial.SerialException as e:
+			logger.debug(e)
+			print "Error on line "+format(sys.exc_info()[-1].tb_lineno)()
+			self.serACM.flushInput()
+			self.serACM.close()
+			time.exc_type, exc_value, exc_traceback = sys.exc_info()
+			print "*** print_tb:"
+			time.sleep(2)
+			self.initserialACM(logger)
+			#time.sleep(5)
+		#else:
+		#	self.parsereading(myline,logger)
+		#return path
+
 	def parsecmd(self, cmd, logger):
 		sendingCmd = True
 		if (cmd == 'GET_CMD') :
@@ -177,46 +218,7 @@ class APServer(object):
 		#return path
 
 
-	def serialwriteACM(self, cmd, logger):
-		myline = ""
-		try:
-			if(self.serACM.isOpen() == False):
-				self.serACM.open()
-			print('Writing cmd '+cmd+' to serial...')
-			cmdToSend = cmd+'\r'
-			self.serACM.write(cmdToSend.encode())
-			#if (self.serACM.inWaiting() > 0):
-			#	myline = self.serACM.readline()
-			#	self.serACM.flushInput()
-		except IOError as e:
-			self.initserialACM(logger)
-		except TypeError as e:
-			logger.debug(e)
-			exc_type, exc_value, exc_traceback = sys.exc_info()
-			print "*** print_tb:"
-			traceback.print_tb(exc_traceback, limit=1, file=sys.stdout)
-			self.serACM.flushInput()
-			self.serACM.close()
-			time.exc_type, exc_value, exc_traceback = sys.exc_info()
-			print "*** print_tb:"
-			time.sleep(2)
-			self.initserialACM(logger)
-			#time.exc_type, exc_value, exc_traceback = sys.exc_info()
-			print "*** print_tb:"
-			time.sleep(5)
-		except serial.SerialException as e:
-			logger.debug(e)
-			print "Error on line "+format(sys.exc_info()[-1].tb_lineno)()
-			self.serACM.flushInput()
-			self.serACM.close()
-			time.exc_type, exc_value, exc_traceback = sys.exc_info()
-			print "*** print_tb:"
-			time.sleep(2)
-			self.initserialACM(logger)
-			#time.sleep(5)
-		#else:
-		#	self.parsereading(myline,logger)
-		#return path
+
 
 	def serialreadACM(self, logger):
 		myline = ""
