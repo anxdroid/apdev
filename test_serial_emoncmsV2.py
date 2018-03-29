@@ -85,7 +85,7 @@ class APServer(object):
 			password_mgr.add_password(None, self.urlJobs, self.jobsUsr, self.jobsPwd)
 			handler = urllib2.HTTPBasicAuthHandler(password_mgr)
 			opener = urllib2.build_opener(handler)
-			opener.open(self.urlJobs)
+			#opener.open(self.urlJobs)
 			urllib2.install_opener(opener)
 			response = urllib2.urlopen(self.urlJobs)
 			serverCmd = response.read()
