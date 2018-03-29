@@ -78,6 +78,7 @@ class APServer(object):
 
 	def parsereading(self, myline, logger):
 		#Some data was received
+		print(myline)
 		p = re.compile('[^:\s]+:[^:\s]+:[\d|\.|-]+:[^\s]+')
 		vals = p.findall(myline)
 		ts = time.time()
