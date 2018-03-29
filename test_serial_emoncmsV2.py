@@ -70,6 +70,11 @@ class APServer(object):
 				except IndexError:
 					print "MySQL Error: %s" % str(e)'''
 
+	def parsecmd(self, cmd, logger):
+		if (cmd == 'GET_CMD') :
+			print("Requesting command...")
+
+
 	def parsereading(self, myline, logger):
 		#Some data was received
 		p = re.compile('[^:\s]+:[^:\s]+:[\d|\.|-]+:[^\s]+')
@@ -81,9 +86,10 @@ class APServer(object):
 			for val in vals:
 				info = val.split(':')
 				if (len(info) == 4 and info[0] != 'MILLIS'):
-					logger.debug('nodeId: '+info[0])
+					#logger.debug('nodeId: '+info[0])
 					if (info[0] == "0" and info[1] in self.nodeids[info[0]]) :
-						logger.debug(info[1])
+						#logger.debug(timestamp+" "+info[1])
+						self.parsecmd(info[1])
 					else :
 						if (info[0] in self.nodeids) :
 							if (info[1] in self.nodeids[info[0]]) :
