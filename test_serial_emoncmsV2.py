@@ -137,9 +137,11 @@ class APServer(object):
 				serverCmd = str(jsonData['data'][0]["id"])+" "+str(jsonData['data'][0]["cmd"])
 			if (serverCmd != "") :
 				self.serialwriteACM(serverCmd, logger)
-				time.sleep(0.2)
+				
 				print "Waiting response..."
 				myline = self.serialreadACM(logger)
+				print "...done"
+				time.sleep(0.2)
 				if (myline != '') :
 					print('Data: '+myline)
 		sendingCmd = False
