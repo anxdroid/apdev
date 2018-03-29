@@ -85,6 +85,7 @@ class APServer(object):
 		logger.debug(myline);
 		if (len(vals) > 0):
 			for val in vals:
+				logger.debug(timestamp+" "+val)
 				info = val.split(':')
 				if (len(info) == 4 and info[0] != 'MILLIS'):
 					#logger.debug('nodeId: '+info[0])
