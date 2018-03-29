@@ -81,9 +81,8 @@ class APServer(object):
 			for val in vals:
 				info = val.split(':')
 				if (len(info) == 4 and info[0] != 'MILLIS'):
-					if (info[0] == "0") :
-						if (info[1] in self.nodeids[info[0]]) :
-							print info[1]
+					if (1*info[0] === 0 and info[1] in self.nodeids[info[0]]) :
+						print info[1]
 					else :
 						if (info[0] in self.nodeids) :
 							if (info[1] in self.nodeids[info[0]]) :
