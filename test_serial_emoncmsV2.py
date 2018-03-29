@@ -21,6 +21,7 @@ class APServer(object):
 #	10: ARDUINO_EMONTX
 	nodeids = {
 		"10":{"POWER_SOLAR":"W", "CURRENT_SOLAR":"A", "VOLTAGE":"V", "TEMP_TERRAZZO":"&deg;"},
+		"30":{"CURRENT_CASA":"A", "TEMP_DISIMPEGNO":"&deg;", "TEMP_SALOTTO":"&deg;", "TEMP_SOTTOTETTO":"&deg;"},
 		"40":{"CURRENT_TERMO":"A", "LIGHT_TERRAZZO":"&perc;"}
 	}
 	domain = "192.168.1.12"
