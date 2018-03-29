@@ -138,6 +138,7 @@ class APServer(object):
 			if (serverCmd != "") :
 				self.serialwriteACM(serverCmd, logger)
 				time.sleep(0.2)
+				print "Waiting response..."
 				myline = self.serialreadACM(logger)
 				if (myline != '') :
 					print('Data: '+myline)
