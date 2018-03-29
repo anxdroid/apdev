@@ -85,6 +85,7 @@ class APServer(object):
 			print('Writing cmd '+cmd+' to serial...')
 			cmdToSend = cmd+'\r'
 			self.serACM.write(cmdToSend.encode())
+			self.serACM.flushOutput()
 			#if (self.serACM.inWaiting() > 0):
 			#	myline = self.serACM.readline()
 			#	self.serACM.flushInput()
