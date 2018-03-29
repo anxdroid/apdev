@@ -31,7 +31,7 @@ class APServer(object):
 	apikey = "2a4e7605bb826a82ef3a54f4ff0267ed"
 	urlJobs = "http://192.168.1.12/temp/jobs.php?req_cmd=HEATERS&simple_out=1"
 	jobsUsr = "anto"
-    jobsPwd = "resistore"
+	jobsPwd = "resistore"
 
 	sendingCmd = False
 
