@@ -74,11 +74,13 @@ class APServer(object):
 		if (cmd == 'GET_CMD') :
 			print("Requesting command...")
 			self.serialwriteACM('RETURN_TEMP', logger)
+			myline = self.serialreadACM(logger)
+			if (myline != '') :
+				print('Data: '+myline)
 
 
 	def parsereading(self, myline, logger):
 		#Some data was received
-		print(myline)
 		p = re.compile('[^:\s]+:[^:\s]+:[\d|\.|-]+:[^\s]+')
 		vals = p.findall(myline)
 		ts = time.time()
@@ -340,6 +342,7 @@ class APServer(object):
 			while True: 
 				myline = self.serialreadACM(logger)
 				if (myline != '') :
+					print('Got: '+myline)
 					self.parsereading(myline,logger)
 
 				#time.sleep(1)
