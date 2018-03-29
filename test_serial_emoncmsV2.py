@@ -135,10 +135,9 @@ class APServer(object):
 			serverCmd = "0 NOOP"
 			if len(jsonData['data']) > 0 :
 				serverCmd = str(jsonData['data'][0]["id"])+" "+str(jsonData['data'][0]["cmd"])
-			print 'CMD: '+serverCmd
 			if (serverCmd != "") :
 				self.serialwriteACM(serverCmd, logger)
-				time.sleep(0.2)
+				time.sleep(0.3)
 				myline = self.serialreadACM(logger)
 				if (myline != '') :
 					print('Data: '+myline)
