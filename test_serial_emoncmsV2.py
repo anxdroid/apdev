@@ -82,10 +82,8 @@ class APServer(object):
 		vals = p.findall(myline)
 		ts = time.time()
 		timestamp = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
-		logger.debug(myline);
 		if (len(vals) > 0):
 			for val in vals:
-				logger.debug(timestamp+" "+val)
 				info = val.split(':')
 				if (len(info) == 4 and info[0] != 'MILLIS'):
 					#logger.debug('nodeId: '+info[0])
@@ -146,8 +144,9 @@ class APServer(object):
 			self.initserialUSB(logger)
 			#time.sleep(5)
 		else:
-			print myline
-			self.parsereading(myline, logger)
+			if (len(myline) > 0) :
+				logger.debug(myline);
+				self.parsereading(myline, logger)
 		#return path
 
 
