@@ -30,7 +30,7 @@ class APServer(object):
 	domain = "192.168.1.12"
 	emoncmspath = "emoncms"
 	apikey = "2a4e7605bb826a82ef3a54f4ff0267ed"
-	urlJobs = "http://192.168.1.12/temp/jobs.php?req_cmd=HEATERS"
+	urlJobs = "http://192.168.1.12/temp/jobs.php"
 	jobsUsr = "anto"
 	jobsPwd = "resistore"
 
@@ -123,14 +123,13 @@ class APServer(object):
 		sendingCmd = True
 		if (cmd == 'GET_CMD') :
 			print("Requesting command...")
-			#print self.urlJobs
+			url = self.urlJobs+'?req_cmd=HEATERS'
 			password_mgr = urllib2.HTTPPasswordMgrWithDefaultRealm()
-			password_mgr.add_password(None, self.urlJobs, self.jobsUsr, self.jobsPwd)
+			password_mgr.add_password(None, url, self.jobsUsr, self.jobsPwd)
 			handler = urllib2.HTTPBasicAuthHandler(password_mgr)
 			opener = urllib2.build_opener(handler)
-			#opener.open(self.urlJobs)
 			urllib2.install_opener(opener)
-			response = urllib2.urlopen(self.urlJobs)
+			response = urllib2.urlopen(url)
 			jsonData = json.loads(response.read())
 			serverCmd = "0 NOOP:NOOP"
 			if len(jsonData['data']) > 0 :
@@ -145,6 +144,17 @@ class APServer(object):
 
 				if (myline != '') :
 					print('Result: '+myline)
+					tokens = myline.split(":")
+					if (len(tokens) > 1 and tokens[0] == str(jsonData['data'][0]["id"])) :
+						url = self.urlJobs+'?job_id='+tokens[0]
+						print url
+						password_mgr = urllib2.HTTPPasswordMgrWithDefaultRealm()
+						password_mgr.add_password(None, url, self.jobsUsr, self.jobsPwd)
+						handler = urllib2.HTTPBasicAuthHandler(password_mgr)
+						opener = urllib2.build_opener(handler)
+						urllib2.install_opener(opener)
+						response = urllib2.urlopen(url)
+
 		sendingCmd = False
 
 
