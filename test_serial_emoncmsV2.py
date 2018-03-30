@@ -123,7 +123,7 @@ class APServer(object):
 		sendingCmd = True
 		if (cmd == 'GET_CMD') :
 			print("Requesting command...")
-			print self.urlJobs
+			#print self.urlJobs
 			password_mgr = urllib2.HTTPPasswordMgrWithDefaultRealm()
 			password_mgr.add_password(None, self.urlJobs, self.jobsUsr, self.jobsPwd)
 			handler = urllib2.HTTPBasicAuthHandler(password_mgr)
@@ -135,6 +135,7 @@ class APServer(object):
 			serverCmd = "0 NOOP:NOOP"
 			if len(jsonData['data']) > 0 :
 				serverCmd = str(jsonData['data'][0]["id"])+" "+str(jsonData['data'][0]["cmd"])
+				print("Sending: "+serverCmd)
 			if (serverCmd != "") :
 				self.serialwriteACM(serverCmd, logger)
 				time.sleep(0.5)
@@ -143,7 +144,7 @@ class APServer(object):
 				#print "...done"
 
 				if (myline != '') :
-					print('Data: '+myline)
+					print('Result: '+myline)
 		sendingCmd = False
 
 
