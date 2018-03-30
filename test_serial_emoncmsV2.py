@@ -132,7 +132,7 @@ class APServer(object):
 			urllib2.install_opener(opener)
 			response = urllib2.urlopen(self.urlJobs)
 			jsonData = json.loads(response.read())
-			serverCmd = "0 NOOP"
+			serverCmd = "0 NOOP:NOOP"
 			if len(jsonData['data']) > 0 :
 				serverCmd = str(jsonData['data'][0]["id"])+" "+str(jsonData['data'][0]["cmd"])
 			if (serverCmd != "") :
