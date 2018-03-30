@@ -132,8 +132,10 @@ class APServer(object):
 			response = urllib2.urlopen(url)
 			jsonData = json.loads(response.read())
 			serverCmd = "0 NOOP:NOOP"
+			id = "-1"
 			if len(jsonData['data']) > 0 :
-				serverCmd = str(jsonData['data'][0]["id"])+" "+str(jsonData['data'][0]["cmd"])
+				id = str(jsonData['data'][0]["id"])
+				serverCmd = id+" "+str(jsonData['data'][0]["cmd"])
 				print("Sending: "+serverCmd)
 			if (serverCmd != "") :
 				self.serialwriteACM(serverCmd, logger)
@@ -145,7 +147,7 @@ class APServer(object):
 				if (myline != '') :
 					print('Result: '+myline)
 					tokens = myline.split(":")
-					if (len(tokens) > 1 and tokens[0] == str(jsonData['data'][0]["id"])) :
+					if (len(tokens) > 1 and tokens[0] == id) :
 						url = self.urlJobs+'?job_id='+tokens[0]
 						print url
 						password_mgr = urllib2.HTTPPasswordMgrWithDefaultRealm()
