@@ -64,6 +64,7 @@ class APServer(object):
 			self.srvinit()
 
 	def log(self, nodeid, key, value) :
+		ts = time.time()
 		timestamp = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
 		print bcolors.BOLD+timestamp+bcolors.ENDC+": "+nodeid+" "+key+" "+bcolors.BOLD+value+bcolors.ENDC
 
@@ -163,8 +164,6 @@ class APServer(object):
 		#Some data was received
 		p = re.compile('[^:\s]+:[^:\s]+:[\d|\.|-]+:[^\s]+')
 		vals = p.findall(myline)
-		ts = time.time()
-		#timestamp = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
 		if (len(vals) > 0):
 			for val in vals:
 				info = val.split(':')
