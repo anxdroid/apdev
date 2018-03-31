@@ -141,7 +141,7 @@ class APServer(object):
 						else :
 							print timestamp+" "+str(val)+" not ok !"	
 
-		def serialwriteACM(self, cmd, logger):
+	def serialwriteACM(self, cmd, logger):
 		myline = ""
 		try:
 			if(self.serACM.isOpen() == False):
