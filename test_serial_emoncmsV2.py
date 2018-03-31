@@ -76,47 +76,7 @@ class APServer(object):
 		except Exception as e:
 			print "HTTP error: %s" % str(e)
 
-	def serialwriteACM(self, cmd, logger):
-		myline = ""
-		try:
-			if(self.serACM.isOpen() == False):
-				self.serACM.open()
-			#print('Writing cmd '+cmd+' to serial...')
-			cmdToSend = cmd+'\r'
-			self.serACM.write(cmdToSend.encode())
-			self.serACM.flushOutput()
-			#if (self.serACM.inWaiting() > 0):
-			#	myline = self.serACM.readline()
-			#	self.serACM.flushInput()
-		except IOError as e:
-			self.initserialACM(logger)
-		except TypeError as e:
-			logger.debug(e)
-			exc_type, exc_value, exc_traceback = sys.exc_info()
-			print "*** print_tb:"
-			traceback.print_tb(exc_traceback, limit=1, file=sys.stdout)
-			self.serACM.flushInput()
-			self.serACM.close()
-			time.exc_type, exc_value, exc_traceback = sys.exc_info()
-			print "*** print_tb:"
-			time.sleep(2)
-			self.initserialACM(logger)
-			#time.exc_type, exc_value, exc_traceback = sys.exc_info()
-			print "*** print_tb:"
-			time.sleep(5)
-		except serial.SerialException as e:
-			logger.debug(e)
-			print "Error on line "+format(sys.exc_info()[-1].tb_lineno)()
-			self.serACM.flushInput()
-			self.serACM.close()
-			time.exc_type, exc_value, exc_traceback = sys.exc_info()
-			print "*** print_tb:"
-			time.sleep(2)
-			self.initserialACM(logger)
-			#time.sleep(5)
-		#else:
-		#	self.parsereading(myline,logger)
-		#return path
+
 
 	def parsecmd(self, cmd, logger):
 		sendingCmd = True
@@ -181,6 +141,125 @@ class APServer(object):
 						else :
 							print timestamp+" "+str(val)+" not ok !"	
 
+		def serialwriteACM(self, cmd, logger):
+		myline = ""
+		try:
+			if(self.serACM.isOpen() == False):
+				self.serACM.open()
+			cmdToSend = cmd+'\r'
+			self.serACM.write(cmdToSend.encode())
+			self.serACM.flushOutput()
+		except IOError as e:
+			self.initserialACM(logger)
+		except TypeError as e:
+			logger.debug(e)
+			exc_type, exc_value, exc_traceback = sys.exc_info()
+			print "*** print_tb:"
+			traceback.print_tb(exc_traceback, limit=1, file=sys.stdout)
+			self.serACM.flushInput()
+			self.serACM.close()
+			time.exc_type, exc_value, exc_traceback = sys.exc_info()
+			print "*** print_tb:"
+			time.sleep(2)
+			self.initserialACM(logger)
+			#time.exc_type, exc_value, exc_traceback = sys.exc_info()
+			print "*** print_tb:"
+			time.sleep(5)
+		except serial.SerialException as e:
+			logger.debug(e)
+			print "Error on line "+format(sys.exc_info()[-1].tb_lineno)()
+			self.serACM.flushInput()
+			self.serACM.close()
+			time.exc_type, exc_value, exc_traceback = sys.exc_info()
+			print "*** print_tb:"
+			time.sleep(2)
+			self.initserialACM(logger)
+
+	def serialreadACM(self, logger):
+		myline = ""
+		try:
+			if(self.serACM.isOpen() == False):
+				self.serACM.open()
+			start = time.time()
+			msg = ""
+			while (self.serACM.inWaiting() == 0):
+				now = time.time()
+				diff = 1000 * (now - start)
+				tokens = str(diff).split(".")
+				intdiff = int(tokens[0])
+				if (intdiff % 1000 == 0 and intdiff > 0) :
+					msg += tokens[0]+'...'
+			if (self.serACM.inWaiting() > 0):
+				myline = self.serACM.readline()
+				if (myline != "" and myline != "\r" and myline != "\n" and len(msg) > 1) :
+					print bcolors.WARNING+msg+bcolors.ENDC
+					self.serACM.flushInput()
+		except IOError as e:
+			self.initserialACM(logger)
+		except TypeError as e:
+			logger.debug(e)
+			exc_type, exc_value, exc_traceback = sys.exc_info()
+			print "*** print_tb:"
+			traceback.print_tb(exc_traceback, limit=1, file=sys.stdout)
+			self.serACM.flushInput()
+			self.serACM.close()
+			time.exc_type, exc_value, exc_traceback = sys.exc_info()
+			print "*** print_tb:"
+			time.sleep(2)
+			self.initserialACM(logger)
+			#time.exc_type, exc_value, exc_traceback = sys.exc_info()
+			print "*** print_tb:"
+			time.sleep(5)
+		except serial.SerialException as e:
+			logger.debug(e)
+			print "Error on line "+format(sys.exc_info()[-1].tb_lineno)()
+			self.serACM.flushInput()
+			self.serACM.close()
+			time.exc_type, exc_value, exc_traceback = sys.exc_info()
+			print "*** print_tb:"
+			time.sleep(2)
+			self.initserialACM(logger)
+		return myline
+
+	def initserialACM(self, logger):
+		#print "Resetting ttyACM..."
+		path = ""
+		for port_no, description, address in serial.tools.list_ports.comports() :
+			if 'ACM' in description:
+				#print(address)
+				path = port_no
+				break
+		if path != "" :
+			print "Using "+path
+			try:
+				self.serACM = serial.Serial(path,
+					baudrate=9600,
+					bytesize=serial.EIGHTBITS,
+					parity=serial.PARITY_NONE,
+					stopbits=serial.STOPBITS_ONE,
+					timeout=1,
+					xonxoff=0,
+					rtscts=0
+				)
+
+				if(self.serACM.isOpen() == False):
+					self.serACM.open() 
+				self.serACM.setDTR(False)
+				self.serACM.flushInput()
+				time.sleep(1)
+				self.serACM.setDTR(True)
+			except IOError as e:
+				exc_type, exc_value, exc_traceback = sys.exc_info()
+				print "*** print_tb:"
+				traceback.print_tb(exc_traceback, limit=1, file=sys.stdout)
+				self.resetserial("Arduino")
+				self.initserialACM(logger)
+		else:
+			print("Serial not found !")
+			time.sleep(2)
+			self.initserialACM(logger)
+		return path
+
 	def serialreadUSB(self, logger):
 		print("serialreadUSB")
 		myline = ""
@@ -231,101 +310,6 @@ class APServer(object):
 				logger.debug(myline);
 				self.parsereading(myline, logger)
 		#return path
-
-
-
-
-	def serialreadACM(self, logger):
-		myline = ""
-		try:
-			if(self.serACM.isOpen() == False):
-				self.serACM.open()
-			start = time.time()
-			msg = ""
-			while (self.serACM.inWaiting() == 0):
-				now = time.time()
-				diff = 1000 * (now - start)
-				tokens = str(diff).split(".")
-				intdiff = int(tokens[0])
-				if (intdiff % 1000 == 0 and intdiff > 0) :
-					#print tokens[0]
-					msg += tokens[0]+'...'
-
-				#pass
-			if (self.serACM.inWaiting() > 0):
-				myline = self.serACM.readline()
-				if (myline != "" and myline != "\r" and myline != "\n") :
-					print bcolors.WARNING+msg+bcolors.ENDC
-					self.serACM.flushInput()
-		except IOError as e:
-			self.initserialACM(logger)
-		except TypeError as e:
-			logger.debug(e)
-			exc_type, exc_value, exc_traceback = sys.exc_info()
-			print "*** print_tb:"
-			traceback.print_tb(exc_traceback, limit=1, file=sys.stdout)
-			self.serACM.flushInput()
-			self.serACM.close()
-			time.exc_type, exc_value, exc_traceback = sys.exc_info()
-			print "*** print_tb:"
-			time.sleep(2)
-			self.initserialACM(logger)
-			#time.exc_type, exc_value, exc_traceback = sys.exc_info()
-			print "*** print_tb:"
-			time.sleep(5)
-		except serial.SerialException as e:
-			logger.debug(e)
-			print "Error on line "+format(sys.exc_info()[-1].tb_lineno)()
-			self.serACM.flushInput()
-			self.serACM.close()
-			time.exc_type, exc_value, exc_traceback = sys.exc_info()
-			print "*** print_tb:"
-			time.sleep(2)
-			self.initserialACM(logger)
-			#time.sleep(5)
-		#else:
-		#	self.parsereading(myline,logger)
-		#return path
-		return myline
-
-	def initserialACM(self, logger):
-		print "Resetting ttyACM..."
-		path = ""
-		for port_no, description, address in serial.tools.list_ports.comports() :
-			if 'ACM' in description:
-				print(address)
-				path = port_no
-				break
-		if path != "" :
-			print "Using "+path
-			try:
-				self.serACM = serial.Serial(path,
-					baudrate=9600,
-					bytesize=serial.EIGHTBITS,
-					parity=serial.PARITY_NONE,
-					stopbits=serial.STOPBITS_ONE,
-					timeout=1,
-					xonxoff=0,
-					rtscts=0
-				)
-
-				if(self.serACM.isOpen() == False):
-					self.serACM.open() 
-				self.serACM.setDTR(False)
-				self.serACM.flushInput()
-				time.sleep(1)
-				self.serACM.setDTR(True)
-			except IOError as e:
-				exc_type, exc_value, exc_traceback = sys.exc_info()
-				print "*** print_tb:"
-				traceback.print_tb(exc_traceback, limit=1, file=sys.stdout)
-				self.resetserial("Arduino")
-				self.initserialACM(logger)
-		else:
-			print("Serial not found !")
-			time.sleep(2)
-			self.initserialACM(logger)
-		return path
 
 	def initserialUSB(self, logger):
 		print "Resetting ttyUSB..."
@@ -402,10 +386,6 @@ class APServer(object):
 				if (myline != '') :
 					#print('Got: '+myline)
 					self.parsereading(myline,logger)
-
-				#time.sleep(1)
-				#pathUSB = self.serialreadUSB(logger)		
-				#time.sleep(3)
 				sys.stdout.flush()
 		except:
 			logger.exception("Problem handling request")
@@ -413,9 +393,6 @@ class APServer(object):
 			logger.debug("Closing serial process")
 
 	def start(self):
-		#process_serials = multiprocessing.Process(target=self.serACMialsrv, args=())
-		#process_serials.daemon = True
-		#process_serials.start()
 		self.serialsrv()
 
 def main ():
