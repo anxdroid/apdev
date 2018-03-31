@@ -242,7 +242,8 @@ class APServer(object):
 			if(self.serACM.isOpen() == False):
 				self.serACM.open()
 			while (self.serACM.inWaiting() == 0):
-				pass
+				sys.stdout.write('.')
+				#pass
 			if (self.serACM.inWaiting() > 0):
 				myline = self.serACM.readline()
 				self.serACM.flushInput()
