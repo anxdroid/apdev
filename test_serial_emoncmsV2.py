@@ -250,11 +250,13 @@ class APServer(object):
 				if (intdiff % 500 == 0) :
 					#print tokens[0]
 					sys.stdout.write(tokens[0]+'...')
-				print "OK"
+
 				#pass
 			if (self.serACM.inWaiting() > 0):
 				myline = self.serACM.readline()
-				self.serACM.flushInput()
+				if (myline != "") :
+					print "OK"
+					self.serACM.flushInput()
 		except IOError as e:
 			self.initserialACM(logger)
 		except TypeError as e:
