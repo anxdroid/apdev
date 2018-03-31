@@ -254,7 +254,7 @@ class APServer(object):
 				#pass
 			if (self.serACM.inWaiting() > 0):
 				myline = self.serACM.readline()
-				if (myline != "" and myline != "\r" and myline != "\n" and msg != "0...") :
+				if (myline != "" and myline != "\r" and myline != "\n") :
 					print bcolors.WARNING+msg+bcolors.ENDC
 					self.serACM.flushInput()
 		except IOError as e:
