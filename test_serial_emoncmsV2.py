@@ -245,8 +245,9 @@ class APServer(object):
 			while (self.serACM.inWaiting() == 0):
 				now = time.time()
 				diff = 1000 * (now - start)
+				tokens = str(diff).split(.)
 				#sys.stdout.write('.')
-				print diff
+				print tokens[0]
 				#pass
 			if (self.serACM.inWaiting() > 0):
 				myline = self.serACM.readline()
