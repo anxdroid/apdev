@@ -63,11 +63,11 @@ class APServer(object):
 	def __init__(self):
 			self.srvinit()
 
-	def log(self, timestamp, nodeid, key, value) :
-		print bcolors.BOLD+timestamp+bcolors.ENDC+": "+nodeid+" "+key+" "+value
+	def log(self, nodeid, key, value) :
+		timestamp = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+		print bcolors.BOLD+timestamp+bcolors.ENDC+": "+nodeid+" "+key+" "+bcolors.BOLD+value+bcolors.ENDC
 
 	def log_emoncms(self, timestamp, nodeid, key, value, logger):
-		self.log(timestamp, nodeid, key, value)
 		conn = httplib.HTTPConnection(self.domain)
 		url = "/"+self.emoncmspath+"/input/post.json?apikey="+self.apikey+"&node="+nodeid+"&json={"+key+":"+value+"}"
 		try:
@@ -120,7 +120,7 @@ class APServer(object):
 	def parsecmd(self, cmd, logger):
 		sendingCmd = True
 		if (cmd == 'GET_CMD') :
-			print("Requesting command...")
+			#print("Requesting command...")
 			url = self.urlJobs+'?req_cmd=HEATERS'
 			password_mgr = urllib2.HTTPPasswordMgrWithDefaultRealm()
 			password_mgr.add_password(None, url, self.jobsUsr, self.jobsPwd)
@@ -134,7 +134,8 @@ class APServer(object):
 			if len(jsonData['data']) > 0 :
 				id = str(jsonData['data'][0]["id"])
 				serverCmd = id+" "+str(jsonData['data'][0]["cmd"])
-				print("Sending: "+serverCmd)
+				#print("Sending: "+serverCmd)
+				self.log(timestamp, "0", "", serverCmd)
 			if (serverCmd != "") :
 				self.serialwriteACM(serverCmd, logger)
 				time.sleep(0.5)
@@ -163,7 +164,7 @@ class APServer(object):
 		p = re.compile('[^:\s]+:[^:\s]+:[\d|\.|-]+:[^\s]+')
 		vals = p.findall(myline)
 		ts = time.time()
-		timestamp = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+		#timestamp = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
 		if (len(vals) > 0):
 			for val in vals:
 				info = val.split(':')
@@ -175,8 +176,8 @@ class APServer(object):
 					else :
 						if (info[0] in self.nodeids) :
 							if (info[1] in self.nodeids[info[0]]) :
-								#print timestamp+" "+str(val)
-								self.log_emoncms(timestamp, info[0], info[1], info[2], logger)
+								self.log_emoncms(info[0], info[1], info[2], logger)
+								self.log(nodeid, key, value)
 						else :
 							print timestamp+" "+str(val)+" not ok !"	
 
