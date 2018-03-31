@@ -248,7 +248,7 @@ class APServer(object):
 				tokens = str(diff).split(".")
 				intdiff = int(tokens[0])
 				#sys.stdout.write('.')
-				if (intdiff % 5 == 0) :
+				if (intdiff % 500 == 0) :
 					print tokens[0]
 				#pass
 			if (self.serACM.inWaiting() > 0):
