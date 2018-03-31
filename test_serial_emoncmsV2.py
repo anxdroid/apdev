@@ -244,7 +244,7 @@ class APServer(object):
 			start = time.time()
 			while (self.serACM.inWaiting() == 0):
 				now = time.time()
-				diff = 1000 * 1000 * (now - start)
+				diff = 1000 * (now - start)
 				#sys.stdout.write('.')
 				print diff
 				#pass
