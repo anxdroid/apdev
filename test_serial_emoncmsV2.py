@@ -67,7 +67,7 @@ class APServer(object):
 		timestamp = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
 		print bcolors.BOLD+timestamp+bcolors.ENDC+": "+nodeid+" "+key+" "+bcolors.BOLD+value+bcolors.ENDC
 
-	def log_emoncms(self, nodeid, key, value, logger):
+	def log_emoncms(self, nodeid, key, value):
 		conn = httplib.HTTPConnection(self.domain)
 		url = "/"+self.emoncmspath+"/input/post.json?apikey="+self.apikey+"&node="+nodeid+"&json={"+key+":"+value+"}"
 		try:
@@ -176,8 +176,8 @@ class APServer(object):
 					else :
 						if (info[0] in self.nodeids) :
 							if (info[1] in self.nodeids[info[0]]) :
-								self.log_emoncms(info[0], info[1], info[2], logger)
-								self.log(nodeid, key, value)
+								self.log_emoncms(info[0], info[1], info[2])
+								self.log(info[0], info[1], info[2])
 						else :
 							print timestamp+" "+str(val)+" not ok !"	
 
