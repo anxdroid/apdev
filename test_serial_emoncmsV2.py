@@ -18,6 +18,16 @@ import fcntl
 
 USBDEVFS_RESET= 21780
 
+class bcolors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+
 class APServer(object):
 # id nodo
 #	10: ARDUINO_EMONTX
@@ -53,29 +63,17 @@ class APServer(object):
 	def __init__(self):
 			self.srvinit()
 
+	def log(self, timestamp, nodeid, key, value) :
+		print bcolors.BOLD+timestamp+bcolors.ENDC+": "+nodeid+" "+key+" "+value
+
 	def log_emoncms(self, timestamp, nodeid, key, value, logger):
-		print timestamp+" "+nodeid+" "+key+" "+value
+		self.log(timestamp, nodeid, key, value)
 		conn = httplib.HTTPConnection(self.domain)
 		url = "/"+self.emoncmspath+"/input/post.json?apikey="+self.apikey+"&node="+nodeid+"&json={"+key+":"+value+"}"
-		#print url
 		try:
 			conn.request("GET", url)
 		except Exception as e:
 			print "HTTP error: %s" % str(e)
-
-	'''def log_event(self, category, key, value, source, notes):
-			curs = self.dbconn.cursor()
-			sql = "INSERT INTO events (category, `cmd`, value, source, params) values (%s, %s, %s, %s, %s)"
-			#print sql
-			try:
-				curs.execute(sql, (category, key, value, source, notes,))
-				#print curs._last_executed
-				#print curs.lastrowid
-			except MySQLdb.Error, e:
-				try:
-					print "MySQL Error [%d]: %s" % (e.args[0], e.args[1])
-				except IndexError:
-					print "MySQL Error: %s" % str(e)'''
 
 	def serialwriteACM(self, cmd, logger):
 		myline = ""
@@ -247,7 +245,7 @@ class APServer(object):
 				diff = 1000 * (now - start)
 				tokens = str(diff).split(".")
 				intdiff = int(tokens[0])
-				if (intdiff % 500 == 0) :
+				if (intdiff % 1000 == 0) :
 					#print tokens[0]
 					sys.stdout.write(tokens[0]+'...')
 
