@@ -247,9 +247,9 @@ class APServer(object):
 				diff = 1000 * (now - start)
 				tokens = str(diff).split(".")
 				intdiff = int(tokens[0])
-				#sys.stdout.write('.')
 				if (intdiff % 500 == 0) :
-					print tokens[0]
+					#print tokens[0]
+					sys.stdout.write(tokens[0]+'...')
 				#pass
 			if (self.serACM.inWaiting() > 0):
 				myline = self.serACM.readline()
@@ -397,7 +397,7 @@ class APServer(object):
 					print "."
 				myline = self.serialreadACM(logger)
 				if (myline != '') :
-					print('Got: '+myline)
+					#print('Got: '+myline)
 					self.parsereading(myline,logger)
 
 				#time.sleep(1)
