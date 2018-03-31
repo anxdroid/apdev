@@ -81,7 +81,7 @@ class APServer(object):
 		try:
 			if(self.serACM.isOpen() == False):
 				self.serACM.open()
-			print('Writing cmd '+cmd+' to serial...')
+			#print('Writing cmd '+cmd+' to serial...')
 			cmdToSend = cmd+'\r'
 			self.serACM.write(cmdToSend.encode())
 			self.serACM.flushOutput()
@@ -136,7 +136,7 @@ class APServer(object):
 				id = str(jsonData['data'][0]["id"])
 				serverCmd = id+" "+str(jsonData['data'][0]["cmd"])
 				#print("Sending: "+serverCmd)
-				self.log(timestamp, "0", "", serverCmd)
+				self.log("", "", "-> "+serverCmd)
 			if (serverCmd != "") :
 				self.serialwriteACM(serverCmd, logger)
 				time.sleep(0.5)
@@ -144,8 +144,9 @@ class APServer(object):
 				myline = self.serialreadACM(logger)
 				#print "...done"
 
-				if (myline != '') :
-					print('Result: '+myline)
+				if (serverCmd != '0 NOOP:NOOP' and myline != '') :
+					#print('Result: '+myline)
+					self.log("", "", "<- "+myline)
 					tokens = myline.split(":")
 					if (len(tokens) > 1 and tokens[0] == id) :
 						url = self.urlJobs+'?job_id='+tokens[0]
