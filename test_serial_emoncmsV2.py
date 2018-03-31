@@ -241,8 +241,13 @@ class APServer(object):
 		try:
 			if(self.serACM.isOpen() == False):
 				self.serACM.open()
+			start = time.time()
 			while (self.serACM.inWaiting() == 0):
-				sys.stdout.write('.')
+				now = time.time()
+				diff = now - start
+				#sys.stdout.write('.')
+				print diff
+				start = now
 				#pass
 			if (self.serACM.inWaiting() > 0):
 				myline = self.serACM.readline()
