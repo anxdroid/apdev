@@ -241,7 +241,7 @@ class APServer(object):
 			if(self.serACM.isOpen() == False):
 				self.serACM.open()
 			start = time.time()
-			sys.stdout.write(bcolors.WARNING)
+			msg = ""
 			while (self.serACM.inWaiting() == 0):
 				now = time.time()
 				diff = 1000 * (now - start)
@@ -249,13 +249,13 @@ class APServer(object):
 				intdiff = int(tokens[0])
 				if (intdiff % 1000 == 0) :
 					#print tokens[0]
-					sys.stdout.write(tokens[0]+'...')
+					msg += tokens[0]+'...'
 
 				#pass
 			if (self.serACM.inWaiting() > 0):
 				myline = self.serACM.readline()
-				if (myline != "" and myline != "\r" and myline != "\n") :
-					print "OK"+bcolors.ENDC
+				if (myline != "" and myline != "\r" and myline != "\n" and msg != "0...") :
+					print bcolors.WARNING+msg+bcolors.ENDC
 					self.serACM.flushInput()
 		except IOError as e:
 			self.initserialACM(logger)
