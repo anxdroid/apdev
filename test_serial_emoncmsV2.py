@@ -150,7 +150,7 @@ class APServer(object):
 					tokens = myline.split(":")
 					if (len(tokens) > 1 and tokens[0] == id) :
 						url = self.urlJobs+'?job_id='+tokens[0]
-						print url
+						#print url
 						password_mgr = urllib2.HTTPPasswordMgrWithDefaultRealm()
 						password_mgr.add_password(None, url, self.jobsUsr, self.jobsPwd)
 						handler = urllib2.HTTPBasicAuthHandler(password_mgr)
