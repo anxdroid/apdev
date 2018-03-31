@@ -66,7 +66,7 @@ class APServer(object):
 	def log(self, nodeid, key, value) :
 		ts = time.time()
 		timestamp = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
-		print bcolors.BOLD+timestamp+bcolors.ENDC+": "+nodeid+" "+key+" "+bcolors.BOLD+value+bcolors.ENDC
+		print bcolors.BOLD+timestamp+bcolors.ENDC+": "+nodeid+" "+key+" "+bcolors.OKBLUE+value+bcolors.ENDC
 
 	def log_emoncms(self, nodeid, key, value):
 		conn = httplib.HTTPConnection(self.domain)
@@ -146,7 +146,7 @@ class APServer(object):
 
 				if (serverCmd != '0 NOOP:NOOP' and myline != '') :
 					#print('Result: '+myline)
-					self.log("", "", "<- "+myline)
+					self.log("", "", "<- "+myline.strip())
 					tokens = myline.split(":")
 					if (len(tokens) > 1 and tokens[0] == id) :
 						url = self.urlJobs+'?job_id='+tokens[0]
@@ -241,6 +241,7 @@ class APServer(object):
 			if(self.serACM.isOpen() == False):
 				self.serACM.open()
 			start = time.time()
+			sys.stdout.write(bcolors.WARNING)
 			while (self.serACM.inWaiting() == 0):
 				now = time.time()
 				diff = 1000 * (now - start)
@@ -254,7 +255,7 @@ class APServer(object):
 			if (self.serACM.inWaiting() > 0):
 				myline = self.serACM.readline()
 				if (myline != "" and myline != "\r" and myline != "\n") :
-					print "OK"
+					print "OK"+bcolors.ENDC
 					self.serACM.flushInput()
 		except IOError as e:
 			self.initserialACM(logger)
