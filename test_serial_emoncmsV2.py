@@ -247,7 +247,7 @@ class APServer(object):
 				diff = 1000 * (now - start)
 				tokens = str(diff).split(".")
 				intdiff = int(tokens[0])
-				if (intdiff % 1000 == 0 && intdiff > 0) :
+				if (intdiff % 1000 == 0 and intdiff > 0) :
 					#print tokens[0]
 					msg += tokens[0]+'...'
 
