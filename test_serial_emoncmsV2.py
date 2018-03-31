@@ -245,7 +245,7 @@ class APServer(object):
 			while (self.serACM.inWaiting() == 0):
 				now = time.time()
 				diff = 1000 * (now - start)
-				tokens = str(diff).split(.)
+				tokens = str(diff).split(".")
 				#sys.stdout.write('.')
 				print tokens[0]
 				#pass
