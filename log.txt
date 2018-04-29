@@ -1,4 +1,5 @@
 failed to reset device: list index out of range
+<<<<<<< Updated upstream
 Using /dev/ttyACM3
 [1m2018-03-31 16:23:10[0m: 10 CURRENT_SOLAR [94m2.59[0m
 [1m2018-03-31 16:23:10[0m: 10 VOLTAGE [94m228.88[0m
@@ -14942,3 +14943,7 @@ Using /dev/ttyACM2
 [1m2018-03-31 21:47:02[0m: 10 CURRENT_SOLAR [94m0.61[0m
 [1m2018-03-31 21:47:02[0m: 10 VOLTAGE [94m228.84[0m
 [1m2018-03-31 21:47:02[0m: 10 TEMP_TERRAZZO [94m14.88[0m
+=======
+Using /dev/ttyACM0
+[93m1000...1000...1000...[0m
+>>>>>>> Stashed changes

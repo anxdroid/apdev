@@ -396,7 +396,7 @@ class APServer(object):
 		self.serialsrv()
 
 def main ():
-	sys.stdout = open("log.txt", "w")
+	sys.stdout = open("/var/log/domotic.log", "w")
 	server = APServer()
 	server.start()
 
