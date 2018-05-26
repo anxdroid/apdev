@@ -37,10 +37,10 @@ class APServer(object):
 		"30":{"CURRENT_CASA":"A", "TEMP_DISIMPEGNO":"&deg;", "TEMP_SALOTTO":"&deg;", "TEMP_SOTTOTETTO":"&deg;"},
 		"40":{"CURRENT_TERMO":"A", "LIGHT_TERRAZZO":"&perc;"}
 	}
-	domain = "192.168.1.12"
+	domain = "192.168.1.9"
 	emoncmspath = "emoncms"
 	apikey = "2a4e7605bb826a82ef3a54f4ff0267ed"
-	urlJobs = "http://192.168.1.12/temp/jobs.php"
+	urlJobs = "http://192.168.1.9/temp/jobs.php"
 	jobsUsr = "anto"
 	jobsPwd = "resistore"
 
