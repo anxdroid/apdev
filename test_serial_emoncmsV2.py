@@ -465,6 +465,8 @@ class APServerBlynk(object):
 							self.log_emoncms(info[0], info[1], info[2])
 							self.log(info[0], info[1], info[2])
 					else :
+						ts = time.time()
+						timestamp = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
 						print timestamp+" "+str(val)+" not ok !"	
 
 	def serialreadACM(self, logger):
