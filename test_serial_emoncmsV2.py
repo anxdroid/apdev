@@ -406,6 +406,7 @@ class APServerBlynk(object):
 	}
 
 	authToken = "736662121c984b3da398b973b54a3bd3"
+	port = 8080
 
 	domain = "192.168.1.9"
 	emoncmspath = "emoncms"
@@ -425,7 +426,7 @@ class APServerBlynk(object):
 		params = {}
 		value = params["pid"] = str(self.srvpid)
 		# Initialize Blynk
-		self.blynk = BlynkLib.Blynk(self.authToken)
+		self.blynk = BlynkLib.Blynk(self.authToken, self.domain, self.port)
 
 	def __init__(self):
 			self.srvinit()
