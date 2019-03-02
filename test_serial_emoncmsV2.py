@@ -426,7 +426,8 @@ class APServerBlynk(object):
 		#params = {}, True, False
 		#value = params["pid"] = str(self.srvpid)
 		# Initialize Blynk
-		self.blynk = BlynkLib.Blynk(self.authToken, self.domain, self.port)
+
+		self.blynk = BlynkLib.Blynk(self.authToken, server=self.domain, port=self.port, heartbeat=30, log=print)
 
 	def __init__(self):
 			self.srvinit()
