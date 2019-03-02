@@ -463,7 +463,7 @@ class APServerBlynk(object):
 					#logger.debug('nodeId: '+info[0])	
 					if (info[0] in self.nodeids) :
 						if (info[1] in self.nodeids[info[0]]) :
-							self.log_blynk(info[0], self.nodeids[info[0]][info[1]], info[1])
+							self.log_blynk(info[0], self.nodeids[info[0]][info[1]], info[2])
 							self.log_emoncms(info[0], info[1], info[2])
 							self.log(info[0], info[1], info[2])
 					else :
