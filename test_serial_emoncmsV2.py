@@ -440,7 +440,7 @@ class APServerBlynk(object):
 	def log_blynk(self, nodeid, key, value):
 		try:
 			print str(key)+" "+str(value)
-			self.blynk.virtual_write(key, abs(int(value)))
+			self.blynk.virtual_write(key, abs(float(value)))
 		except Exception as e:
 			print "Blynk error: %s" % str(e)
 
