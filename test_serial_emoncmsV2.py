@@ -593,7 +593,7 @@ class APServerBlynk(object):
 
 def main ():
 	sys.stdout = open("/var/log/domotic.log", "w")
-	server = APServer()
+	server = APServerBlynk()
 	server.start()
 
 if __name__ == "__main__":
