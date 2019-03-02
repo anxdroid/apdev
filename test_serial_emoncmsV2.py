@@ -438,6 +438,7 @@ class APServerBlynk(object):
 
 	def log_blynk(self, nodeid, key, value):
 		try:
+			print timestamp+" "+str(key)+" "+str(value)
 			self.blynk.virtual_write(key, value)
 		except Exception as e:
 			print "Blynk error: %s" % str(e)
@@ -458,18 +459,14 @@ class APServerBlynk(object):
 			for val in vals:
 				info = val.split(':')
 				if (len(info) == 4 and info[0] != 'MILLIS'):
-					#logger.debug('nodeId: '+info[0])
-					if (info[0] == "0" and info[1] in self.nodeids[info[0]]) :
-						#logger.debug(timestamp+" "+info[1])
-						self.parsecmd(info[1], logger)
+					#logger.debug('nodeId: '+info[0])	
+					if (info[0] in self.nodeids) :
+						if (info[1] in self.nodeids[info[0]]) :
+							self.log_blynk(info[0], self.nodeids[info[0]][info[1]], info[1])
+							self.log_emoncms(info[0], info[1], info[2])
+							self.log(info[0], info[1], info[2])
 					else :
-						if (info[0] in self.nodeids) :
-							if (info[1] in self.nodeids[info[0]]) :
-								self.log_blynk(info[0], self.nodeids[info[0]][info[1]], info[1])
-								self.log_emoncms(info[0], info[1], info[2])
-								self.log(info[0], info[1], info[2])
-						else :
-							print timestamp+" "+str(val)+" not ok !"	
+						print timestamp+" "+str(val)+" not ok !"	
 
 	def serialreadACM(self, logger):
 		myline = ""
