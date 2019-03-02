@@ -423,10 +423,10 @@ class APServerBlynk(object):
 		key="START"
 		self.srvaddress = socket.gethostbyname(socket.gethostname())
 		self.srvpid = os.getpid()
-		params = {}
+		params = {}, True, False
 		value = params["pid"] = str(self.srvpid)
 		# Initialize Blynk
-		self.blynk = BlynkLib.Blynk(self.authToken, self.domain, self.port)
+		self.blynk = BlynkLib.Blynk(self.authToken, self.domain, self.port, True, False)
 
 	def __init__(self):
 			self.srvinit()
