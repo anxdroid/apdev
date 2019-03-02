@@ -1,0 +1,52 @@
+21:32:09.784 INFO - Using data dir '/var/lib/blynk'
+21:32:12.332 INFO - Region : local. Host : 127.0.1.1.
+21:32:14.849 INFO - Initializing gmail smtp mail transport. Username : example@gmail.com. SMTP host : smtp.gmail.com:587
+21:32:15.266 INFO - Reports : 0
+21:32:15.268 INFO - Didn't find custom user certificates.
+21:32:15.275 INFO - Didn't find Let's Encrypt certificates.
+21:32:15.276 WARN - You didn't specified 'server.host' or 'contact.email' properties in server.properties file. Automatic certificate generation is turned off. Please specify above properties for automatic certificates retrieval.
+21:32:15.276 WARN - ATTENTION. Server certificate paths (cert : '/home/pi/apdev/blynk', key : '/home/pi/apdev/blynk') not valid. Using embedded server certs and one way ssl. This is not secure. Please replace it with your own certs.
+21:32:20.739 INFO - HTTP API and WebSockets server listening at 8080 port.
+21:32:20.745 INFO - HTTPS API, WebSockets and Admin page server listening at 9443 port.
+21:32:20.753 INFO - Mqtt hardware server listening at 8440 port.
+21:32:23.623 INFO - paoletti.antonello@gmail.com hardware joined.
+21:32:54.516 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
+21:37:30.079 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
+21:40:11.672 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
+21:40:36.866 INFO - paoletti.antonello@gmail.com hardware joined.
+21:41:25.832 INFO - paoletti.antonello@gmail.com hardware joined.
+21:44:49.126 INFO - paoletti.antonello@gmail.com hardware joined.
+21:56:31.863 INFO - paoletti.antonello@gmail.com hardware joined.
+21:57:54.438 INFO - paoletti.antonello@gmail.com hardware joined.
+21:58:47.725 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
+22:02:17.187 INFO - paoletti.antonello@gmail.com hardware joined.
+22:03:31.290 INFO - paoletti.antonello@gmail.com hardware joined.
+22:07:36.124 INFO - paoletti.antonello@gmail.com hardware joined.
+22:10:44.678 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
+22:11:46.527 INFO - paoletti.antonello@gmail.com hardware joined.
+22:12:05.301 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
+22:14:14.786 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
+22:15:11.116 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
+22:18:55.632 INFO - paoletti.antonello@gmail.com hardware joined.
+22:23:25.666 INFO - paoletti.antonello@gmail.com hardware joined.
+22:26:30.564 INFO - paoletti.antonello@gmail.com hardware joined.
+22:26:41.476 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
+22:30:23.676 INFO - paoletti.antonello@gmail.com hardware joined.
+22:33:16.654 INFO - paoletti.antonello@gmail.com hardware joined.
+22:33:26.900 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
+22:34:29.951 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
+22:37:03.703 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
+22:38:17.656 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
+22:38:39.702 INFO - paoletti.antonello@gmail.com hardware joined.
+22:45:06.836 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
+22:57:09.306 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
+23:13:06.323 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
+23:16:21.618 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
+23:16:43.181 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
+23:16:47.342 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
+23:20:26.849 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
+23:21:32.963 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
+23:24:04.740 INFO - paoletti.antonello@gmail.com hardware joined.
+23:27:32.776 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
+23:29:02.989 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
+23:44:31.058 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
