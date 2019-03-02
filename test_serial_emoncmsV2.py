@@ -440,7 +440,7 @@ class APServerBlynk(object):
 	def log_blynk(self, nodeid, key, value):
 		try:
 			print str(key)+" "+str(value)
-			self.blynk.virtual_write(key, value)
+			self.blynk.virtual_write(key, abs(int(value))
 		except Exception as e:
 			print "Blynk error: %s" % str(e)
 
@@ -581,6 +581,7 @@ class APServerBlynk(object):
 				if (myline != '') :
 					#print('Got: '+myline)
 					self.parsereading(myline,logger)
+					time.sleep(5)
 				sys.stdout.flush()
 		except:
 			logger.exception("Problem handling request")
