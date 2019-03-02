@@ -402,7 +402,7 @@ class APServerBlynk(object):
 # id nodo
 #	10: ARDUINO_EMONTX
 	nodeids = {
-		"10":{"POWER_SOLAR":39, "CURRENT_SOLAR":38, "VOLTAGE":37, "TEMP_TERRAZZO":35},
+		"10":{"POWER_SOLAR":30, "CURRENT_SOLAR":31, "VOLTAGE":0, "TEMP_TERRAZZO":6},
 	}
 
 	authToken = "736662121c984b3da398b973b54a3bd3"
