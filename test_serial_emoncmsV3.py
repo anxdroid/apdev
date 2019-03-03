@@ -120,8 +120,10 @@ class BlynkSerial(object):
 			self.blynk.virtual_write(key, abs(float(value)))
 		except Exception as e:
 			print "Blynk error: %s" % str(e)
+			return 1;
+		return 0;
 
-	def logemoncms(self, nodeid, key, value):
+	def logEmoncms(self, nodeid, key, value):
 		conn = httplib.HTTPConnection(self.domain)
 		url = "/"+self.emoncmspath+"/input/post.json?apikey="+self.apikey+"&node="+nodeid+"&json={"+key+":"+value+"}"
 		try:
@@ -129,7 +131,7 @@ class BlynkSerial(object):
 		except Exception as e:
 			print "HTTP error: %s" % str(e)
 
-	def parsereading(self, myline):
+	def parseReading(self, myline):
 		#Some data was received
 		p = re.compile('[^:\s]+:[^:\s]+:[\d|\.|-]+:[^\s]+')
 		vals = p.findall(myline)
@@ -139,9 +141,9 @@ class BlynkSerial(object):
 				if (len(info) == 4 and info[0] != 'MILLIS'):
 					if (info[0] in self.nodeids) :
 						if (info[1] in self.nodeids[info[0]]) :
-							self.logBlynk(info[0], self.nodeids[info[0]][info[1]], info[2])
-							self.logemoncms(info[0], info[1], info[2])
 							self.log(info[0], info[1], info[2])
+							self.logEmoncms(info[0], info[1], info[2])
+							return self.logBlynk(info[0], self.nodeids[info[0]][info[1]], info[2])
 					else :
 						ts = time.time()
 						timestamp = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
@@ -197,18 +199,19 @@ class BlynkSerial(object):
 		#try:
 			myline = self.serialReadACM()
 			if (myline != '') :
-				self.parsereading(myline)
-			sys.stdout.flush()
-		#except:
-		#	print("Problem handling request")
-		#finally:
-		#	print("Closing serial process")
+				return self.parseReading(myline)
 
 authToken = "736662121c984b3da398b973b54a3bd3"
 port = 8080
 ip = "192.168.1.9"
 blynk = BlynkLib.Blynk(authToken, server=ip, port=port)
 timer = BlynkTimer()
+
+def readVal():
+	retval = blynkSerial.serialRead()
+	if (retval == 1):
+		blynk = BlynkLib.Blynk(authToken, server=ip, port=port)
+	sys.stdout.flush()
 
 @blynk.ON("connected")
 def blynk_connected(ping):
@@ -231,7 +234,7 @@ def blynk_handle_vpins_read(pin):
 def main():
 	sys.stdout = open("/var/log/domotic.log", "w")
 	blynkSerial = BlynkSerial(blynk)
-	timer.set_interval(5, blynkSerial.serialRead)
+	timer.set_interval(5, readVal)
 	while True:
 		blynk.run()
 		timer.run()
