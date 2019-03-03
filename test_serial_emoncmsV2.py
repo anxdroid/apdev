@@ -576,7 +576,7 @@ class APServerBlynk(object):
 			if (myline != '') :
 				#print('Got: '+myline)
 				self.parsereading(myline,logger)
-				#time.sleep(5)
+				time.sleep(5)
 			sys.stdout.flush()
 		except:
 			logger.exception("Problem handling request")
@@ -590,11 +590,12 @@ class APServerBlynk(object):
 		self.resetserial("FT232")
 		pathACM = self.initserialACM(logger)
 		#pathUSB = self.initserialUSB(logger)
-		self.blynk.set_user_task(self.serialread(), 5000)
 		try:
 			while True:
 				try: 
 					self.blynk.run()
+					self.serialread()
+
 				except BrokenPipeError as e:
 					print('Socket error {}'.format(e))
 					blynk.on_connect(self.blynkconnected)
