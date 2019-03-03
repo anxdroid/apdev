@@ -419,6 +419,10 @@ class APServerBlynk(object):
 
 	lastUSBreading = 0
 
+	def blynkconnected(self):
+		print("Updating all values from the server...")
+		blynk.sync_all()
+
 	def srvinit(self):
 		key="START"
 		self.srvaddress = socket.gethostbyname(socket.gethostname())
@@ -565,7 +569,19 @@ class APServerBlynk(object):
 			fcntl.ioctl(f, USBDEVFS_RESET, 0)
 		except Exception, msg:
 			print "failed to reset device:", msg
-		
+
+	def serialread(self):
+		try:
+			myline = self.serialreadACM(logger)
+			if (myline != '') :
+				#print('Got: '+myline)
+				self.parsereading(myline,logger)
+				#time.sleep(5)
+			sys.stdout.flush()
+		except:
+			logger.exception("Problem handling request")
+		finally:
+			logger.debug("Closing serial process")
 
 	def serialsrv(self):
 		logging.basicConfig(level=logging.DEBUG)
@@ -574,15 +590,29 @@ class APServerBlynk(object):
 		self.resetserial("FT232")
 		pathACM = self.initserialACM(logger)
 		#pathUSB = self.initserialUSB(logger)
+		self.blynk.set_user_task(self.serialread(), 5000)
 		try:
 			while True:
-				self.blynk.run()
-				myline = self.serialreadACM(logger)
-				if (myline != '') :
+				try: 
+					self.blynk.run()
+				except BrokenPipeError as e:
+					print('Socket error {}'.format(e))
+					blynk.on_connect(self.blynkconnected)
+				except IOError as e:
+					if e.Errno == Errno.EPIPE:
+						print('EPIPE error {}'.format(e))
+						blynk.on_connect(self.blynkconnected)
+					else:
+						print("Unexpected error:", sys.exc_info()[0])
+						raise
+				
+				
+				#myline = self.serialreadACM(logger)
+				#if (myline != '') :
 					#print('Got: '+myline)
-					self.parsereading(myline,logger)
-					time.sleep(5)
-				sys.stdout.flush()
+					#self.parsereading(myline,logger)
+					#time.sleep(5)
+				#sys.stdout.flush()
 		except:
 			logger.exception("Problem handling request")
 		finally:
