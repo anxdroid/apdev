@@ -7,6 +7,7 @@ import logging
 import socket
 import multiprocessing
 import os
+import sys
 import json
 import httplib
 import urllib2
