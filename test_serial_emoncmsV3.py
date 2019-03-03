@@ -193,11 +193,10 @@ class BlynkSerial(object):
 			self.initSerial()
 		return myline		
 
-	def serialread(self):
+	def serialRead(self):
 		#try:
 			myline = self.serialReadACM()
 			if (myline != '') :
-				#print('Got: '+myline)
 				self.parsereading(myline)
 			sys.stdout.flush()
 		#except:
@@ -228,11 +227,10 @@ def blynk_handle_vpins_read(pin):
 	print("Server asks a value for V{}".format(pin))
 	blynk.virtual_write(pin, 0)
 
-
 def main():
 	sys.stdout = open("/var/log/domotic.log", "w")
 	blynkSerial = BlynkSerial(blynk)
-	timer.set_interval(5, blynkSerial.serialread)
+	timer.set_interval(5, blynkSerial.serialRead)
 	while True:
 		blynk.run()
 		timer.run()
