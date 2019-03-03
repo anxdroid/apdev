@@ -88,7 +88,7 @@ class BlynkSerial(object):
 					self.serACM.open() 
 				self.serACM.setDTR(False)
 				self.serACM.flushInput()
-				time.sleep(1)
+				#time.sleep(1)
 				self.serACM.setDTR(True)
 			except IOError as e:
 				exc_type, exc_value, exc_traceback = sys.exc_info()
@@ -98,7 +98,7 @@ class BlynkSerial(object):
 				self.initSerial()
 		else:
 			print("Serial not found !")
-			time.sleep(2)
+			#time.sleep(2)
 			self.initSerial()
 		return path	
 
@@ -177,11 +177,11 @@ class BlynkSerial(object):
 			self.serACM.close()
 			time.exc_type, exc_value, exc_traceback = sys.exc_info()
 			print "*** print_tb:"
-			time.sleep(2)
+			#time.sleep(2)
 			self.initSerial()
 			#time.exc_type, exc_value, exc_traceback = sys.exc_info()
 			print "*** print_tb:"
-			time.sleep(5)
+			#time.sleep(5)
 		except serial.SerialException as e:
 			print(e)
 			print "Error on line "+format(sys.exc_info()[-1].tb_lineno)()
@@ -189,7 +189,7 @@ class BlynkSerial(object):
 			self.serACM.close()
 			time.exc_type, exc_value, exc_traceback = sys.exc_info()
 			print "*** print_tb:"
-			time.sleep(2)
+			#time.sleep(2)
 			self.initSerial()
 		return myline		
 
