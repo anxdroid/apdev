@@ -31,7 +31,7 @@ class bcolors:
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 
-class APServerBlynk(object):
+class BlynkSerial(object):
 # id nodo
 #	10: ARDUINO_EMONTX
 	nodeids = {
@@ -50,13 +50,28 @@ class APServerBlynk(object):
 
 	sendingCmd = False
 
-	lastUSBreading = 0		
+	lastUSBreading = 0
+
+	def resetserial(self, driver):
+		try:
+			lsusb_out = Popen("lsusb | grep -i %s"%driver, shell=True, bufsize=64, stdin=PIPE, stdout=PIPE, close_fds=True).stdout.read().strip().split()
+			bus = lsusb_out[1]
+			device = lsusb_out[3][:-1]
+			f = open("/dev/bus/usb/%s/%s"%(bus, device), 'w', os.O_WRONLY)
+			fcntl.ioctl(f, USBDEVFS_RESET, 0)
+		except Exception, msg:
+			print "failed to reset device:", msg		
 
 	def __init__(self, blynk):
 		key="START"
 		self.srvaddress = socket.gethostbyname(socket.gethostname())
 		self.srvpid = os.getpid()
 		self.blynk = blynk
+		logging.basicConfig(level=logging.DEBUG)
+		self.logger = logging.getLogger("process-serial")
+		print("Starting serial process")
+		self.resetserial("FT232")
+		pathACM = self.initserialACM()
 
 	def log(self, nodeid, key, value) :
 		ts = time.time()
@@ -78,7 +93,7 @@ class APServerBlynk(object):
 		except Exception as e:
 			print "HTTP error: %s" % str(e)
 
-	def parsereading(self, myline, logger):
+	def parsereading(self, myline):
 		#Some data was received
 		p = re.compile('[^:\s]+:[^:\s]+:[\d|\.|-]+:[^\s]+')
 		vals = p.findall(myline)
@@ -86,7 +101,6 @@ class APServerBlynk(object):
 			for val in vals:
 				info = val.split(':')
 				if (len(info) == 4 and info[0] != 'MILLIS'):
-					#logger.debug('nodeId: '+info[0])	
 					if (info[0] in self.nodeids) :
 						if (info[1] in self.nodeids[info[0]]) :
 							self.logblynk(info[0], self.nodeids[info[0]][info[1]], info[2])
@@ -97,7 +111,7 @@ class APServerBlynk(object):
 						timestamp = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
 						print timestamp+" "+str(val)+" not ok !"	
 
-	def serialreadACM(self, logger):
+	def serialreadACM(self):
 		myline = ""
 		try:
 			if(self.serACM.isOpen() == False):
@@ -117,9 +131,9 @@ class APServerBlynk(object):
 					print bcolors.WARNING+msg+bcolors.ENDC
 					self.serACM.flushInput()
 		except IOError as e:
-			self.initserialACM(logger)
+			self.initserialACM()
 		except TypeError as e:
-			logger.debug(e)
+			print(e)
 			exc_type, exc_value, exc_traceback = sys.exc_info()
 			print "*** print_tb:"
 			traceback.print_tb(exc_traceback, limit=1, file=sys.stdout)
@@ -128,22 +142,22 @@ class APServerBlynk(object):
 			time.exc_type, exc_value, exc_traceback = sys.exc_info()
 			print "*** print_tb:"
 			time.sleep(2)
-			self.initserialACM(logger)
+			self.initserialACM()
 			#time.exc_type, exc_value, exc_traceback = sys.exc_info()
 			print "*** print_tb:"
 			time.sleep(5)
 		except serial.SerialException as e:
-			logger.debug(e)
+			print(e)
 			print "Error on line "+format(sys.exc_info()[-1].tb_lineno)()
 			self.serACM.flushInput()
 			self.serACM.close()
 			time.exc_type, exc_value, exc_traceback = sys.exc_info()
 			print "*** print_tb:"
 			time.sleep(2)
-			self.initserialACM(logger)
+			self.initserialACM()
 		return myline
 
-	def initserialACM(self, logger):
+	def initserialACM(self):
 		#print "Resetting ttyACM..."
 		path = ""
 		for port_no, description, address in serial.tools.list_ports.comports() :
@@ -175,57 +189,33 @@ class APServerBlynk(object):
 				print "*** print_tb:"
 				traceback.print_tb(exc_traceback, limit=1, file=sys.stdout)
 				self.resetserial("Arduino")
-				self.initserialACM(logger)
+				self.initserialACM()
 		else:
 			print("Serial not found !")
 			time.sleep(2)
-			self.initserialACM(logger)
+			self.initserialACM()
 		return path		
-
-	def resetserial(self, driver):
-		try:
-			lsusb_out = Popen("lsusb | grep -i %s"%driver, shell=True, bufsize=64, stdin=PIPE, stdout=PIPE, close_fds=True).stdout.read().strip().split()
-			bus = lsusb_out[1]
-			device = lsusb_out[3][:-1]
-			f = open("/dev/bus/usb/%s/%s"%(bus, device), 'w', os.O_WRONLY)
-			fcntl.ioctl(f, USBDEVFS_RESET, 0)
-		except Exception, msg:
-			print "failed to reset device:", msg
 
 	def serialread(self):
 		try:
-			myline = self.serialreadACM(logger)
+			myline = self.serialreadACM()
 			if (myline != '') :
 				#print('Got: '+myline)
-				self.parsereading(myline,logger)
-				time.sleep(5)
+				self.parsereading(myline)
 			sys.stdout.flush()
 		except:
-			logger.exception("Problem handling request")
+			print("Problem handling request")
 		finally:
-			logger.debug("Closing serial process")
-
-	def serialsrv(self):
-		logging.basicConfig(level=logging.DEBUG)
-		logger = logging.getLogger("process-serial")
-		print("Starting serial process")
-		self.resetserial("FT232")
-		pathACM = self.initserialACM(logger)
-		while True:
-			try: 
-				self.blynk.run()
-				self.serialread()
-			except:
-				print("Problem handling request")
-			finally:
-				print("Closing serial process")
-	def start(self):
-		self.serialsrv()
+			print("Closing serial process")
 
 authToken = "736662121c984b3da398b973b54a3bd3"
 port = 8080
 domain = "192.168.1.9"
 blynk = BlynkLib.Blynk(authToken, server=domain, port=port)
+blynkSerial = BlynkSerial(blynk)
+
+# Create BlynkTimer Instance
+timer = BlynkTimer()
 
 @blynk.ON("connected")
 def blynk_connected(ping):
@@ -244,10 +234,17 @@ def blynk_handle_vpins_read(pin):
 	print("Server asks a value for V{}".format(pin))
 	blynk.virtual_write(pin, 0)
 
-def main ():
+
+def main():
 	sys.stdout = open("/var/log/domotic.log", "w")
-	server = APServerBlynk(blynk)
-	server.start()
+	timer.set_interval(5, blynkSerial.serialread())
+	while True:
+		try: 
+			blynk.run()
+		except:
+			print("Problem handling request")
+		finally:
+			print("Closing serial process")
 
 if __name__ == "__main__":
 		main()
