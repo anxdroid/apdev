@@ -242,14 +242,13 @@ def blynk_handle_vpins_read(pin):
 	print("Server asks a value for V{}".format(pin))
 	blynk.virtual_write(pin, 0)
 
+authToken = "736662121c984b3da398b973b54a3bd3"
+port = 8080
+domain = "192.168.1.9"
+blynk = BlynkLib.Blynk(authToken, server=domain, port=port)
+
 def main ():
 	sys.stdout = open("/var/log/domotic.log", "w")
-
-	authToken = "736662121c984b3da398b973b54a3bd3"
-	port = 8080
-	domain = "192.168.1.9"
-	blynk = BlynkLib.Blynk(authToken, server=domain, port=port)
-
 	server = APServerBlynk(blynk)
 	server.start()
 
