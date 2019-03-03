@@ -208,7 +208,7 @@ class APServerBlynk(object):
 	def serialsrv(self):
 		logging.basicConfig(level=logging.DEBUG)
 		logger = logging.getLogger("process-serial")
-		logger.debug("Starting serial process")
+		print("Starting serial process")
 		self.resetserial("FT232")
 		pathACM = self.initserialACM(logger)
 		while True:
@@ -216,9 +216,9 @@ class APServerBlynk(object):
 				self.blynk.run()
 				self.serialread()
 			except:
-				logger.exception("Problem handling request")
+				print("Problem handling request")
 			finally:
-				logger.debug("Closing serial process")
+				print("Closing serial process")
 	def start(self):
 		self.serialsrv()
 
