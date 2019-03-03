@@ -114,7 +114,7 @@ class BlynkSerial(object):
 		timestamp = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
 		print bcolors.BOLD+timestamp+bcolors.ENDC+": "+nodeid+" "+key+" "+bcolors.OKBLUE+value+bcolors.ENDC
 
-	def logblynk(self, nodeid, key, value):
+	def logBlynk(self, nodeid, key, value):
 		try:
 			print str(key)+" "+str(value)
 			self.blynk.virtual_write(key, abs(float(value)))
@@ -139,7 +139,7 @@ class BlynkSerial(object):
 				if (len(info) == 4 and info[0] != 'MILLIS'):
 					if (info[0] in self.nodeids) :
 						if (info[1] in self.nodeids[info[0]]) :
-							self.logblynk(info[0], self.nodeids[info[0]][info[1]], info[2])
+							self.logBlynk(info[0], self.nodeids[info[0]][info[1]], info[2])
 							self.logemoncms(info[0], info[1], info[2])
 							self.log(info[0], info[1], info[2])
 					else :
@@ -217,6 +217,7 @@ def blynk_connected(ping):
 @blynk.ON("disconnected")
 def blynk_disconnected():
 	print('Blynk disconnected')
+	blynk = BlynkLib.Blynk(authToken, server=ip, port=port)
 
 @blynk.ON("V*")
 def blynk_handle_vpins(pin, value):
