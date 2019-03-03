@@ -194,16 +194,16 @@ class BlynkSerial(object):
 		return myline		
 
 	def serialread(self):
-		try:
+		#try:
 			myline = self.serialReadACM()
 			if (myline != '') :
 				#print('Got: '+myline)
 				self.parsereading(myline)
 			sys.stdout.flush()
-		except:
-			print("Problem handling request")
-		finally:
-			print("Closing serial process")
+		#except:
+		#	print("Problem handling request")
+		#finally:
+		#	print("Closing serial process")
 
 authToken = "736662121c984b3da398b973b54a3bd3"
 port = 8080
