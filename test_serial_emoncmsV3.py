@@ -214,10 +214,10 @@ timer = BlynkTimer()
 def readVal():
 	retval = blynkSerial.serialRead()
 	if (retval == 1):
-		sleep(5)
+		time.sleep(5)
 		print('Reconnecting...')
 		blynk.disconnect()
-		sleep(5)
+		time.sleep(5)
 		blynk.connect()
 	sys.stdout.flush()
 
