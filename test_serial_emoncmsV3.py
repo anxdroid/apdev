@@ -52,7 +52,7 @@ class APServerBlynk(object):
 
 	lastUSBreading = 0		
 
-	def __init__(self):
+	def __init__(self, blynk):
 		key="START"
 		self.srvaddress = socket.gethostbyname(socket.gethostname())
 		self.srvpid = os.getpid()
