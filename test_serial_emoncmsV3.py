@@ -52,19 +52,19 @@ class APServerBlynk(object):
 
 	lastUSBreading = 0
 
-	@blynk.ON("connected")
+	@self.blynk.ON("connected")
 	def blynk_connected(self, ping):
 		print('Blynk ready. Ping:', ping, 'ms')
 
-	@blynk.ON("disconnected")
+	@self.blynk.ON("disconnected")
 	def blynk_disconnected(self):
 		print('Blynk disconnected')
 
-	@blynk.ON("V*")
+	@self.blynk.ON("V*")
 	def blynk_handle_vpins(self, pin, value):
 		print("V{} value: {}".format(pin, value))
 
-	@blynk.ON("readV*")
+	@self.blynk.ON("readV*")
 	def blynk_handle_vpins_read(self, pin):
 		print("Server asks a value for V{}".format(pin))
 		self.blynk.virtual_write(pin, 0)
