@@ -31,7 +31,7 @@ class bcolors:
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 
-class APServerBlynk(object):
+class APServerBlynk():
 # id nodo
 #	10: ARDUINO_EMONTX
 	nodeids = {
