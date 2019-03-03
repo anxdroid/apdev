@@ -31,7 +31,7 @@ class bcolors:
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 
-class APServerBlynk():
+class APServerBlynk(object):
 # id nodo
 #	10: ARDUINO_EMONTX
 	nodeids = {
@@ -50,16 +50,13 @@ class APServerBlynk():
 
 	sendingCmd = False
 
-	lastUSBreading = 0
+	lastUSBreading = 0		
 
-	def srvinit(self, blynk):
+	def __init__(self):
 		key="START"
 		self.srvaddress = socket.gethostbyname(socket.gethostname())
 		self.srvpid = os.getpid()
 		self.blynk = blynk
-
-	def __init__(self):
-			self.srvinit()
 
 	def log(self, nodeid, key, value) :
 		ts = time.time()
