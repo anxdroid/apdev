@@ -207,7 +207,7 @@ ip = "192.168.1.9"
 blynk = BlynkLib.Blynk(authToken, server=ip, port=port)
 timer = BlynkTimer()
 
-def readVal():
+def readVal(blynkSerial):
 	retval = blynkSerial.serialRead()
 	if (retval == 1):
 		blynk = BlynkLib.Blynk(authToken, server=ip, port=port)
@@ -234,7 +234,7 @@ def blynk_handle_vpins_read(pin):
 def main():
 	sys.stdout = open("/var/log/domotic.log", "w")
 	blynkSerial = BlynkSerial(blynk)
-	timer.set_interval(5, readVal)
+	timer.set_interval(5, readVal(blynkSerial))
 	while True:
 		blynk.run()
 		timer.run()
