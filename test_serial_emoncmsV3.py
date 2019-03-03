@@ -143,11 +143,14 @@ class BlynkSerial(object):
 						if (info[1] in self.nodeids[info[0]]) :
 							self.log(info[0], info[1], info[2])
 							self.logEmoncms(info[0], info[1], info[2])
-							return self.logBlynk(info[0], self.nodeids[info[0]][info[1]], info[2])
+							retval = self.logBlynk(info[0], self.nodeids[info[0]][info[1]], info[2])
+							if (retval == 1) :
+								return 1
 					else :
 						ts = time.time()
 						timestamp = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
-						print timestamp+" "+str(val)+" not ok !"	
+						print timestamp+" "+str(val)+" not ok !"
+		return 0
 
 	def serialReadACM(self):
 		myline = ""
