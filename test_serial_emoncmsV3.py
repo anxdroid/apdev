@@ -18,7 +18,7 @@ from subprocess import Popen, PIPE
 import fcntl
 
 import BlynkLib
-import BlynkTimer
+from BlynkTimer import BlynkTimer
 
 USBDEVFS_RESET= 21780
 
