@@ -214,7 +214,11 @@ timer = BlynkTimer()
 def readVal():
 	retval = blynkSerial.serialRead()
 	if (retval == 1):
-		blynk = BlynkLib.Blynk(authToken, server=ip, port=port)
+		sleep(5)
+		print('Reconnecting...')
+		blynk.disconnect()
+		sleep(5)
+		blynk.connect()
 	sys.stdout.flush()
 
 @blynk.ON("connected")
