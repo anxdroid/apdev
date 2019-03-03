@@ -52,28 +52,11 @@ class APServerBlynk(object):
 
 	lastUSBreading = 0
 
-	@self.blynk.ON("connected")
-	def blynk_connected(self, ping):
-		print('Blynk ready. Ping:', ping, 'ms')
-
-	@self.blynk.ON("disconnected")
-	def blynk_disconnected(self):
-		print('Blynk disconnected')
-
-	@self.blynk.ON("V*")
-	def blynk_handle_vpins(self, pin, value):
-		print("V{} value: {}".format(pin, value))
-
-	@self.blynk.ON("readV*")
-	def blynk_handle_vpins_read(self, pin):
-		print("Server asks a value for V{}".format(pin))
-		self.blynk.virtual_write(pin, 0)
-
-	def srvinit(self):
+	def srvinit(self, blynk):
 		key="START"
 		self.srvaddress = socket.gethostbyname(socket.gethostname())
 		self.srvpid = os.getpid()
-		self.blynk = BlynkLib.Blynk(self.authToken, server=self.domain, port=self.port)
+		self.blynk = blynk
 
 	def __init__(self):
 			self.srvinit()
@@ -242,10 +225,32 @@ class APServerBlynk(object):
 	def start(self):
 		self.serialsrv()
 
+@blynk.ON("connected")
+def blynk_connected(ping):
+	print('Blynk ready. Ping:', ping, 'ms')
+
+@blynk.ON("disconnected")
+def blynk_disconnected():
+	print('Blynk disconnected')
+
+@blynk.ON("V*")
+def blynk_handle_vpins(pin, value):
+	print("V{} value: {}".format(pin, value))
+
+@blynk.ON("readV*")
+def blynk_handle_vpins_read(pin):
+	print("Server asks a value for V{}".format(pin))
+	blynk.virtual_write(pin, 0)
 
 def main ():
 	sys.stdout = open("/var/log/domotic.log", "w")
-	server = APServerBlynk()
+
+	authToken = "736662121c984b3da398b973b54a3bd3"
+	port = 8080
+	domain = "192.168.1.9"
+	blynk = BlynkLib.Blynk(authToken, server=domain, port=port)
+
+	server = APServerBlynk(blynk)
 	server.start()
 
 if __name__ == "__main__":
