@@ -597,16 +597,17 @@ class APServerBlynk(object):
 					self.blynk.run()
 					self.serialread()
 
-				except BrokenPipeError as e:
-					print('Socket error {}'.format(e))
+				#except BrokenPipeError as e:
+				#	print('Socket error {}'.format(e))
+				#	blynk.on_connect(self.blynkconnected)
+				#except IOError as e:
+				except:
+					#if e.Errno == Errno.EPIPE:
+						#print('EPIPE error {}'.format(e))
 					blynk.on_connect(self.blynkconnected)
-				except IOError as e:
-					if e.Errno == Errno.EPIPE:
-						print('EPIPE error {}'.format(e))
-						blynk.on_connect(self.blynkconnected)
-					else:
-						print("Unexpected error:", sys.exc_info()[0])
-						raise
+					#else:
+						#print("Unexpected error:", sys.exc_info()[0])
+						#raise
 				
 				
 				#myline = self.serialreadACM(logger)
