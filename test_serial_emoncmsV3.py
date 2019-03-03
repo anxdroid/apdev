@@ -53,7 +53,7 @@ class BlynkSerial(object):
 
 	lastUSBreading = 0
 
-	def resetserial(self, driver):
+	def resetSerial(self, driver):
 		try:
 			lsusb_out = Popen("lsusb | grep -i %s"%driver, shell=True, bufsize=64, stdin=PIPE, stdout=PIPE, close_fds=True).stdout.read().strip().split()
 			bus = lsusb_out[1]
@@ -61,18 +61,53 @@ class BlynkSerial(object):
 			f = open("/dev/bus/usb/%s/%s"%(bus, device), 'w', os.O_WRONLY)
 			fcntl.ioctl(f, USBDEVFS_RESET, 0)
 		except Exception, msg:
-			print "failed to reset device:", msg		
+			print "failed to reset device:", msg	
+
+	def initSerial(self):
+		#print "Resetting ttyACM..."
+		path = ""
+		for port_no, description, address in serial.tools.list_ports.comports() :
+			if 'ACM' in description:
+				#print(address)
+				path = port_no
+				break
+		if path != "" :
+			print "Using "+path
+			try:
+				self.serACM = serial.Serial(path,
+					baudrate=9600,
+					bytesize=serial.EIGHTBITS,
+					parity=serial.PARITY_NONE,
+					stopbits=serial.STOPBITS_ONE,
+					timeout=1,
+					xonxoff=0,
+					rtscts=0
+				)
+
+				if(self.serACM.isOpen() == False):
+					self.serACM.open() 
+				self.serACM.setDTR(False)
+				self.serACM.flushInput()
+				time.sleep(1)
+				self.serACM.setDTR(True)
+			except IOError as e:
+				exc_type, exc_value, exc_traceback = sys.exc_info()
+				print "*** print_tb:"
+				traceback.print_tb(exc_traceback, limit=1, file=sys.stdout)
+				self.resetSerial("Arduino")
+				self.initSerial()
+		else:
+			print("Serial not found !")
+			time.sleep(2)
+			self.initSerial()
+		return path	
 
 	def __init__(self, blynk):
 		key="START"
-		self.srvaddress = socket.gethostbyname(socket.gethostname())
-		self.srvpid = os.getpid()
 		self.blynk = blynk
-		logging.basicConfig(level=logging.DEBUG)
-		self.logger = logging.getLogger("process-serial")
 		print("Starting serial process")
-		self.resetserial("FT232")
-		pathACM = self.initserialACM()
+		self.resetSerial("FT232")
+		pathACM = self.initSerial()
 
 	def log(self, nodeid, key, value) :
 		ts = time.time()
@@ -112,7 +147,7 @@ class BlynkSerial(object):
 						timestamp = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
 						print timestamp+" "+str(val)+" not ok !"	
 
-	def serialreadACM(self):
+	def serialReadACM(self):
 		myline = ""
 		try:
 			if(self.serACM.isOpen() == False):
@@ -132,7 +167,7 @@ class BlynkSerial(object):
 					print bcolors.WARNING+msg+bcolors.ENDC
 					self.serACM.flushInput()
 		except IOError as e:
-			self.initserialACM()
+			self.initSerial()
 		except TypeError as e:
 			print(e)
 			exc_type, exc_value, exc_traceback = sys.exc_info()
@@ -143,7 +178,7 @@ class BlynkSerial(object):
 			time.exc_type, exc_value, exc_traceback = sys.exc_info()
 			print "*** print_tb:"
 			time.sleep(2)
-			self.initserialACM()
+			self.initSerial()
 			#time.exc_type, exc_value, exc_traceback = sys.exc_info()
 			print "*** print_tb:"
 			time.sleep(5)
@@ -155,51 +190,12 @@ class BlynkSerial(object):
 			time.exc_type, exc_value, exc_traceback = sys.exc_info()
 			print "*** print_tb:"
 			time.sleep(2)
-			self.initserialACM()
-		return myline
-
-	def initserialACM(self):
-		#print "Resetting ttyACM..."
-		path = ""
-		for port_no, description, address in serial.tools.list_ports.comports() :
-			if 'ACM' in description:
-				#print(address)
-				path = port_no
-				break
-		if path != "" :
-			print "Using "+path
-			try:
-				self.serACM = serial.Serial(path,
-					baudrate=9600,
-					bytesize=serial.EIGHTBITS,
-					parity=serial.PARITY_NONE,
-					stopbits=serial.STOPBITS_ONE,
-					timeout=1,
-					xonxoff=0,
-					rtscts=0
-				)
-
-				if(self.serACM.isOpen() == False):
-					self.serACM.open() 
-				self.serACM.setDTR(False)
-				self.serACM.flushInput()
-				time.sleep(1)
-				self.serACM.setDTR(True)
-			except IOError as e:
-				exc_type, exc_value, exc_traceback = sys.exc_info()
-				print "*** print_tb:"
-				traceback.print_tb(exc_traceback, limit=1, file=sys.stdout)
-				self.resetserial("Arduino")
-				self.initserialACM()
-		else:
-			print("Serial not found !")
-			time.sleep(2)
-			self.initserialACM()
-		return path		
+			self.initSerial()
+		return myline		
 
 	def serialread(self):
 		try:
-			myline = self.serialreadACM()
+			myline = self.serialReadACM()
 			if (myline != '') :
 				#print('Got: '+myline)
 				self.parsereading(myline)
@@ -240,12 +236,8 @@ def main():
 	sys.stdout = open("/var/log/domotic.log", "w")
 	timer.set_interval(5, blynkSerial.serialread())
 	while True:
-		try: 
-			blynk.run()
-		except:
-			print("Problem handling request")
-		finally:
-			print("Closing serial process")
+		blynk.run()
+		timer.run()
 
 if __name__ == "__main__":
 		main()
