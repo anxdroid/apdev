@@ -604,7 +604,7 @@ class APServerBlynk(object):
 				except:
 					#if e.Errno == Errno.EPIPE:
 						#print('EPIPE error {}'.format(e))
-					blynk.on_connect(self.blynkconnected)
+					self.blynk.on_connect(self.blynkconnected)
 					#else:
 						#print("Unexpected error:", sys.exc_info()[0])
 						#raise
