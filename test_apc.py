@@ -1,4 +1,3 @@
-import serial
 import time
 import re
 import datetime
@@ -11,7 +10,6 @@ import json
 import httplib
 import urllib2
 import json
-import serial.tools.list_ports
 import sys, traceback
 from subprocess import Popen, PIPE
 import fcntl
@@ -19,11 +17,10 @@ import fcntl
 import BlynkLib
 from BlynkTimer import BlynkTimer
 
-authToken = "736662121c984b3da398b973b54a3bd3"
+authToken = "1f265075b96e449d8efd602338442b22"
 port = 8080
 ip = "192.168.1.9"
 blynk = BlynkLib.Blynk(authToken, server=ip, port=port)
-blynkSerial = BlynkSerial(blynk)
 timer = BlynkTimer()
 
 @blynk.ON("connected")
