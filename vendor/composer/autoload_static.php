@@ -8,6 +8,7 @@ class ComposerStaticInitfd90a4427e4e03fe391731dfcdf879ae
 {
     public static $files = array (
         '5255c38a0faeba867671b61dfda6d864' => __DIR__ . '/..' . '/paragonie/random_compat/lib/random.php',
+        'a0edc8309cc5e1d60e3047b5df6b7052' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/functions_include.php',
         '023d27dca8066ef29e6739335ea73bad' => __DIR__ . '/..' . '/symfony/polyfill-php70/bootstrap.php',
     );
 
@@ -17,6 +18,18 @@ class ComposerStaticInitfd90a4427e4e03fe391731dfcdf879ae
             'Symfony\\Polyfill\\Php70\\' => 23,
             'Symfony\\Component\\PropertyAccess\\' => 33,
             'Symfony\\Component\\Inflector\\' => 28,
+        ),
+        'P' => 
+        array (
+            'Psr\\Http\\Message\\' => 17,
+        ),
+        'G' => 
+        array (
+            'GuzzleHttp\\Psr7\\' => 16,
+        ),
+        'B' => 
+        array (
+            'Buzz\\' => 5,
         ),
     );
 
@@ -32,6 +45,18 @@ class ComposerStaticInitfd90a4427e4e03fe391731dfcdf879ae
         'Symfony\\Component\\Inflector\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/inflector',
+        ),
+        'Psr\\Http\\Message\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/psr/http-message/src',
+        ),
+        'GuzzleHttp\\Psr7\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/guzzlehttp/psr7/src',
+        ),
+        'Buzz\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/kriswallsmith/buzz/lib/Buzz',
         ),
     );
 
@@ -64,13 +89,6 @@ class ComposerStaticInitfd90a4427e4e03fe391731dfcdf879ae
                 0 => __DIR__ . '/..' . '/fguillot/json-rpc/src',
             ),
         ),
-        'B' => 
-        array (
-            'Buzz' => 
-            array (
-                0 => __DIR__ . '/..' . '/kriswallsmith/buzz/lib',
-            ),
-        ),
     );
 
     public static $classMap = array (
@@ -79,6 +97,7 @@ class ComposerStaticInitfd90a4427e4e03fe391731dfcdf879ae
         'DivisionByZeroError' => __DIR__ . '/..' . '/symfony/polyfill-php70/Resources/stubs/DivisionByZeroError.php',
         'Error' => __DIR__ . '/..' . '/symfony/polyfill-php70/Resources/stubs/Error.php',
         'ParseError' => __DIR__ . '/..' . '/symfony/polyfill-php70/Resources/stubs/ParseError.php',
+        'SessionUpdateTimestampHandlerInterface' => __DIR__ . '/..' . '/symfony/polyfill-php70/Resources/stubs/SessionUpdateTimestampHandlerInterface.php',
         'TypeError' => __DIR__ . '/..' . '/symfony/polyfill-php70/Resources/stubs/TypeError.php',
     );
 

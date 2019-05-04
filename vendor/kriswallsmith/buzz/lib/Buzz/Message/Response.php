@@ -11,7 +11,7 @@ class Response extends AbstractMessage
     /**
      * Returns the protocol version of the current response.
      *
-     * @return float
+     * @return string
      */
     public function getProtocolVersion()
     {
@@ -74,7 +74,7 @@ class Response extends AbstractMessage
     /**
      * Is response invalid?
      *
-     * @return Boolean
+     * @return boolean
      */
     public function isInvalid()
     {
@@ -84,7 +84,7 @@ class Response extends AbstractMessage
     /**
      * Is response informative?
      *
-     * @return Boolean
+     * @return boolean
      */
     public function isInformational()
     {
@@ -94,7 +94,7 @@ class Response extends AbstractMessage
     /**
      * Is response successful?
      *
-     * @return Boolean
+     * @return boolean
      */
     public function isSuccessful()
     {
@@ -104,7 +104,7 @@ class Response extends AbstractMessage
     /**
      * Is the response a redirect?
      *
-     * @return Boolean
+     * @return boolean
      */
     public function isRedirection()
     {
@@ -114,7 +114,7 @@ class Response extends AbstractMessage
     /**
      * Is there a client error?
      *
-     * @return Boolean
+     * @return boolean
      */
     public function isClientError()
     {
@@ -124,7 +124,7 @@ class Response extends AbstractMessage
     /**
      * Was there a server side error?
      *
-     * @return Boolean
+     * @return boolean
      */
     public function isServerError()
     {
@@ -134,7 +134,7 @@ class Response extends AbstractMessage
     /**
      * Is the response OK?
      *
-     * @return Boolean
+     * @return boolean
      */
     public function isOk()
     {
@@ -142,9 +142,9 @@ class Response extends AbstractMessage
     }
 
     /**
-     * Is the reponse forbidden?
+     * Is the response forbidden?
      *
-     * @return Boolean
+     * @return boolean
      */
     public function isForbidden()
     {
@@ -154,7 +154,7 @@ class Response extends AbstractMessage
     /**
      * Is the response a not found error?
      *
-     * @return Boolean
+     * @return boolean
      */
     public function isNotFound()
     {
@@ -164,7 +164,7 @@ class Response extends AbstractMessage
     /**
      * Is the response empty?
      *
-     * @return Boolean
+     * @return boolean
      */
     public function isEmpty()
     {
@@ -177,10 +177,10 @@ class Response extends AbstractMessage
     {
         $headers = $this->getHeaders();
 
-        if (isset($headers[0]) && 3 == count($parts = explode(' ', $headers[0], 3))) {
-            $this->protocolVersion = (float) substr($parts[0], 5);
+        if (isset($headers[0]) && 2 <= count($parts = explode(' ', $headers[0], 3))) {
+            $this->protocolVersion = (string) substr($parts[0], 5);
             $this->statusCode = (integer) $parts[1];
-            $this->reasonPhrase = $parts[2];
+            $this->reasonPhrase = isset($parts[2]) ? $parts[2] : '';
         } else {
             $this->protocolVersion = $this->statusCode = $this->reasonPhrase = false;
         }

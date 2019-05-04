@@ -10,5 +10,4 @@ return array(
     'Transmission' => array($vendorDir . '/kleiram/transmission-php/lib'),
     'PHPHtmlParser' => array($vendorDir . '/paquettg/php-html-parser/src'),
     'JsonRPC' => array($vendorDir . '/fguillot/json-rpc/src'),
-    'Buzz' => array($vendorDir . '/kriswallsmith/buzz/lib'),
 );
