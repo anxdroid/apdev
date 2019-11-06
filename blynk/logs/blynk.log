@@ -1,50 +1,232 @@
-09:54:05.996 INFO - paoletti.antonello@gmail.com hardware joined.
-09:58:28.166 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
-09:59:50.461 ERROR- Error sending email auth token to user : paoletti.antonello@gmail.com. Error: 535-5.7.8 Username and Password not accepted. Learn more at
-535 5.7.8  https://support.google.com/mail/?p=BadCredentials a82sm2248054wmf.11 - gsmtp
-
-10:04:43.555 INFO - paoletti.antonello@gmail.com hardware joined.
-10:06:14.357 INFO - paoletti.antonello@gmail.com hardware joined.
-10:13:50.495 INFO - paoletti.antonello@gmail.com hardware joined.
-10:24:01.649 INFO - paoletti.antonello@gmail.com hardware joined.
-10:26:08.344 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
-10:34:00.927 INFO - paoletti.antonello@gmail.com hardware joined.
-10:34:03.111 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
-10:37:56.609 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
-10:50:33.281 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
-10:53:44.843 INFO - paoletti.antonello@gmail.com hardware joined.
-10:55:11.753 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
-10:55:36.993 ERROR- Error sending email auth token to user : paoletti.antonello@gmail.com. Error: 535-5.7.8 Username and Password not accepted. Learn more at
-535 5.7.8  https://support.google.com/mail/?p=BadCredentials y20sm456627wmi.34 - gsmtp
-
-10:55:55.304 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
-10:56:27.688 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
-10:57:53.687 INFO - paoletti.antonello@gmail.com hardware joined.
-11:01:52.035 INFO - paoletti.antonello@gmail.com hardware joined.
-11:02:10.627 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
-11:05:56.303 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
-11:06:33.258 INFO - paoletti.antonello@gmail.com hardware joined.
-11:06:34.048 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
-11:08:23.640 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
-11:12:28.542 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
-11:13:57.116 ERROR- Error sending email auth token to user : paoletti.antonello@gmail.com. Error: 535-5.7.8 Username and Password not accepted. Learn more at
-535 5.7.8  https://support.google.com/mail/?p=BadCredentials v196sm445925wmf.15 - gsmtp
-
-11:14:13.583 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
-11:27:46.423 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
-11:56:27.840 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
-12:13:48.401 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
-12:14:27.257 INFO - paoletti.antonello@gmail.com hardware joined.
-12:19:04.263 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
-12:19:25.949 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
-13:08:27.934 INFO - paoletti.antonello@gmail.com hardware joined.
-13:08:44.490 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
-13:11:12.478 INFO - paoletti.antonello@gmail.com hardware joined.
-13:11:15.238 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
-13:13:00.943 INFO - paoletti.antonello@gmail.com hardware joined.
-13:13:03.581 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
-13:20:08.904 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
-13:29:43.607 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
-13:30:09.166 INFO - paoletti.antonello@gmail.com hardware joined.
-13:30:44.679 INFO - paoletti.antonello@gmail.com hardware joined.
-13:31:07.792 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
+00:09:51.339 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
+08:39:57.639 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
+08:43:33.712 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
+08:44:34.035 INFO - paoletti.antonello@gmail.com hardware joined.
+08:45:17.997 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
+10:16:54.892 INFO - paoletti.antonello@gmail.com hardware joined.
+10:16:58.019 INFO - paoletti.antonello@gmail.com hardware joined.
+10:17:01.387 INFO - paoletti.antonello@gmail.com hardware joined.
+10:17:04.535 INFO - paoletti.antonello@gmail.com hardware joined.
+10:17:07.631 INFO - paoletti.antonello@gmail.com hardware joined.
+10:17:10.803 INFO - paoletti.antonello@gmail.com hardware joined.
+10:20:57.986 INFO - paoletti.antonello@gmail.com hardware joined.
+10:21:01.426 INFO - paoletti.antonello@gmail.com hardware joined.
+10:21:07.875 INFO - paoletti.antonello@gmail.com hardware joined.
+10:21:11.740 INFO - paoletti.antonello@gmail.com hardware joined.
+10:21:14.887 INFO - paoletti.antonello@gmail.com hardware joined.
+10:21:18.134 INFO - paoletti.antonello@gmail.com hardware joined.
+10:21:21.283 INFO - paoletti.antonello@gmail.com hardware joined.
+10:21:24.406 INFO - paoletti.antonello@gmail.com hardware joined.
+10:21:27.579 INFO - paoletti.antonello@gmail.com hardware joined.
+10:21:30.722 INFO - paoletti.antonello@gmail.com hardware joined.
+10:21:33.868 INFO - paoletti.antonello@gmail.com hardware joined.
+10:21:37.013 INFO - paoletti.antonello@gmail.com hardware joined.
+10:21:40.150 INFO - paoletti.antonello@gmail.com hardware joined.
+10:21:43.392 INFO - paoletti.antonello@gmail.com hardware joined.
+10:21:46.535 INFO - paoletti.antonello@gmail.com hardware joined.
+10:23:35.066 INFO - paoletti.antonello@gmail.com hardware joined.
+10:23:38.194 INFO - paoletti.antonello@gmail.com hardware joined.
+10:23:41.322 INFO - paoletti.antonello@gmail.com hardware joined.
+10:23:44.461 INFO - paoletti.antonello@gmail.com hardware joined.
+10:23:47.616 INFO - paoletti.antonello@gmail.com hardware joined.
+10:23:50.952 INFO - paoletti.antonello@gmail.com hardware joined.
+10:29:04.737 INFO - paoletti.antonello@gmail.com hardware joined.
+10:29:08.128 INFO - paoletti.antonello@gmail.com hardware joined.
+10:29:11.306 INFO - paoletti.antonello@gmail.com hardware joined.
+10:29:14.453 INFO - paoletti.antonello@gmail.com hardware joined.
+10:29:17.579 INFO - paoletti.antonello@gmail.com hardware joined.
+10:29:20.713 INFO - paoletti.antonello@gmail.com hardware joined.
+10:29:23.871 INFO - paoletti.antonello@gmail.com hardware joined.
+10:29:27.075 INFO - paoletti.antonello@gmail.com hardware joined.
+10:29:30.215 INFO - paoletti.antonello@gmail.com hardware joined.
+10:29:33.349 INFO - paoletti.antonello@gmail.com hardware joined.
+10:29:36.486 INFO - paoletti.antonello@gmail.com hardware joined.
+10:29:39.617 INFO - paoletti.antonello@gmail.com hardware joined.
+10:29:42.753 INFO - paoletti.antonello@gmail.com hardware joined.
+10:29:45.908 INFO - paoletti.antonello@gmail.com hardware joined.
+10:29:49.041 INFO - paoletti.antonello@gmail.com hardware joined.
+10:29:52.193 INFO - paoletti.antonello@gmail.com hardware joined.
+10:29:55.331 INFO - paoletti.antonello@gmail.com hardware joined.
+10:29:58.462 INFO - paoletti.antonello@gmail.com hardware joined.
+10:30:01.589 INFO - paoletti.antonello@gmail.com hardware joined.
+10:30:04.719 INFO - paoletti.antonello@gmail.com hardware joined.
+10:30:07.987 INFO - paoletti.antonello@gmail.com hardware joined.
+10:30:11.292 INFO - paoletti.antonello@gmail.com hardware joined.
+10:32:46.799 INFO - paoletti.antonello@gmail.com hardware joined.
+10:32:50.108 INFO - paoletti.antonello@gmail.com hardware joined.
+10:32:53.423 INFO - paoletti.antonello@gmail.com hardware joined.
+10:32:56.562 INFO - paoletti.antonello@gmail.com hardware joined.
+10:32:59.709 INFO - paoletti.antonello@gmail.com hardware joined.
+10:33:02.843 INFO - paoletti.antonello@gmail.com hardware joined.
+10:33:06.002 INFO - paoletti.antonello@gmail.com hardware joined.
+10:33:09.155 INFO - paoletti.antonello@gmail.com hardware joined.
+10:33:12.307 INFO - paoletti.antonello@gmail.com hardware joined.
+10:59:08.647 INFO - paoletti.antonello@gmail.com hardware joined.
+11:00:14.725 INFO - paoletti.antonello@gmail.com hardware joined.
+11:01:28.296 INFO - paoletti.antonello@gmail.com hardware joined.
+11:01:56.293 INFO - paoletti.antonello@gmail.com hardware joined.
+11:03:26.052 INFO - paoletti.antonello@gmail.com hardware joined.
+11:03:40.193 INFO - paoletti.antonello@gmail.com hardware joined.
+11:05:35.191 INFO - paoletti.antonello@gmail.com hardware joined.
+11:23:11.833 INFO - paoletti.antonello@gmail.com hardware joined.
+11:39:07.081 INFO - paoletti.antonello@gmail.com hardware joined.
+11:41:26.584 INFO - paoletti.antonello@gmail.com hardware joined.
+11:43:37.208 INFO - paoletti.antonello@gmail.com hardware joined.
+11:47:06.421 INFO - paoletti.antonello@gmail.com hardware joined.
+11:53:33.633 INFO - paoletti.antonello@gmail.com hardware joined.
+12:02:38.607 INFO - paoletti.antonello@gmail.com hardware joined.
+12:05:11.715 INFO - paoletti.antonello@gmail.com hardware joined.
+12:06:18.984 INFO - paoletti.antonello@gmail.com hardware joined.
+12:07:06.865 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
+12:08:38.741 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
+12:10:07.684 INFO - paoletti.antonello@gmail.com hardware joined.
+12:10:22.864 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
+12:12:51.979 INFO - paoletti.antonello@gmail.com hardware joined.
+12:13:57.249 INFO - paoletti.antonello@gmail.com hardware joined.
+12:20:06.597 INFO - paoletti.antonello@gmail.com hardware joined.
+12:21:37.506 INFO - paoletti.antonello@gmail.com hardware joined.
+12:23:11.713 INFO - paoletti.antonello@gmail.com hardware joined.
+12:24:10.801 INFO - paoletti.antonello@gmail.com hardware joined.
+12:25:01.400 INFO - paoletti.antonello@gmail.com hardware joined.
+12:25:42.642 INFO - paoletti.antonello@gmail.com hardware joined.
+12:26:39.822 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
+12:28:42.877 INFO - paoletti.antonello@gmail.com hardware joined.
+12:28:54.899 INFO - paoletti.antonello@gmail.com hardware joined.
+12:29:00.908 INFO - paoletti.antonello@gmail.com hardware joined.
+12:29:12.910 INFO - paoletti.antonello@gmail.com hardware joined.
+12:29:30.934 INFO - paoletti.antonello@gmail.com hardware joined.
+12:29:48.964 INFO - paoletti.antonello@gmail.com hardware joined.
+12:30:06.990 INFO - paoletti.antonello@gmail.com hardware joined.
+12:30:13.049 INFO - paoletti.antonello@gmail.com hardware joined.
+12:30:22.944 INFO - paoletti.antonello@gmail.com hardware joined.
+12:30:28.957 INFO - paoletti.antonello@gmail.com hardware joined.
+12:30:34.963 INFO - paoletti.antonello@gmail.com hardware joined.
+12:30:40.983 INFO - paoletti.antonello@gmail.com hardware joined.
+12:31:05.018 INFO - paoletti.antonello@gmail.com hardware joined.
+12:31:12.375 INFO - paoletti.antonello@gmail.com hardware joined.
+12:31:17.150 INFO - paoletti.antonello@gmail.com hardware joined.
+12:31:29.120 INFO - paoletti.antonello@gmail.com hardware joined.
+12:32:29.177 INFO - paoletti.antonello@gmail.com hardware joined.
+12:32:41.205 INFO - paoletti.antonello@gmail.com hardware joined.
+12:32:59.252 INFO - paoletti.antonello@gmail.com hardware joined.
+12:33:22.528 INFO - paoletti.antonello@gmail.com hardware joined.
+12:33:27.239 INFO - paoletti.antonello@gmail.com hardware joined.
+12:33:33.258 INFO - paoletti.antonello@gmail.com hardware joined.
+12:34:15.342 INFO - paoletti.antonello@gmail.com hardware joined.
+12:34:45.409 INFO - paoletti.antonello@gmail.com hardware joined.
+12:34:55.364 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
+12:35:01.468 INFO - paoletti.antonello@gmail.com hardware joined.
+12:35:07.427 INFO - paoletti.antonello@gmail.com hardware joined.
+12:35:25.462 INFO - paoletti.antonello@gmail.com hardware joined.
+12:36:01.544 INFO - paoletti.antonello@gmail.com hardware joined.
+12:36:07.548 INFO - paoletti.antonello@gmail.com hardware joined.
+12:36:14.569 INFO - paoletti.antonello@gmail.com hardware joined.
+12:36:19.562 INFO - paoletti.antonello@gmail.com hardware joined.
+12:36:25.575 INFO - paoletti.antonello@gmail.com hardware joined.
+12:36:38.605 INFO - paoletti.antonello@gmail.com hardware joined.
+12:36:49.620 INFO - paoletti.antonello@gmail.com hardware joined.
+12:36:55.632 INFO - paoletti.antonello@gmail.com hardware joined.
+12:37:07.657 INFO - paoletti.antonello@gmail.com hardware joined.
+12:37:31.699 INFO - paoletti.antonello@gmail.com hardware joined.
+12:37:49.737 INFO - paoletti.antonello@gmail.com hardware joined.
+12:38:01.787 INFO - paoletti.antonello@gmail.com hardware joined.
+12:38:07.789 INFO - paoletti.antonello@gmail.com hardware joined.
+12:38:13.795 INFO - paoletti.antonello@gmail.com hardware joined.
+12:38:20.803 INFO - paoletti.antonello@gmail.com hardware joined.
+12:38:37.830 INFO - paoletti.antonello@gmail.com hardware joined.
+12:38:43.846 INFO - paoletti.antonello@gmail.com hardware joined.
+12:38:49.854 INFO - paoletti.antonello@gmail.com hardware joined.
+12:39:01.890 INFO - paoletti.antonello@gmail.com hardware joined.
+12:39:07.895 INFO - paoletti.antonello@gmail.com hardware joined.
+12:39:43.972 INFO - paoletti.antonello@gmail.com hardware joined.
+12:39:55.985 INFO - paoletti.antonello@gmail.com hardware joined.
+12:40:14.024 INFO - paoletti.antonello@gmail.com hardware joined.
+12:40:29.589 INFO - paoletti.antonello@gmail.com hardware joined.
+12:52:30.359 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
+12:55:31.156 INFO - paoletti.antonello@gmail.com hardware joined.
+12:56:29.209 INFO - paoletti.antonello@gmail.com hardware joined.
+12:56:34.244 INFO - paoletti.antonello@gmail.com hardware joined.
+12:56:54.363 INFO - paoletti.antonello@gmail.com hardware joined.
+12:58:26.330 INFO - paoletti.antonello@gmail.com hardware joined.
+12:58:46.394 INFO - paoletti.antonello@gmail.com hardware joined.
+13:00:39.441 INFO - paoletti.antonello@gmail.com hardware joined.
+13:00:59.517 INFO - paoletti.antonello@gmail.com hardware joined.
+13:02:55.633 INFO - paoletti.antonello@gmail.com hardware joined.
+13:03:15.722 INFO - paoletti.antonello@gmail.com hardware joined.
+13:07:59.956 INFO - paoletti.antonello@gmail.com hardware joined.
+13:08:19.952 INFO - paoletti.antonello@gmail.com hardware joined.
+13:10:51.224 INFO - paoletti.antonello@gmail.com hardware joined.
+13:11:58.270 INFO - paoletti.antonello@gmail.com hardware joined.
+13:12:06.426 INFO - paoletti.antonello@gmail.com hardware joined.
+13:12:29.406 INFO - paoletti.antonello@gmail.com hardware joined.
+13:13:03.369 INFO - paoletti.antonello@gmail.com hardware joined.
+13:13:48.954 INFO - paoletti.antonello@gmail.com hardware joined.
+13:17:29.706 INFO - paoletti.antonello@gmail.com hardware joined.
+13:17:52.704 INFO - paoletti.antonello@gmail.com hardware joined.
+13:19:08.793 INFO - paoletti.antonello@gmail.com hardware joined.
+13:19:41.035 INFO - paoletti.antonello@gmail.com hardware joined.
+13:20:14.906 INFO - paoletti.antonello@gmail.com hardware joined.
+13:20:35.085 INFO - paoletti.antonello@gmail.com hardware joined.
+13:21:07.312 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
+13:25:23.285 INFO - paoletti.antonello@gmail.com hardware joined.
+13:25:49.447 INFO - paoletti.antonello@gmail.com hardware joined.
+13:27:23.521 INFO - paoletti.antonello@gmail.com hardware joined.
+13:27:43.571 INFO - paoletti.antonello@gmail.com hardware joined.
+13:28:35.668 INFO - paoletti.antonello@gmail.com hardware joined.
+13:29:11.545 INFO - paoletti.antonello@gmail.com hardware joined.
+13:29:19.800 INFO - paoletti.antonello@gmail.com hardware joined.
+13:29:42.557 INFO - paoletti.antonello@gmail.com hardware joined.
+13:31:52.686 INFO - paoletti.antonello@gmail.com hardware joined.
+13:32:12.830 INFO - paoletti.antonello@gmail.com hardware joined.
+13:33:28.860 INFO - paoletti.antonello@gmail.com hardware joined.
+13:33:48.999 INFO - paoletti.antonello@gmail.com hardware joined.
+13:34:34.958 INFO - paoletti.antonello@gmail.com hardware joined.
+13:35:10.064 INFO - paoletti.antonello@gmail.com hardware joined.
+13:37:50.210 INFO - paoletti.antonello@gmail.com hardware joined.
+13:38:42.302 INFO - paoletti.antonello@gmail.com hardware joined.
+13:38:47.411 INFO - paoletti.antonello@gmail.com hardware joined.
+13:39:11.482 INFO - paoletti.antonello@gmail.com hardware joined.
+13:41:29.593 INFO - paoletti.antonello@gmail.com hardware joined.
+13:41:46.587 INFO - paoletti.antonello@gmail.com hardware joined.
+13:42:16.055 INFO - paoletti.antonello@gmail.com hardware joined.
+13:42:40.556 INFO - paoletti.antonello@gmail.com hardware joined.
+13:43:33.892 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
+13:52:33.836 INFO - paoletti.antonello@gmail.com hardware joined.
+13:52:59.997 INFO - paoletti.antonello@gmail.com hardware joined.
+13:55:56.212 INFO - paoletti.antonello@gmail.com hardware joined.
+13:56:22.225 INFO - paoletti.antonello@gmail.com hardware joined.
+13:56:56.226 INFO - paoletti.antonello@gmail.com hardware joined.
+13:57:22.370 INFO - paoletti.antonello@gmail.com hardware joined.
+13:59:00.342 INFO - paoletti.antonello@gmail.com hardware joined.
+13:59:20.421 INFO - paoletti.antonello@gmail.com hardware joined.
+14:04:00.816 INFO - paoletti.antonello@gmail.com hardware joined.
+14:04:20.899 INFO - paoletti.antonello@gmail.com hardware joined.
+14:08:23.325 INFO - paoletti.antonello@gmail.com hardware joined.
+14:08:30.234 INFO - paoletti.antonello@gmail.com hardware joined.
+14:08:55.416 INFO - paoletti.antonello@gmail.com hardware joined.
+14:09:29.395 INFO - paoletti.antonello@gmail.com hardware joined.
+14:09:49.447 INFO - paoletti.antonello@gmail.com hardware joined.
+14:11:47.614 INFO - paoletti.antonello@gmail.com hardware joined.
+14:12:13.716 INFO - paoletti.antonello@gmail.com hardware joined.
+14:13:19.260 INFO - paoletti.antonello@gmail.com hardware joined.
+14:13:49.852 INFO - paoletti.antonello@gmail.com hardware joined.
+14:15:29.987 INFO - paoletti.antonello@gmail.com hardware joined.
+14:15:55.962 INFO - paoletti.antonello@gmail.com hardware joined.
+14:19:36.348 INFO - paoletti.antonello@gmail.com hardware joined.
+14:19:56.414 INFO - paoletti.antonello@gmail.com hardware joined.
+14:20:10.758 INFO - paoletti.antonello@gmail.com hardware joined.
+14:20:26.452 INFO - paoletti.antonello@gmail.com hardware joined.
+14:20:31.885 INFO - paoletti.antonello@gmail.com hardware joined.
+14:21:18.624 INFO - paoletti.antonello@gmail.com hardware joined.
+14:23:38.825 INFO - paoletti.antonello@gmail.com hardware joined.
+14:23:59.835 INFO - paoletti.antonello@gmail.com hardware joined.
+14:24:27.897 INFO - paoletti.antonello@gmail.com hardware joined.
+14:24:44.045 INFO - paoletti.antonello@gmail.com hardware joined.
+14:25:46.234 INFO - paoletti.antonello@gmail.com hardware joined.
+14:26:05.317 INFO - paoletti.antonello@gmail.com hardware joined.
+14:27:56.640 INFO - paoletti.antonello@gmail.com hardware joined.
+14:28:16.748 INFO - paoletti.antonello@gmail.com hardware joined.
+14:29:15.751 INFO - paoletti.antonello@gmail.com hardware joined.
+14:29:44.989 INFO - paoletti.antonello@gmail.com hardware joined.
+14:33:02.474 INFO - paoletti.antonello@gmail.com hardware joined.
+14:33:22.654 INFO - paoletti.antonello@gmail.com hardware joined.

@@ -1,0 +1,91 @@
+09:54:05.996 INFO - paoletti.antonello@gmail.com hardware joined.
+09:58:28.166 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
+09:59:50.461 ERROR- Error sending email auth token to user : paoletti.antonello@gmail.com. Error: 535-5.7.8 Username and Password not accepted. Learn more at
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials a82sm2248054wmf.11 - gsmtp
+
+10:04:43.555 INFO - paoletti.antonello@gmail.com hardware joined.
+10:06:14.357 INFO - paoletti.antonello@gmail.com hardware joined.
+10:13:50.495 INFO - paoletti.antonello@gmail.com hardware joined.
+10:24:01.649 INFO - paoletti.antonello@gmail.com hardware joined.
+10:26:08.344 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
+10:34:00.927 INFO - paoletti.antonello@gmail.com hardware joined.
+10:34:03.111 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
+10:37:56.609 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
+10:50:33.281 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
+10:53:44.843 INFO - paoletti.antonello@gmail.com hardware joined.
+10:55:11.753 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
+10:55:36.993 ERROR- Error sending email auth token to user : paoletti.antonello@gmail.com. Error: 535-5.7.8 Username and Password not accepted. Learn more at
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials y20sm456627wmi.34 - gsmtp
+
+10:55:55.304 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
+10:56:27.688 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
+10:57:53.687 INFO - paoletti.antonello@gmail.com hardware joined.
+11:01:52.035 INFO - paoletti.antonello@gmail.com hardware joined.
+11:02:10.627 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
+11:05:56.303 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
+11:06:33.258 INFO - paoletti.antonello@gmail.com hardware joined.
+11:06:34.048 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
+11:08:23.640 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
+11:12:28.542 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
+11:13:57.116 ERROR- Error sending email auth token to user : paoletti.antonello@gmail.com. Error: 535-5.7.8 Username and Password not accepted. Learn more at
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials v196sm445925wmf.15 - gsmtp
+
+11:14:13.583 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
+11:27:46.423 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
+11:56:27.840 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
+12:13:48.401 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
+12:14:27.257 INFO - paoletti.antonello@gmail.com hardware joined.
+12:19:04.263 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
+12:19:25.949 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
+13:08:27.934 INFO - paoletti.antonello@gmail.com hardware joined.
+13:08:44.490 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
+13:11:12.478 INFO - paoletti.antonello@gmail.com hardware joined.
+13:11:15.238 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
+13:13:00.943 INFO - paoletti.antonello@gmail.com hardware joined.
+13:13:03.581 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
+13:20:08.904 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
+13:29:43.607 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
+13:30:09.166 INFO - paoletti.antonello@gmail.com hardware joined.
+13:30:44.679 INFO - paoletti.antonello@gmail.com hardware joined.
+13:31:07.792 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
+23:20:16.475 INFO - Using data dir '/var/lib/blynk'
+23:20:19.104 INFO - Region : local. Host : 127.0.1.1.
+23:20:21.431 INFO - Initializing gmail smtp mail transport. Username : example@gmail.com. SMTP host : smtp.gmail.com:587
+23:20:21.845 INFO - Reports : 0
+23:20:21.847 INFO - Didn't find custom user certificates.
+23:20:21.854 INFO - Didn't find Let's Encrypt certificates.
+23:20:21.855 WARN - You didn't specified 'server.host' or 'contact.email' properties in server.properties file. Automatic certificate generation is turned off. Please specify above properties for automatic certificates retrieval.
+23:20:21.855 WARN - ATTENTION. Server certificate paths (cert : '/home/pi/apdev/blynk', key : '/home/pi/apdev/blynk') not valid. Using embedded server certs and one way ssl. This is not secure. Please replace it with your own certs.
+23:20:27.410 INFO - HTTP API and WebSockets server listening at 8080 port.
+23:20:27.416 INFO - HTTPS API, WebSockets and Admin page server listening at 9443 port.
+23:20:27.420 INFO - Mqtt hardware server listening at 8440 port.
+23:20:27.928 INFO - paoletti.antonello@gmail.com hardware joined.
+23:20:27.931 INFO - paoletti.antonello@gmail.com hardware joined.
+23:20:27.933 INFO - paoletti.antonello@gmail.com hardware joined.
+23:21:19.589 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
+23:22:19.700 INFO - Using data dir '/var/lib/blynk'
+23:22:22.336 INFO - Region : local. Host : 127.0.1.1.
+23:22:24.750 INFO - Initializing gmail smtp mail transport. Username : example@gmail.com. SMTP host : smtp.gmail.com:587
+23:22:25.174 INFO - Reports : 0
+23:22:25.176 INFO - Didn't find custom user certificates.
+23:22:25.183 INFO - Didn't find Let's Encrypt certificates.
+23:22:25.183 WARN - You didn't specified 'server.host' or 'contact.email' properties in server.properties file. Automatic certificate generation is turned off. Please specify above properties for automatic certificates retrieval.
+23:22:25.184 WARN - ATTENTION. Server certificate paths (cert : '/home/pi/apdev/blynk', key : '/home/pi/apdev/blynk') not valid. Using embedded server certs and one way ssl. This is not secure. Please replace it with your own certs.
+23:22:29.741 INFO - HTTP API and WebSockets server listening at 8080 port.
+23:22:29.747 INFO - HTTPS API, WebSockets and Admin page server listening at 9443 port.
+23:22:29.751 INFO - Mqtt hardware server listening at 8440 port.
+23:22:32.491 INFO - paoletti.antonello@gmail.com hardware joined.
+23:22:32.499 INFO - paoletti.antonello@gmail.com hardware joined.
+23:22:32.514 INFO - paoletti.antonello@gmail.com hardware joined.
+23:22:39.344 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
+23:23:56.514 INFO - paoletti.antonello@gmail.com hardware joined.
+23:24:11.841 INFO - paoletti.antonello@gmail.com hardware joined.
+23:24:28.415 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
+23:28:53.513 INFO - paoletti.antonello@gmail.com hardware joined.
+23:29:11.513 INFO - paoletti.antonello@gmail.com hardware joined.
+23:30:05.613 INFO - paoletti.antonello@gmail.com hardware joined.
+23:30:09.547 INFO - paoletti.antonello@gmail.com hardware joined.
+23:31:21.351 INFO - paoletti.antonello@gmail.com hardware joined.
+23:32:20.327 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
+23:33:41.146 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
+23:43:24.224 INFO - paoletti.antonello@gmail.com Blynk-app (android-22701) joined.
