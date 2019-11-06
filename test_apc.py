@@ -17,11 +17,17 @@ import fcntl
 import BlynkLib
 from BlynkTimer import BlynkTimer
 
+#from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
+
 authToken = "1f265075b96e449d8efd602338442b22"
 port = 8080
 ip = "192.168.1.9"
 blynk = BlynkLib.Blynk(authToken, server=ip, port=port)
 timer = BlynkTimer()
+lastStatus = ""
+lastPerc = 0
+currStatus = ""
+currPerc = 0
 
 vpins = {
         "STATUS" : 0,
@@ -48,6 +54,10 @@ def blynk_handle_vpins_read(pin):
 	blynk.virtual_write(pin, 0)
 
 def readVal():
+    global currStatus
+    global currPerc
+    global lastStatus
+    global lastPerc
     #print("Reading value...")
     cmd = 'apcaccess status'
     myCmd = os.popen(cmd).read()
@@ -59,12 +69,23 @@ def readVal():
         for g in groups:
             k = g[0].strip()
             v = g[1].strip().replace(" Percent", "").replace(" Minutes", "")
-            if (v == 'BCHARGE' or v == 'TIMELEFT') :
+            if (k == 'BCHARGE' or k == 'TIMELEFT') :
                 v = float(v)
+            if (k == "BCHARGE") :
+                currPerc = v
+            if (k == "STATUS") :
+                currStatus = v
             if (k in vpins) :
-                print k+" => V"+str(vpins[k])+' : '+v
+                #if (currPerc != 0) :
+                #    print currStatus+" - "+str(currPerc)
+                print k+" => V"+str(vpins[k])+' : '+str(v)
                 sys.stdout.flush()
                 blynk.virtual_write(vpins[k], v)
+                if (currPerc != lastPerc) :
+                    print currStatus+" - "+str(currPerc)
+                    contents = urllib2.urlopen("https://api.telegram.org/bot738992030:AAHcuMiGmx8stdyy6bVkKWCIB5-JHjdgd9M/sendMessage?chat_id=-205991625&text="+currStatus+" "+str(currPerc)+"%").read()
+                    lastStatus = currStatus
+                    lastPerc = currPerc
 
 def main():
         sys.stdout = open("/var/log/domotic.log", "w")
