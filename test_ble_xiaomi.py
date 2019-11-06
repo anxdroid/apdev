@@ -67,7 +67,7 @@ def readVal():
             print (e)
 
 def main():
-    sys.stdout = open("/var/log/domotic.log", "w")
+    sys.stdout = open("/var/log/domotic.log", "w", buffering=0)
     while True:
         blynk.run()
         timer.run()
