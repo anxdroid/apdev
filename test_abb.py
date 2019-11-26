@@ -171,7 +171,7 @@ class APABB(object):
         return None
 
 def main ():
-    abb = APABB("192.168.1.18", "admin", "db6e106cf2b982d8dce1cf2ba2e0d449", "4:120399-3G96-3016")
+    abb = APABB("192.168.1.154", "admin", "db6e106cf2b982d8dce1cf2ba2e0d449", "4:120399-3G96-3016")
     while True :
         m = abb.fetch('m101_1_PhVphA')
         if m is not None :
