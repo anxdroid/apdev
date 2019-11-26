@@ -34,7 +34,15 @@ def disconnect_handler():
     blynk.connect()
 
 @timer.register(interval=300)
-
+def readVal():
+    print("Polling...")
+    for device in devices :
+        try:
+            print("Polling data from "+device["name"])
+            val = abb.fetch()
+            blynk.virtual_write(device["vpin"], val)
+        except Exception as e:
+            print (e)
 
 class APABB(object):
     nonce = None
@@ -50,12 +58,14 @@ class APABB(object):
     host = None
     debug = False
     resp = None
+    userToken = None
 
-    def __init__(self, host, username, password, ser) :
+    def __init__(self, host, username, userToken, password, ser) :
         self.host = host
         self.username = username
         self.password = password
         self.ser = ser
+        self.userToken = userToken
 
     def extractNonce(self, headers) :
         timestamp = str(int(time.time()))
@@ -63,18 +73,22 @@ class APABB(object):
         if (regexp is not None) :
             self.nonce = str(regexp.group(1))
     
-    def handleAuth(self) :
+    def handleAuth(self, path) :
+        self.HA1 = self.userToken
+
         if self.debug:
             print "Nonce ------------------------------"
             print self.nonce
             print "------------------------------------"
         
+        """
         self.challenge = 'X-Digest realm="registered_user@power-one.com", nonce="'+self.nonce+'", qop="auth"'
         
         if self.debug:
             print "Challenge --------------------------"
             print self.challenge
             print "------------------------------------"
+        """
 
         HA2_md5 = hashlib.md5()
         HA2_md5.update(method+":"+path)
@@ -98,12 +112,9 @@ class APABB(object):
         conn = httplib.HTTPConnection(self.host)
         if self.debug:
             conn.set_debuglevel(2)
-        headers = {}
 
         if self.nonce is not None :
-            
-            self.handleAuth()
-            
+            self.handleAuth(path)
             headers = {
                 "Cookie": "filter=all; _ga=GA1.3.1163095045."+timestamp+"; _gid=GA1.3.915588772."+timestamp+"; _gat=1",
                 "Accept": "application/json, text/plain, */*",
@@ -163,21 +174,9 @@ class APABB(object):
             print("JSON error: "+resp['html'])
         return None  
     
-
-@timer.register(interval=300)
-def readVal():
-    print("Polling...")
-    for device in devices :
-        try:
-            print("Polling data from "+device["name"])
-            val = abb.fetch()
-            blynk.virtual_write(device["vpin"], val)
-        except Exception as e:
-            print (e)
-
 def main():
     sys.stdout = open("/var/log/domotic.log", "w", buffering=2)
-    abb = APABB("192.168.1.154", "admin", "Thejedi82", "4:120399-3G96-3016")
+    abb = APABB("192.168.1.154", "admin", "Thejedi82", "db6e106cf2b982d8dce1cf2ba2e0d449", "4:120399-3G96-3016")
     while True:
         blynk.run()
         timer.run()
