@@ -22,11 +22,12 @@
     $realm = "registered_user@power-one.com";
     $user = "admin";
     $pass = "Thejedi82";
-    $nonce = "";
+    $nonce = "060c1917968d6fbbda561ea5707e2e28";
     $nc = "00000002";
     $cnonce = "ddf4bfcaf87acba9";
     $method = 'GET';
     $uri = "/v1/feeds/ser4:120399-3G96-3016/datastreams/m101_1_W?_=1574784046328";
+    $uri = "/v1/status?_=1574845879374";
     $params = "&end=2019-11-19T23:00:00Z&interval=5min&maxDataPointsPerPage=288&start=2019-11-18T23:00:00Z&timeFormat=utc";
     $userToken = 'db6e106cf2b982d8dce1cf2ba2e0d449';
     $qop = "auth";
@@ -35,8 +36,8 @@
     $HA2 = md5($method.":".$uri);
     $response = md5($HA1.":".$nonce.":".$nc.":".$cnonce.":".$qop.":".$HA2);
 
-    //echo $HA2."\n";
-    //echo $response."\n";
+    echo "HA2: ".$HA2."\n";
+    echo "Response: ".$response."\n";
 
     $authorization = 'X-Digest username="' . $user . '", ' .
     'realm="' . $realm . '", ' . 
@@ -47,7 +48,8 @@
     'nc=' . $nc . ', ' .
     'cnonce="' . $cnonce . '"';
 
-    sendReq($host.$uri, array("Authorization", $authorization));
+    echo $authorization."\n";
+    //sendReq($host.$uri, array("Authorization", $authorization));
     //echo $header;
 
 /*
