@@ -1,0 +1,14 @@
+[Unit]
+Description=Inverter ABB to Blynk
+After=network.target
+
+[Service]
+ExecStart=/bin/sh /home/pi/apdev/start_abb2.sh
+WorkingDirectory=/home/pi/apdev
+StandardOutput=inherit
+StandardError=inherit
+Restart=always
+User=root
+
+[Install]
+WantedBy=multi-user.target

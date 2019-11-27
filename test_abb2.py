@@ -19,6 +19,18 @@ timer = Timer()
 
 feeds = [
     {
+        "name" : "m64061_1_YearWH",
+        "vpin" : "7"
+    },
+    {
+        "name" : "m64061_1_MonthWH",
+        "vpin" : "6"
+    },
+    {
+        "name" : "m64061_1_WeekWH",
+        "vpin" : 5
+    },  
+    {
         "name" : "m101_1_PhVphA",
         "vpin" : 4
     },
@@ -126,7 +138,7 @@ class APABB(object):
         """
 
     def buildReq(self, path, method, timestamp) :
-        conn = httplib2.Http(".cache")
+        conn = httplib2.Http()
         headers = {}
         """
 GET /v1/feeds/ser4:120399-3G96-3016/datastreams/m101_1_W?_=1574854636192 HTTP/1.1
