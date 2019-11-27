@@ -1,8 +1,0 @@
-status: 200
-server: lighttpd/1.4.35
-cache-control: max-age=180, public
-content-location: http://192.168.1.154/v1/feeds/ser4:120399-3G96-3016/datastreams/m101_1_W?_=1574847669168
-date: Wed, 27 Nov 2019 09:41:09 GMT
-content-type: application/json; charset=utf-8
-
-{"feeds":{"ser4:120399-3G96-3016":{"feedIntervals":["raw"],"description":"http://power-one.com/device/sunspec/v2/","datastreams":{"m101_1_W":{"data":[{"value":0.3847140990834852,"timestamp":"2019-11-27T10:40:40"},{"value":0.8056866227407156,"timestamp":"2019-11-27T10:35:25"},{"value":0.632544707778635,"timestamp":"2019-11-27T10:30:33"},{"value":0.7237230568359365,"timestamp":"2019-11-27T10:25:15"},{"value":0.6112050461205243,"timestamp":"2019-11-27T10:20:18"},{"value":0.6204198903082059,"timestamp":"2019-11-27T10:15:16"},{"value":0.5908354162467688,"timestamp":"2019-11-27T10:10:13"},{"value":0.6107200607459262,"timestamp":"2019-11-27T10:05:19"},{"value":0.4763774945505439,"timestamp":"2019-11-27T10:00:13"},{"value":0.5176017091550733,"timestamp":"2019-11-27T09:56:31"}],"decimal_precision":2,"title":"Pout","units":"kW","class":"out","priority":0}}}}}
