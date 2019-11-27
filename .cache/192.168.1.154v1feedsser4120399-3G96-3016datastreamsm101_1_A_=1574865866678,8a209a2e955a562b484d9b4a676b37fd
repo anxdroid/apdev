@@ -1,0 +1,8 @@
+status: 200
+cache-control: max-age=180, public
+content-type: application/json; charset=utf-8
+date: Wed, 27 Nov 2019 14:44:26 GMT
+server: lighttpd/1.4.35
+content-location: http://192.168.1.154/v1/feeds/ser4:120399-3G96-3016/datastreams/m101_1_A?_=1574865866678
+
+{"feeds":{"ser4:120399-3G96-3016":{"feedIntervals":["raw"],"description":"http://power-one.com/device/sunspec/v2/","datastreams":{"m101_1_A":{"data":[{"value":0.22363218665122987,"timestamp":"2019-11-27T15:40:24"},{"value":0.22363218665122987,"timestamp":"2019-11-27T15:35:30"},{"value":0.620359480381012,"timestamp":"2019-11-27T15:30:27"},{"value":0.8187231421470642,"timestamp":"2019-11-27T15:25:44"},{"value":0.7124203443527222,"timestamp":"2019-11-27T15:20:32"},{"value":1.3260259628295899,"timestamp":"2019-11-27T15:15:47"},{"value":1.1297105550765992,"timestamp":"2019-11-27T15:10:23"},{"value":1.5228811502456666,"timestamp":"2019-11-27T15:05:25"},{"value":1.7084399461746216,"timestamp":"2019-11-27T15:00:25"},{"value":0.7674773931503296,"timestamp":"2019-11-27T14:55:23"}],"decimal_precision":2,"title":"IGrid","units":"A","class":"out","priority":0}}}}}

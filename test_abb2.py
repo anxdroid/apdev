@@ -19,6 +19,14 @@ timer = Timer()
 
 feeds = [
     {
+        "name" : "m101_1_PhVphA",
+        "vpin" : 4
+    },
+    {
+        "name" : "m101_1_A",
+        "vpin" : 3
+    },
+    {
         "name" : 'm64061_1_DayWH',
         "vpin" : 2
     },
