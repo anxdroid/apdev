@@ -1,8 +1,0 @@
-status: 200
-content-location: http://192.168.1.154/v1/feeds/ser4:120399-3G97-3016/datastreams/m101_1_W?_=1574851229383
-date: Wed, 27 Nov 2019 10:40:29 GMT
-server: lighttpd/1.4.35
-content-type: application/json; charset=utf-8
-cache-control: max-age=180, public
-
-{"feeds":{}}
