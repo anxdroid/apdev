@@ -1,0 +1,8 @@
+status: 200
+date: Wed, 27 Nov 2019 14:06:59 GMT
+content-type: application/json; charset=utf-8
+server: lighttpd/1.4.35
+content-location: http://192.168.1.154/v1/feeds/ser4:120399-3G96-3016/datastreams/m64061_1_DayWH?_=1574863619757
+cache-control: max-age=180, public
+
+{"feeds":{"ser4:120399-3G96-3016":{"feedIntervals":["raw"],"description":"http://power-one.com/device/sunspec/v2/","datastreams":{"m64061_1_DayWH":{"data":[{"value":2.745000130380504,"timestamp":"2019-11-27T15:05:25"},{"value":2.7160001290030779,"timestamp":"2019-11-27T15:00:25"},{"value":2.692000127863139,"timestamp":"2019-11-27T14:55:23"},{"value":2.681000127340667,"timestamp":"2019-11-27T14:50:31"},{"value":2.6730001269606875,"timestamp":"2019-11-27T14:45:24"},{"value":2.670000126818195,"timestamp":"2019-11-27T14:40:22"},{"value":2.6620001264382155,"timestamp":"2019-11-27T14:35:17"},{"value":2.6400001253932716,"timestamp":"2019-11-27T14:25:23"},{"value":2.6240001246333124,"timestamp":"2019-11-27T14:20:22"},{"value":2.6030001236358659,"timestamp":"2019-11-27T14:15:23"}],"decimal_precision":2,"title":"Energy today","units":"kWh","class":"statistics","priority":1}}}}}

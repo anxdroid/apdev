@@ -42,13 +42,13 @@ def disconnect_handler():
 
 @timer.register(interval=5)
 def readVal():
-    abb = APABB("192.168.1.154", "admin", "db6e106cf2b982d8dce1cf2ba2e0d449", "Thejedi82", "4:120399-3G97-3016")
+    abb = APABB("192.168.1.154", "admin", "db6e106cf2b982d8dce1cf2ba2e0d449", "Thejedi82", "4:120399-3G96-3016")
     for feed in feeds :
         try:
             print("Polling from "+feed["name"]+" on vpin "+str(feed["vpin"]))
             val = abb.fetch(feed["name"])
             if (val is not None) :
-                blynk.virtual_write(feed["vpin"], str(val.value))
+                blynk.virtual_write(feed["vpin"], str(val))
         except Exception as e:
             print (e)
 
@@ -120,18 +120,43 @@ class APABB(object):
     def buildReq(self, path, method, timestamp) :
         conn = httplib2.Http(".cache")
         headers = {}
-        if self.nonce is not None :
+        """
+GET /v1/feeds/ser4:120399-3G96-3016/datastreams/m101_1_W?_=1574854636192 HTTP/1.1
+Host: 127.0.0.1:10480
+Connection: keep-alive
+Pragma: no-cache
+Cache-Control: no-cache
+Accept: application/json, text/plain, */*
+Authorization: X-Digest username="admin", realm="registered_user@power-one.com", nonce="937e6a2a189cfe3791f4bd0a2cd852fe", uri="/v1/feeds/ser4:120399-3G96-3016/datastreams/m101_1_W?_=1574854636192", response="a7a24c8e57ccb4266be5356c4bea2ba0", qop=auth, nc=00000002, cnonce="ddf4bfcaf87acba9"
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: cors
+Referer: http://127.0.0.1:10480/v3/
+Accept-Encoding: gzip, deflate, br
+Accept-Language: it-IT,it;q=0.9,en;q=0.8,es;q=0.7,pl;q=0.6
+Cookie: _ga=GA1.1.169258567.1574776814; _gid=GA1.1.932969922.1574776814; _gat=1
+        """    
+        headers = {
+            "Cookie": 'auth.method="GET";auth.challenge="X-Digest realm=\"registered_user@power-one.com\", nonce=\"937e6a2a189cfe3791f4bd0a2cd852fe\", qop=\"auth\"";auth.user={"id":"admin","authToken":"db6e106cf2b982d8dce1cf2ba2e0d449"};auth.uri="../au/logger/v1/wifi/status?_=1574860320060";_ga=GA1.1.169258567.1574776814;_gid=GA1.1.932969922.1574776814',
+            "Connection": "keep-alive",
+            "Pragma": "no-cache",
+	    "Cache-Control": "no-cache",
+            "Accept": "application/json, text/plain, */*",
+            "Accept-Encoding": "gzip, deflate",
+            "Accept-Language": "it-IT,it;q=0.9,en;q=0.8,es;q=0.7",
+	    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36",
+	    "Sec-Fetch-Site": "same-origin",
+	    "Sec-Fetch-Mode": "cors",
+	    "Referer": "http://"+self.host+"/v3/"}
+        if (self.nonce is not None) :
             self.handleAuth(path)
-            headers = {
-                "Accept": "application/json, text/plain, */*",
-                "Accept-Encoding": "gzip, deflate",
-                "Accept-Language": "it-IT,it;q=0.9,en;q=0.8,es;q=0.7",
-                "Authorization": "X-Digest username=\""+self.username+"\", realm=\"registered_user@power-one.com\", nonce=\""+self.nonce+"\", uri=\""+path+"\", response=\""+self.response+"\", qop="+self.qop+", nc="+self.nc+", cnonce=\""+self.cnonce+"\""}
-
-            if (self.cookies is not None) :
-                headers['Cookie'] = self.cookies
-            if self.debug:
-                print ("Auth: "+str(headers["Authorization"]))
+            headers["Authorization"] = "X-Digest username=\""+self.username+"\", realm=\"registered_user@power-one.com\", nonce=\""+self.nonce+"\", uri=\""+path+"\", response=\""+self.response+"\", qop="+self.qop+", nc="+self.nc+", cnonce=\""+self.cnonce+"\""
+        if (self.cookies is not None) :
+            headers['Cookie'] = self.cookies
+        if self.debug :
+            print(headers)
+        #if self.debug:
+            #print ("Auth: "+str(headers["Authorization"]))
         try :
             myUri = "http://"+self.host+path
             if self.debug:
@@ -141,11 +166,12 @@ class APABB(object):
             self.resp = str(resp.decode("utf-8"))
             if self.debug:
                 print ("Status: "+respHeaders["status"])
-            print(respHeaders)
+            if self.debug:
+                print(respHeaders)
             if ('set-cookie' in respHeaders) :
                 self.cookies = respHeaders['set-cookie']
-            if (self.debug) :
-                print(self.cookies)
+            #if (self.debug) :
+            #    print(self.cookies)
             return True
         except Exception as e:
             print ("HTTP error: " + str(e))
@@ -154,13 +180,17 @@ class APABB(object):
     def callUrl(self, uri) :
         timestamp = str(int(time.time()))
         self.buildReq(uri, "GET", timestamp)
+        if (self.debug) :
+            print(uri)
         if self.resp is None :
             return None
         else :
             self.extractNonce()
+        if (self.debug) :
+            print("==============================")
     
     def login(self) :
-        print("Logging in...")
+        #print("Logging in...")
         uri = "/v3/"
         self.callUrl(uri)
         timestamp = str(current_milli_time())
@@ -175,7 +205,7 @@ class APABB(object):
         self.callUrl(uri)
 
     def fetch(self, feed) :
-        print("Fetching data...")
+        #print("Fetching data...")
         if self.nonce is None :
             self.login()
             if self.nonce is None :
@@ -183,33 +213,33 @@ class APABB(object):
 
         timestamp = str(current_milli_time())
         uri = "/v1/feeds/ser"+self.ser+"/datastreams/"+feed+"?_="+timestamp
-        print(uri)
         self.callUrl(uri)
         try:  
-            print(self.resp)
             payload = json.loads(self.resp)
-            print(payload)
+            if (self.debug) : 
+                print(payload)
             if payload is not None and 'feeds' in payload and 'ser'+self.ser in payload["feeds"]:
                 datastreams = payload['feeds']['ser'+self.ser]['datastreams']
                 lastVal = datastreams[feed]['data'][0]
-                units = datastream[feed]['units']
+                units = datastreams[feed]['units']
                 if (lastVal is not None) :
-                    print(lastVal+" "+units)
-                    return lastVal.value
+                    print(str(lastVal["value"])+" "+units)
+                    return lastVal["value"]
                 else :
                     print ("No value found !")
         except ValueError as e:
             print("JSON error: "+str(e))
+        print("---------------------------------------------------------")
         return None  
 
 
 def main():
     #sys.stdout = open("/var/log/domotic.log", "w", buffering=2)
-    abb = APABB("192.168.1.154", "admin", "db6e106cf2b982d8dce1cf2ba2e0d449", "Thejedi82", "4:120399-3G97-3016")
-    abb.fetch('m101_1_W')
-    #while True:
-    #    blynk.run()
-    #    timer.run()
+    #abb = APABB("192.168.1.154", "admin", "db6e106cf2b982d8dce1cf2ba2e0d449", "Thejedi82", "4:120399-3G97-3016")
+    #abb.fetch('m64061_1_DayWH')
+    while True:
+        blynk.run()
+        timer.run()
 
 if __name__ == "__main__":
 		main()
