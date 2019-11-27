@@ -19,12 +19,12 @@ timer = Timer()
 
 feeds = [
     {
-        "name" : "m64061_1_DayWH",
+        "name" : 'm64061_1_DayWH',
         "vpin" : 2
     },
     {
-        "name" : "m101_1_W",
-        "vpin" : 2
+        "name" : 'm101_1_W',
+        "vpin" : 1
     }
 ]
 
@@ -42,11 +42,13 @@ def disconnect_handler():
 
 @timer.register(interval=5)
 def readVal():
-    print("Polling...")
+    abb = APABB("192.168.1.154", "admin", "db6e106cf2b982d8dce1cf2ba2e0d449", "Thejedi82", "4:120399-3G97-3016")
     for feed in feeds :
         try:
+            print("Polling from "+feed["name"]+" on vpin "+str(feed["vpin"]))
             val = abb.fetch(feed["name"])
-            blynk.virtual_write(device["vpin"], str(val.value))
+            if (val is not None) :
+                blynk.virtual_write(feed["vpin"], str(val.value))
         except Exception as e:
             print (e)
 
@@ -73,7 +75,8 @@ class APABB(object):
         self.password = password
         self.ser = ser
         self.userToken = userToken
-        self.debug = True
+        #self.debug = True
+        self.cookies = None
 
     def extractNonce(self) :
         timestamp = str(int(time.time()))
@@ -120,12 +123,13 @@ class APABB(object):
         if self.nonce is not None :
             self.handleAuth(path)
             headers = {
-                "Cookie": "filter=all; _ga=GA1.3.1163095045."+timestamp+"; _gid=GA1.3.915588772."+timestamp+"; _gat=1",
                 "Accept": "application/json, text/plain, */*",
                 "Accept-Encoding": "gzip, deflate",
                 "Accept-Language": "it-IT,it;q=0.9,en;q=0.8,es;q=0.7",
                 "Authorization": "X-Digest username=\""+self.username+"\", realm=\"registered_user@power-one.com\", nonce=\""+self.nonce+"\", uri=\""+path+"\", response=\""+self.response+"\", qop="+self.qop+", nc="+self.nc+", cnonce=\""+self.cnonce+"\""}
 
+            if (self.cookies is not None) :
+                headers['Cookie'] = self.cookies
             if self.debug:
                 print ("Auth: "+str(headers["Authorization"]))
         try :
@@ -137,6 +141,11 @@ class APABB(object):
             self.resp = str(resp.decode("utf-8"))
             if self.debug:
                 print ("Status: "+respHeaders["status"])
+            print(respHeaders)
+            if ('set-cookie' in respHeaders) :
+                self.cookies = respHeaders['set-cookie']
+            if (self.debug) :
+                print(self.cookies)
             return True
         except Exception as e:
             print ("HTTP error: " + str(e))
@@ -152,16 +161,18 @@ class APABB(object):
     
     def login(self) :
         print("Logging in...")
+        uri = "/v3/"
+        self.callUrl(uri)
         timestamp = str(current_milli_time())
         uri = "/v1/status?_="+timestamp
         self.callUrl(uri)
         self.callUrl(uri)
 
-        #uri = "/au/logger/v1/public_config"
-        #self.callUrl(uri)
+        uri = "/au/logger/v1/public_config"
+        self.callUrl(uri)
 
-        #uri = "/v1/config"
-        #self.callUrl(uri)
+        uri = "/v1/config"
+        self.callUrl(uri)
 
     def fetch(self, feed) :
         print("Fetching data...")
@@ -172,30 +183,33 @@ class APABB(object):
 
         timestamp = str(current_milli_time())
         uri = "/v1/feeds/ser"+self.ser+"/datastreams/"+feed+"?_="+timestamp
+        print(uri)
         self.callUrl(uri)
         try:  
-            #print(self.resp)
+            print(self.resp)
             payload = json.loads(self.resp)
-            if payload is not None :
+            print(payload)
+            if payload is not None and 'feeds' in payload and 'ser'+self.ser in payload["feeds"]:
                 datastreams = payload['feeds']['ser'+self.ser]['datastreams']
                 lastVal = datastreams[feed]['data'][0]
                 units = datastream[feed]['units']
-                #print(datastreams)
                 if (lastVal is not None) :
                     print(lastVal+" "+units)
                     return lastVal.value
+                else :
+                    print ("No value found !")
         except ValueError as e:
             print("JSON error: "+str(e))
         return None  
 
-abb = APABB("192.168.1.154", "admin", "db6e106cf2b982d8dce1cf2ba2e0d449", "4:120399-3G96-3016")
 
 def main():
     #sys.stdout = open("/var/log/domotic.log", "w", buffering=2)
-    #abb = APABB("192.168.1.154", "admin", "db6e106cf2b982d8dce1cf2ba2e0d449", "Thejedi82", "4:120399-3G97-3016")
-    while True:
-        blynk.run()
-        timer.run()
+    abb = APABB("192.168.1.154", "admin", "db6e106cf2b982d8dce1cf2ba2e0d449", "Thejedi82", "4:120399-3G97-3016")
+    abb.fetch('m101_1_W')
+    #while True:
+    #    blynk.run()
+    #    timer.run()
 
 if __name__ == "__main__":
 		main()
