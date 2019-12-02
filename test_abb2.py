@@ -17,7 +17,7 @@ ip = "192.168.1.9"
 blynk = blynklib.Blynk(authToken, server=ip, port=port, heartbeat=30)
 timer = Timer()
 
-feeds = [
+"""
     {
         "name" : "m64061_1_YearWH",
         "vpin" : "7"
@@ -30,6 +30,9 @@ feeds = [
         "name" : "m64061_1_WeekWH",
         "vpin" : 5
     },  
+"""
+
+feeds = [
     {
         "name" : "m101_1_PhVphA",
         "vpin" : 4
@@ -60,7 +63,7 @@ def disconnect_handler():
     print(DISCONNECT_PRINT_MSG)
     blynk.connect()
 
-@timer.register(interval=5)
+@timer.register(interval=10)
 def readVal():
     abb = APABB("192.168.1.154", "admin", "db6e106cf2b982d8dce1cf2ba2e0d449", "Thejedi82", "4:120399-3G96-3016")
     for feed in feeds :
@@ -138,7 +141,7 @@ class APABB(object):
         """
 
     def buildReq(self, path, method, timestamp) :
-        conn = httplib2.Http()
+        conn = httplib2.Http(timeout=3)
         headers = {}
         """
 GET /v1/feeds/ser4:120399-3G96-3016/datastreams/m101_1_W?_=1574854636192 HTTP/1.1
@@ -227,6 +230,7 @@ Cookie: _ga=GA1.1.169258567.1574776814; _gid=GA1.1.932969922.1574776814; _gat=1
     def fetch(self, feed) :
         #print("Fetching data...")
         if self.nonce is None :
+            print("Need to login...")
             self.login()
             if self.nonce is None :
                 return None

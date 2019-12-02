@@ -1,0 +1,13 @@
+Devices(s):
+[
+  {
+    name: 'Condizionatore Mansarda',
+    id: '04564850840d8e9bb04b',
+    key: '68a760c04fd5ce1f'
+  },
+  {
+    name: 'Termodinamico',
+    id: '20856001cc50e3d2a7d9',
+    key: '60ef17b549d76787'
+  }
+]

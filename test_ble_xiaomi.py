@@ -16,6 +16,16 @@ ip = "192.168.1.9"
 blynk = blynklib.Blynk(authToken, server=ip, port=port, heartbeat=15)
 timer = Timer()
 
+"""
+    {
+        "name" : "terrazzino",
+        "mac" : "",
+        "humidity" : 7,
+        "temperature" : 8,
+        "battery" : 9
+    },
+"""
+
 devices = [
     {
         "name" : "salotto",
@@ -47,12 +57,12 @@ def disconnect_handler():
 
 @timer.register(interval=5)
 def readVal():
-    print("Polling...")
+    #print("Polling...")
     for device in devices :
         try:
             print("Polling from "+device["mac"])
             """Poll data from the sensor."""
-            poller = MiTempBtPoller(device["mac"], GatttoolBackend)
+            poller = MiTempBtPoller(device["mac"], GatttoolBackend, retries=1)
             #print("Getting data from Mi Temperature and Humidity Sensor")
             #print("FW: {}".format(poller.firmware_version()))
             #print("Name: {}".format(poller.name()))
@@ -67,7 +77,7 @@ def readVal():
             print (e)
 
 def main():
-    sys.stdout = open("/var/log/domotic.log", "w", buffering=2)
+    #sys.stdout = open("/var/log/domotic.log", "w", buffering=2)
     while True:
         blynk.run()
         timer.run()
