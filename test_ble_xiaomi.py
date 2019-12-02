@@ -16,17 +16,14 @@ ip = "192.168.1.9"
 blynk = blynklib.Blynk(authToken, server=ip, port=port, heartbeat=15)
 timer = Timer()
 
-"""
+devices = [
     {
         "name" : "terrazzino",
-        "mac" : "",
+        "mac" : "58:2D:34:36:2F:78",
         "humidity" : 7,
         "temperature" : 8,
         "battery" : 9
-    },
-"""
-
-devices = [
+    },    
     {
         "name" : "salotto",
         "mac" : "58:2D:34:35:2F:02",
