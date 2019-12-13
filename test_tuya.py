@@ -56,7 +56,7 @@ def readVal():
             data = d.status()  # NOTE this does NOT require a valid key
             print('Dictionary %r' % data)
             print('state (bool, true is ON) %r' % data['dps']['1'])  # Show status of first controlled switch on device
-            output = str(data['dps']['5'])
+            output = str(data['dps']['4'])
             print(output)
             if (output is not None and output.isnumeric()) :
                 print('Output: ', output)
